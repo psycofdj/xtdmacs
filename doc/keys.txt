@@ -1,0 +1,167 @@
+﻿#----------#
+#- Autres -#
+#----------#
+
+C-SPC           set-mark-command                 (poser la mark)
+C-x C-c         save-buffers-kill-terminal       (quitter emacs)
+C-x C-s         save-buffer                      (sauvegarde le buffer en cours)
+C-g             keyboard-quit                    (annuler l'action en cours)
+<f10>           menu-bar-open                    (ouvrir le menu)
+<f11>           tmm-menubar                      (ouvrir le menu)
+M-s             speedbar-get-focus               (ouvrir la speedbar de navigation)
+
+
+#----------------------#
+#- Gestion du curseur -#
+#----------------------#
+
+<home>          beginning-of-line                (aller au début de la ligne)
+<select>        end-of-line                      (aller a la fin de la ligne)
+
+<next>          scroll-up                        (remonter de quelques lignes)
+<prior>         scroll-down                      (descendre de quelques lignes)
+
+<M-next>        scroll-other-window              (remonter de quelques lignes dans la fenêtre a cote)
+<M-prior>       scroll-other-window-down         (descendre de quelques lignes dans la fenêtre a cote)
+
+<M-down>        end-of-buffer                    (aller au début du buffer)
+<M-up>          beginning-of-buffer              (aller a la fin du buffer)
+
+<M-end>         end-of-buffer-other-window       (aller a la fin du buffer dans la fenêtre a cote)
+<M-home>        beginning-of-buffer-other-wndow  (aller au début du buffer dans la fenêtre a cote)
+
+<C-left>        backward-word                    (aller au début du mot précédant)
+<C-right>       forward-word                     (aller a la fin du mot suivant)
+
+<C-M-down>      forward-sexp                     (aller a la fin de l'expression courante)
+<C-M-up>        backward-sexp                    (aller au début de l'expression courante)
+
+<C-M-end>       end-of-defun                     (aller au début de la fonction en cours) (c/c++)
+<C-M-home>      beginning-of-defun               (aller a la fin de la fonction en cours) (c/c++)
+
+C-c C-g         goto-line                        (aller a la ligne donnée)
+
+C-s             isearch-forward                  (rechercher en avant)
+C-r             isearch-backward                 (rechercher en arrière)
+C-M-s           isearch-forward-regexp           (rechercher regexp en avant)
+C-M-r           isearch-backward-regexp          (rechercher regexp en arrière)
+
+<C-up>          backward-paragraph               (aller au paragraphe précédent)
+<C-down>        forward-paragraph                (aller au paragraphe suivant)
+
+
+#-----------------------#
+#- Gestion des buffers -#
+#-----------------------#
+
+C-x C-f         find-file                        (ouvrir un fichier)
+C-x k           kill-buffer                      (ferme le buffer courant)
+C-x <C-down>    iswitchb-buffer                  (liste des buffers)
+C-x b           switch-to-buffer                 (liste des buffers)
+C-x C-b         list-buffers                     (liste de tous les buffers)
+C-x <C-left>    swbuff-switch-to-previous-buffer (buffer précédant)
+C-x <C-right>   swbuff-switch-to-next-buffer     (buffer suivant)
+<f12>           kecode-c++-header-toggle         (cycler entre le .hh, le .cc et le .hxx)
+
+
+#------------------------#
+#- Gestion des fenetres -#
+#------------------------#
+
+C-x 0           delete-window                    (supprime la fenêtre courante)
+C-x 1           delete-other-windows             (supprime toute les autres fenetres)
+C-x 2           split-window-vertically          (divise la fenêtres en cours verticalement)
+C-x 3           split-window-horizontally        (divise la fenêtres en cours horizontalement)
+
+C-x <up>        windmove-up                      (aller a la fenêtre en haut)
+C-x <down>      windmove-down                    (aller a la fenêtre en bas)
+C-x <left>      windmove-left                    (aller a la fenêtre a gauche)
+C-x <right>     windmove-right                   (aller a la fenêtre a droite)
+C-x o           other-window                     (aller a la fenetre suivante)
+
+M-+             enlarge-window                   (agrandir la taille de la fenêtre)
+M--             shrink-window                    (réduire la taille de la fenêtre)
+C-x +           balance-windows                  (ré-arrange les fenêtres)
+
+C-l             recenter-top-bottom              (recentrer le curseur dans la fenêtre en cours)
+
+
+#--------------------#
+#- Edition du texte -#
+#--------------------#
+
+M-w             kill-ring-save                   (copier entre la mark et le curseur)
+C-w             kill-region                      (couper entre la mark et le curseur)
+C-y             yank                             (coller entre la mark et le curseur)
+C-_             undo                             (annuler la/les dernières modifications)
+
+C-d             query-replace                    (chercher/remplacer)
+C-f             query-replace-regexp             (chercher/remplacer regexp)
+<M-delete>      kill-word                        (supprimer le mot avant le curseur)
+C-x l           insert-date                      (insérer la date au format 6-01-2014)
+C-k             kill-line                        (couper la ligne courante)
+
+C-x TAB         indent-rigidly                   (insérer un espace au début des lignes entre la mark et le curseur)
+
+M-c             capitalize-word                  (capitalise le mot suivant)
+M-l             downcase-word                    (mettre en minuscule le mot suivant)
+M-u             upcase-word                      (mettre en majuscule le mot suivant)
+
+
+#-------------------#
+#- Edition du code -#
+#-------------------#
+
+M-a             uncomment-region                 (de-commenter le code entre la mark et le curseur)
+M-q             comment-region                   (commenter le code entre la mark et le curseur)
+M-SPC           dabbrev-expand                   (complétion statistique)
+C-q             auto-complete                    (complétion sémantique) (c/c++)
+
+<C-f1>          kecode-align-vars                (aligner les définitions et init des paramètres/variables/membres) (c++)
+<C-f2>          kecode-align-args                (aligner les arguments d'un appel de fonction multiligne)
+
+<f5>            delete-trailing-whitespace       (supprimer les espaces en fin de ligne dans le buffer)
+<f6>            indent-region                    (indenter le code entre la mark et le curseur)
+<C-f6>          kecode-indent-buffer             (indenter le code dans tout le buffer)
+
+C-x d           doxymacs-insert-function-comment (commenter la fonction)
+C-x m           doxymacs-insert-member-comment   (commenter la variable membre)
+
+
+#-------------------------------------#
+#- Gestion de la compilation (c/c++) -#
+#-------------------------------------#
+
+<f7>            compile++-arrange-windows        (lancer la compilation)
+<C-f7>          compile++-get-params             (entrer manuellement les parametres de compilation)
+<M-f7>          compile++-safe-kill              (tuer la compilation en cours)
+
+<f8>            compile++-previous-error         (aller a l'erreur précédente)
+<C-f8>          compile++-previous-warning       (aller au warning précédent)
+
+<f9>            compile++-next-error             (aller a l'erreur suivante)
+<C-f9>          compile++-next-warning           (aller au warning suivant)
+
+
+#--------------------------------#
+#- Recherche de symbole (c/c++) -#
+#--------------------------------#
+
+C-x r RET     rtags-find-symbol-at-point          (aller a la definition du symbol sous le curseur)
+C-x r DEL     rtags-find-all-references-at-point  (rechercher les references au symbol sous le curseur)
+C-x r <down>  rtags-location-stack-back           (positionner le curseur a sa position precedante)
+C-x r <up>    rtags-location-stack-forward        (positionner le curseur a sa position suivante)
+C-x r <right> rtags-next-match                    (aller au resultat suivant)
+C-x r <left>  rtags-previous-match                (aller au resultat precedant)
+C-x r n       rtags-rename-symbol                 (renomer le symbol sous le curseur)
+C-x r e       rtags-print-enum-value-at-point     (donner la veleur de l'enum sous le curseur)
+C-x r i       rtags-print-cursorinfo              (donner des informations sur le symbol sous le curseur)
+
+
+
+
+
+
+
+
+

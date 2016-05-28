@@ -1,0 +1,178 @@
+#---------#
+#- intro -#
+#---------#
+
+- Tuer dans l'oeuf le troll inter-editeur
+- On va parler de features, peut importe quel editeur tant
+  que les features sont la.
+- Pour couper court, on dira que tous les editeurs (emacs.vi.eclipse)
+  sont capables de faire la job, c'est une question de temps passer sur la
+  configuration
+
+#-------------------------#
+#- coloration syntaxique -#
+#-------------------------#
+
+  -> riche : pas seulement les mots celfs du language
+             mais aussi les elements remarquables :
+              - les types
+              - les methodes
+              - les fonctions
+              - les classes... etc
+
+      (eclipse = Ko, vim = Ko, emacs = Ok)
+
+  -> enrichissable : Doit permettre d'etre configurable, ajouter des
+                     elements a mettre en valeur.
+                     Dans le cadre de KE, une façon redoutablement
+                     efficace de mettre à profit et promouvoir la norme de
+                     codage
+      (eclipse = ?, vim = ?, emacs = Ok)
+
+#-------------#
+#- mouseless -#
+#-------------#
+
+  -> Des études ont montré que l'utilisation de raccourcis clavier
+     divise par 10 le temps necessaire pour effectuer la meme operation
+     a la souris.
+
+     Ouvrir un fichier, chager d'onglet, déplacer le curseur
+     faire un copier/coller, rechercher/remplacer.... Combien de fois dans
+     ces opérations stériles sont elles effectuées dans la même journée d'un
+     déeveloppeur ?
+
+  -> Le problème, c'est que l'apprentissage de ces raccourcis demande un
+     véritable effort. Or l'homme en général, et le développement tout
+     particulierement, est d'un naturel feignant.
+
+  -> La solution : se placer dans une situation où on n'a pas le choix que
+     de faire cet effort. C'est pourquoi je recommande vivement l'utilisation
+     d'un environnement "mouseless" en mode console. Donc soit vim ou soit emacs.
+
+  -> Eclipse reste tout à fait utilisable sans la souris mais la couche graphique
+     ne favorise pas l'effort d'apprentissage.
+
+  -> voir prez groupe eclipse et elements de justification (cf JPP)
+
+#---------------#
+#- indentation -#
+#---------------#
+
+   -> Petite parenthese sur l'indentation. Indenter le code est mantadory,
+      on rappelle qu'on code est lu 90% du temps. Or, indenter du code est
+      fastidieux et donc, chronophage.
+
+   -> Configurer son editeur pour indenter automatiquement en fonction du
+      contexte est très important.
+      <neutre="off">
+      Dans ce domaine, emacs est de loin le roi des editeurs
+      mais les editeurs comme eclipse et vim ont des modules egalément très
+      efficaces.
+      </neutre>
+
+#------------------------#
+#- compilation integrée -#
+#------------------------#
+
+   -> Le schéma de développement C/C++ standard est le suivant :
+        1. Editer
+        2. Compiler
+        3. Voir les erreurs
+        4. Ouvrir le fichier en erreur
+        5. Aller a la ligne de l'erreur
+        6. Goto 1
+
+   -> De base, compiler necessite de changer de contexte, par exemple retourner
+      dans le shell.
+      Identifier le fichier et la ligne source de l'erreur est très fastidieux,
+      en particuliers dans en C++ ou les templates crachent beaucoup d'informations.
+      Il faut en suite revenir dans l'éditeur, ouvrir le fichier concerné en
+      navigant dans l'arboresnce de fichier et, en priant pour s'en souvenir,
+      aller à la ligne concernée. Le tout peut prendre plusieurs dizaines de
+      secondes, le tout pour recommencer immédiatement car l'erreur en question
+      était un problème de point-virgule.
+
+   -> Dans un éditeur correctement configuré, toutes ces opérations peuvent
+      etre automatisées. Dans mon cas, la touche F7 lance la compilation,
+      ouvre en fenetre en bas qui affiche le log de compilo, et les touches
+      F8/F9 permettent de navigeur entre les erreurs ou ouvrant automatiquement
+      les fichiers à la bonne ligne.
+
+#--------------#
+#- navigation -#
+#--------------#
+
+   -> La navigation est un autre aspect important dans le developpement.
+      - ouvrir un fichier
+      - passer du .cc au .hh et vis et versa
+      - aller a la ligne de la declaration de telle ou telle methode
+
+      Dans de très nombreux cas, le développeur peu outillé sera oubligé
+      de revenir dans son shell, naviguer dans ses repertoires, ouvrir
+      le fichier, recherche sa methode... etc.
+      Il existe pourtant (pour tous les editeurs, j'en suis convaincu),
+      des outils permettant d'accelerer ces processus.
+
+#-----------#
+#- doxygen -#
+#-----------#
+
+   -> La generation de la documentaiton doxygen peut elle aussi etre automatisée.
+      Un éditeur correctement configuré détectera le type de retour de fonction,
+      sa liste de paramêtre et générera un template "pret à remplir" de documentation
+      doxygen.
+
+   -> Automatiser ce traitement encouragera d'autant plus la production et la
+      maintenance d'un code correctement documenté.
+
+#--------------#
+#- completion -#
+#--------------#
+
+   -> La completion est un element central dans le developpement. En C/C++
+      c'est un épineux problème car, pour générer la liste de complétion
+      cohérante pour un endroit donné, il faut analyser tout le contexte :
+      le fichier, ses includes, les includes des includes... etc. Bref, il
+      faut compiler.
+
+   -> Deux problèmes : d'abord, compiler est un procéssus très lent, surtout
+      en c++. Et d'autre part, le compilateur n'est pas concu pour aider
+      dans cette tâche (en interne, cela nécéssite de garder en permanence
+      un lien entre les noeuds des AST et leur représentation dans le code
+      source.
+
+   -> Solution : la completion statistique
+      Dans les faits, on se rend compte que le developpement est une activité
+      où l'on répète souvent ce qui est écrit plus haut. Ex: je déclare ma variable,
+      j'utilise ma variable. Je déclare une méthode, j'utilise ma méthode... etc.
+      Du coup, les editeurs introduisent la notion de complétion statistique ou
+      les mots contenus dans les fichiers ouverts sont indexés à la volé et proposé
+      à la demande sans se préoccupé de la cohérence sémantique.
+      80% du temps, c'est approche est satisfaisante et est diaboliquement rapide.
+
+   -> Solution lourde : les nouveaux compilateurs
+      Pour le reste des cas, lorsqu'on peut appeler une methode qui n'a pas ete
+      encore utilisé dans le fichier ou lorsqu'on manipule un objet dont on ne
+      connait pas les proprietés fines, on ne coupe pas à déployer d'autres outils.
+
+      Clang, un nouveau compilateur C/C++ a, dès sa conception, intégré le besoin
+      de produire les propositions de complétion. Ducoup, on a vu sortir depuis
+      relativement peut de temps, des modules des éditeurs permettant de tirer
+      partie de cet outils et ainsi générer une vrai complétion.
+
+      La contre partie d'une complétion cohérante, c'est un temps d'attente plus
+      long, de l'ordre d'une à deux secondes selon les performances de la machine.
+
+   -> Au final, il est nécessaire d'avoir accès aux deux types de complétion,
+      la statistique, rapide, lorsqu'on sait ce que l'on veut et la complétion  
+      sémantique, lente, mais toujours plus rapide que d'aller farfouiller
+      dans la documentation pour savoir ce que l'on cherche.
+
+
+#------------------------#
+#- refactoring          -#
+#- recherche definition -#
+#- recherche reference  -#
+#------------------------#
+
