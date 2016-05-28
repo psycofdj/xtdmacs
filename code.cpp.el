@@ -40,8 +40,7 @@
     ("\\<\$?_[a-zA-Z0-9][_a-zA-Z0-9]+\\>"                      . 'code-face-class-member)
     ("\\<\$?my\\(_\\|[A-Z]\\)?[_a-zA-Z0-9]+\\>"     . 'code-face-class-member)
 
-    ("\\<\$?pcs\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\>"     . 'code-face-param-const-static)
-    ("\\<\$?ps\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\>"      . 'code-face-param-static)
+
     ("\\<\$?pc\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\>"      . 'code-face-param-const)
     ("\\<\$?\\(p\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\)\\>" . 'code-face-param)
 

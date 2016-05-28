@@ -97,17 +97,6 @@
 ;; --------------------------------------------------------------
 
 (defvar compile++-last-buffer       nil nil)
-
-(defface compile++-face-checking   '((t (:foreground "#008787" :underline t :weight normal ))) "compile++ checking keyword."  :group 'compile++)
-(defface compile++-face-compiling  '((t (:foreground "#008787" :underline t :weight normal ))) "compile++ compiling keyword." :group 'compile++)
-(defface compile++-face-linking    '((t (:foreground "#008787" :underline t :weight normal ))) "compile++ linking keyword."   :group 'compile++)
-(defface compile++-face-stripping  '((t (:foreground "#008787" :underline t :weight normal ))) "compile++ stripping keyword." :group 'compile++)
-(defface compile++-face-archiving  '((t (:foreground "#008787" :underline t :weight normal ))) "compile++ archiving keyword." :group 'compile++)
-(defface compile++-face-indexing   '((t (:foreground "#008787" :underline t :weight normal ))) "compile++ indexing keyword."  :group 'compile++)
-(defface compile++-face-test-passed   '((t (:foreground "#008787" :underline t :weight normal ))) "compile++ indexing keyword."  :group 'compile++)
-(defface compile++-face-test-failed   '((t (:foreground "#008787" :underline t :weight normal ))) "compile++ indexing keyword."  :group 'compile++)
-(defface compile++-face-test-progress '((t (:foreground "#008787" :underline t :weight normal ))) "compile++ indexing keyword."  :group 'compile++)
-
 (defcustom compile++-buffer-height  13     "Command to run to start compilation."                           :group 'compile++ :type 'integer)
 (defcustom compile++-scroll-output  t      "Should we scroll compilation buffer while compiling ?"          :group 'compile++ :type 'boolean)
 (defcustom compile++-buffer-local   nil    "Set compile/deploy and test paramters buffer local."            :group 'compile++ :type 'boolean :safe (lambda(val) t))

@@ -1,7 +1,21 @@
-(defface docker-mode-face-parent-url       '((t (:foreground "color-134"  :weight normal))) "Parent image url"   :group 'docker-mode)
-(defface docker-mode-face-parent-tag       '((t (:foreground "color-114"  :weight normal))) "Parent image tag"   :group 'docker-mode)
-(defface docker-mode-face-maintainer-name  '((t (:foreground "color-134"  :weight normal))) "Maintainer's name"  :group 'docker-mode)
-(defface docker-mode-face-maintainer-email '((t (:foreground "color-114"  :weight normal))) "Maintainer's email" :group 'docker-mode)
+(defface docker-mode-face-parent-url       '((t (:foreground "#af5fd7"))) "Parent image url"   :group 'docker-mode)
+(defface docker-mode-face-parent-tag       '((t (:foreground "#87d787"))) "Parent image tag"   :group 'docker-mode)
+
+(defface docker-mode-face-maintainer-name
+  '((((min-colors 256) (background dark))
+     (:foreground "#ffffff" :weight bold))
+    (((min-colors 256) (background light))
+     (:foreground "#cdcdcd" :weight bold)))
+  "Maintainer's name"
+  :group 'docker-mode
+  )
+
+(defface docker-mode-face-maintainer-email
+  '((t (:foreground "#bcbcbc" :weight bold)))
+  "Maintainer's email"
+  :group 'docker-mode
+  )
+
 (defvar docker-mode-keywords
   '("FROM" "RUN" "COPY" "CMD" "MAINTAINER"
     "ARG" "VOLUME" "EXPOSE" "LABEL" "ENV" "ADD"

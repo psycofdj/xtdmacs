@@ -1,4 +1,8 @@
-(defface code-php-operator '((t (:foreground "color-134" :weight normal ))) "arrow operator." :group 'code)
+(defface code-php-operator
+  '((t (:foreground "#af5fd7")))
+  "arrow operator."
+  :group 'code
+  )
 
 (defcustom code-php-indent-load-auto
   t

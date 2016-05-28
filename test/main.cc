@@ -15,11 +15,19 @@ int main(int p_argc, char** p_argv)
  */
 void test(void)
 {
-
+  return echo::KEOK;
+  return echo::KEERROR;
+  return echo::KEWARNING;
 }
+
+#define MACRO(el) ;
+
+int g_toto = 0;
+int gc_toto = 0;
 
 class C
 {
+public:
   void super(void);
   /**
    ** @brief super bref de la mort qui tue
@@ -29,7 +37,22 @@ class C
    ** @details
    ** Voici des details sur la façon dont fonctionne cette fonction
    */
-  bool super(string p_type, int p_paran);
+  bool super(string p_type,
+             int    p_paran,
+             int    pc_paran)
+  {
+    int l_test = 0;
+    int lc_test = 0;
+    int c_test = 0;
+    int cc_test = 0;
+    int fdssomevar = 0;
+  }
+
+private:
+  std::string m_toto;
+  std::string ms_toto;
+  std::string msc_toto;
+  std::string mc_toto;
 };
 
 

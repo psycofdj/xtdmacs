@@ -22,6 +22,7 @@ from ngstream.core.lib.configuration import application_path as app_path
 
 #===========================================================================#
 
+@decorator
 def _initOptParser(super):
   """
   Option parser configuration and parsing

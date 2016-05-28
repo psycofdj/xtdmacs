@@ -45,6 +45,7 @@
 ;; Diviser la fenetre en deux buffers
 (split-window-horizontally)
 
+(scroll-bar-mode -1)
 ;; ------------------
 ;; - Mode Changelog -
 ;; ------------------
@@ -54,6 +55,10 @@
 ;; Activation du rechargement automatique des fichiers qui ont changés sur disque
 (global-auto-revert-mode 1)
 (setq auto-revert-interval 0.5)
+
+(if window-system
+    (setq frame-background-mode 'light)
+  (setq frame-background-mode 'dark))
 
 ;; ------------------------------------
 ;; - Appel aux bibliotheques externes -
