@@ -1,32 +1,28 @@
-;; -*- mode: emacs-lisp -*-
-;; ----------------------
-;; -  User config file  -
-;; ----------------------
-(message "loading .emacs...")
+;; -*- mode: emacs-lisp; -*-
 
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(package-initialize)
-
-(setq load-path (cons (file-name-directory (file-truename "~/.emacs")) load-path))
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (add-to-list 'package-archives '("melpa"     . "http://melpa.org/packages/") t)
+  (add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/"))
+  (package-initialize))
 
 ;; Custom file definition
 (setq custom-file "~/.emacs-custom")
 (load custom-file)
 
-;; Adresse email
-(setq user-mail-adress "xavier.marcelet@orange.com")
-;; Nom de l'utilisateur
-(setq user-full-name "Xavier MARCELET")
+;; configuration de l'encodage
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-language-environment   'utf-8)
 
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (add-to-list
-   'package-archives
-   '("melpa" . "http://melpa.org/packages/")
-   t)
-  (package-initialize))
+;; Desactive le systeme de creation de fichiers de sauvegarde emacs (file.cc~)
+(setq backup-inhibited  t)
 
-;; conf generale
-(require 'config)
+;; Diviser la fenetre en deux buffers
+(split-window-horizontally)
+
+(if window-system
+    (setq frame-background-mode 'light)
+  (setq frame-background-mode 'dark))
+
+(require 'xtdmacs-loader)
