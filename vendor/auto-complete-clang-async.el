@@ -40,6 +40,7 @@
 (require 'auto-complete)
 (require 'flymake)
 (require 'json)
+(require 'xtdmacs-compile++)
 
 
 (defcustom ac-clang-complete-executable
@@ -106,7 +107,7 @@ This variable will typically contain include paths, e.g., (\"-I~/MyProject\" \"-
 
 
 (defun ac-clang-find-compile-commands ()
-  (let* ((topbuilddir (compile++-get-nearest-filename ac-clang-compile-directory-name)))
+  (let* ((topbuilddir (xtdmacs-compile++-get-nearest-filename ac-clang-compile-directory-name)))
     (concat topbuilddir "/compile_commands.json"))
   )
 
@@ -136,10 +137,10 @@ This variable will typically contain include paths, e.g., (\"-I~/MyProject\" \"-
               (setq ac-clang-cflags cflags)
               t)
           (progn
-            (message "unable to find compile command for buffer")
+            (message "ac-clang-async : unable to find compile command for buffer")
             nil)))
     (progn
-      (message "could not find compile_commands.json")
+      (message "ac-clang-async : could not find compile_commands.json")
       nil))
   )
 
@@ -682,21 +683,16 @@ set new cflags for ac-clang from shell command output"
      (selection-face . ac-clang-selection-face)
      (prefix . ac-clang-prefix)
      (requires . 0)
-     ;; (requires . 9999)
      (document . ac-clang-document)
      (action . ac-clang-action)
      (cache)
      (symbol . "c")))
 
   (setq ac-auto-start nil)
-  (setq ac-clang-complete-executable "/home/psyco/dev/system/emacs/clang-complete")
   (setq ac-sources '(ac-source-clang-async))
   (ac-clang-launch-completion-process)
   (add-hook 'auto-complete-mode-hook 'ac-common-setup t t)
   (global-auto-complete-mode t)
-  ;; (local-set-key (kbd ".") 'ac-clang-async-autocomplete-autotrigger)
-  ;; (local-set-key (kbd ":") 'ac-clang-async-autocomplete-autotrigger)
-  ;; (local-set-key (kbd ">") 'ac-clang-async-autocomplete-autotrigger)
   )
 
 (defun --ac-clang-async-mode-destroy()
@@ -706,15 +702,13 @@ set new cflags for ac-clang from shell command output"
 ;;;###autoload
 (define-minor-mode ac-clang-async-mode "Async completion using clang" nil "Code"
   '(([8388640] . auto-complete))
-
-  (message "mode : %s" ac-clang-async-mode)
   (if ac-clang-async-mode
       (if (ac-clang-auto-cflags)
           (progn
             (--ac-clang-async-mode-construct)
             (message "ac-clang-async : up & running"))
         (progn
-          (message "unable to initialize ac-clang-async-mode")
+          (message "ac-clang-async : unable to initialize ac-clang-async-mode")
           (setq ac-clang-async-mode nil)))
     (--ac-clang-async-mode-destroy)))
 
