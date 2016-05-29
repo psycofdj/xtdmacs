@@ -15,6 +15,7 @@
     (yasnippet     "20160517.1628")
     (php-mode      "20160526.425")
     (auto-complete "20160416.604")
+    (markdown-mode "20160527.235")
     (json          "1.2"))
   :url "https://github.com/psycofdj/xtdmacs"
   )
