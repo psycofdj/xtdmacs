@@ -1,6 +1,18 @@
 ;;;###autoload
 (defcustom xtdmacs-loader-auto-minor-mode-alist
-  nil
+  '((("Dockerfile") xtdmacs-code-mode dockerfile-mode)
+    (("\\.php\\'") php-mode xtdmacs-code-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode)
+    (("\\.xml\\.erb\\'" "\\.erb\\'" "Rakefile\\'") ruby-mode xtdmacs-code-mode)
+    (("\\.html\\'" "\\.tpl\\'") xtdmacs-code-mode web-mode xtdmacs-code-web-mode)
+    (("\\.py\\'") python-mode xtdmacs-code-mode xtdmacs-code-python-mode xtdmacs-code-line-mode)
+    (("\\.h\\'" "\\.c\\'" "\\.cc\\'" "\\.hh\\'" "\\.cpp\\'" "\\.hpp\\'" "\\.hxx\\'") xtdmacs-code-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode xtdmacs-code-doxymacs-mode ac-clang-async-mode)
+    (("\\.js\\'") js2-mode xtdmacs-code-js-mode xtdmacs-code-line-mode xtdmacs-code-mode)
+    (("\\.json\\'") xtdmacs-code-mode json-mode xtdmacs-code-json-mode linum-mode)
+    (("CMakeLists\\.txt\\'") cmake-mode xtdmacs-code-mode)
+    (("\\.groovy\\'") groovy-mode xtdmacs-code-mode)
+    (("Makefile") xtdmacs-code-mode makefile-mode xtdmacs-code-makefile-mode xtdmacs-code-line-mode)
+    (("\\.el\\'") emacs-lisp-mode xtdmacs-code-mode xtdmacs-code-lisp-mode xtdmacs-code-line-mode)
+    (("\\.java\\'") java-mode xtdmacs-code-mode xtdmacs-code-java-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode))
   "Alist of filename patterns vs correpsonding minor mode functions,
 see `auto-mode-alist'. All elements of this alist are checked,
 meaning you can enable multiple minor modes for the same

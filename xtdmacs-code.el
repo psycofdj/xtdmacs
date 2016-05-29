@@ -186,5 +186,3 @@
   )
 
 (provide 'xtdmacs-code)
-
-
