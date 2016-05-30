@@ -127,8 +127,6 @@ This variable will typically contain include paths, e.g., (\"-I~/MyProject\" \"-
                  (let* ((dir     (cdr (assoc 'directory x)))
                         (command (cdr (assoc 'command   x)))
                         (file    (cdr (assoc 'file      x))))
-                   (message "cur : %s" (file-name-sans-extension (buffer-file-name)))
-                   (message "itm : %s" (file-name-sans-extension file))
                    (when (string= (file-name-sans-extension (buffer-file-name)) (file-name-sans-extension file))
                      (setq found-command command))))
         (if found-command

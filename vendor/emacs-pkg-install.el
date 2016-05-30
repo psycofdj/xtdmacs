@@ -9,9 +9,9 @@
 (add-to-list 'package-archives '("melpa" .     "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
+(package-refresh-contents)
 
 ;; Fix HTTP1/1.1 problems
 (setq url-http-attempt-keepalives nil)
 ;;(package-refresh-contents)
 (package-install-file pkg-to-install)
-
