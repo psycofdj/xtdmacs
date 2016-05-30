@@ -36,7 +36,7 @@ M-x xtdmacs-bindings-mode
 (xtdmacs-bindings-mode)
 ```
 
-##### using emacs customizaton:
+##### using emacs customization:
 
 ```M-x customize-variable RET xtdmacs-bindings-mode```
 
@@ -48,11 +48,11 @@ M-x xtdmacs-bindings-mode
 |-------------------------------|---------------------------------------|-------------------------------|---------------------------------------|
 | \<home\>                      | move cursor to end of line            | \<ctrl\>+x \<ctrl\>+\<right\> | display next buffer                   |
 | \<select\>                    | move cursor to end of line            | \<ctrl\>+x \<ctrl\>+\<left\>  | display previous buffer               |
-| \<alt\>+\<up\>                | move cursor to beggining of buffer    | \<ctrl\>+x \<ctrl\>+\<down\>  | prompt buffer to display              |
-| \<alt\>+\<down\>              | move curtor to end of buffer          | \<ctrl\>+x k                  | close current buffer                  |
+| \<alt\>+\<up\>                | move cursor to beginning of buffer    | \<ctrl\>+x \<ctrl\>+\<down\>  | prompt buffer to display              |
+| \<alt\>+\<down\>              | move cursor to end of buffer          | \<ctrl\>+x k                  | close current buffer                  |
 | \<ctrl\>+\<right\>            | move cursor to end of word            | \<ctrl\>+x \<ctrl\>+f         | open file                             |
 | \<ctrl\>+\<left\>             | move cursor to beginning of word      | \<alt\>+\<plus\>              | enlarge current window's height       |
-| \<ctrl\>+c \<ctrl\>+g         | goto given line                       | \<alt\>+\<minus\>             | shink current window's height         |
+| \<ctrl\>+c \<ctrl\>+g         | goto given line                       | \<alt\>+\<minus\>             | shrink current window's height        |
 | \<ctrl\>+d                    | search and replace                    | \<alt\>+\<delete\>            | delete previous word                  |
 | \<ctrl\>+f                    | search and replace regexp             | \<alt\>+s                     | display speedbar                      |
 | \<alt\>+d                     | align regexp                          | \<alt\>+/                     | autocomplete current word             |
@@ -123,7 +123,7 @@ xtdmacs-code-mode provides two utility functions : *xtdmacs-code-align-vars* and
 *xtdmacs-code-align-args* that format a specific region to a **matrix readable** form.
 
 ```c++
-// given this code snipset :
+// given this code snippet :
 // mark
 void myfunction(const std::string& p_parameter1,
                 int p_param2,
@@ -136,7 +136,7 @@ void myfunction(const std::string&        p_parameter1,
                 std::vector<std::string>& p_result);
 
 
-// given this code snipset :
+// given this code snippet :
 // mark
   std::cout << "my current process" << l_tmp
             << "is about to fail because of " << l_reason
@@ -150,7 +150,7 @@ void myfunction(const std::string&        p_parameter1,
 
 
 
-// given this code snipset :
+// given this code snippet :
 void foo(void)
 {
 // mark
@@ -188,18 +188,24 @@ void foo(void)
 xtdmacs-compile++
 -----------------
 
-This minor mode wraps the default compilation mode in order to profide a set of
+This minor mode wraps the default compilation mode in order to provide a set of
 pre-defined compilation commands. It also allows to use function instead of
 plain string as default compile commands.
 
 There is 3 predefined commands : **compile**, **test** and **deploy**
 
+#### Window managment
+
+xtdmacs-compile++ dedicates a window to the compilation buffer's preventing
+emacs to use it to open new files. It also sets this window's height according
+to ```xtdmacs-compile++-buffer-height``` variable and enables optionally
+automatic scrolling if ```xtdmacs-compile++-scroll-output``` is non nil.
+
+
 #### Behind the curtain
 
-The whole thing is configurable through customizing **xtdmacs-compile++-config-alist**
-```
-M-x customize-variable RET xtdmacs-compile++-config-alist RET
-```
+The predefinied commands are defined in the **xtdmacs-compile++-config-alist**
+variable.
 
 Where **xtdmacs-compile++-config-alist** is an alist of the form
 ```lisp
@@ -213,15 +219,15 @@ and where each *config-alist* is an alist of the form
  ("command"    . string-or-function))
 ```
 
-The *get-params* function is called interactivaly to prompt for specific parameters
+The **get-params** function is called interactively to prompt for specific parameters
 of the command. Ex. for c++ "compile" command, we prompt for working directory,
 optional environment variables and specific script to run.
 
-The *command* item build the final command send to default compilation-mode. Ex. for
+The **command** item build the final command send to default compilation-mode. Ex. for
 c++ it will construct something like ```cd dir && key=value make -j``` from values
-prompted by *get-params*.
+prompted by **get-params**.
 
-Usually, *get-params* uses *xtdmacs-compile++-config-alist* itself to store the values
+Usually, **get-params** uses *xtdmacs-compile++-config-alist* itself to store the values
 prompted to user user. Ex :
 ```lisp
 (("compile" .
@@ -232,43 +238,59 @@ prompted to user user. Ex :
       ("command"    . (lambda() (xtdmacs-compile++-default-command "compile"))))))
 ```
 
-#### Other
-arrange window
-
-
-
-#### Configuration
+#### API
 
 **xtdmacs-compile++-mode** provide utility functions that helps building your own
-*get-param* and *command* function values.
+**get-param** and **command** function values.
 
-* ```xtdmacs-compile++-get-nearest-filename (name)``` returns the closest path parent
+* **```xtdmacs-compile++-get-nearest-filename (name)```** returns the closest path parent
   to current buffer file that contains a file or a directory named *name*
-* ```xtdmacs-compile++-get-dir-locals-directory``` returns the path containing
+
+* **```xtdmacs-compile++-get-dir-locals-directory```** returns the path containing
   the nearest .dir-locals.el configuration file (nil if none)
-* ```xtdmacs-compile++-get-dir-git``` return the closest parent from buffer containing
+
+* **```xtdmacs-compile++-get-dir-git```** return the closest parent from buffer containing
   a *.git* directory, often used as project root directory.
-* ```xtdmacs-compile++-guess-directory``` returns the build directory assuming your
+
+* **```xtdmacs-compile++-guess-directory```** returns the build directory assuming your
   are using automake's VPATH builds in a directory named .release in your project root
 
 
+In addition the mode provides some usable default function :
 
-* xtdmacs-compile++-docker-params
-* xtdmacs-compile++-docker-run-command
-* xtdmacs-compile++-docker-exec-command
-* xtdmacs-compile++-default-params
+* **```xtdmacs-compile++-default-params```**: this function prompt interactively
+  for :
+  * a build directory, default given by ```"dir"``` function/value
+  * some environment variables, default given by ```"env"``` function/value
+  * a build command, , default given by ```"bin"``` function/value
 
-xtdmacs-compile++-buffer-height
-xtdmacs-compile++-scroll-output
-xtdmacs-compile++-buffer-local
+* **```xtdmacs-compile++-default-command```** : build the command as
+  * ```cd <bin> && <env> <bin>```
 
-Interactively :
-```
-M-x customize-variable RET xtdmacs-compile++-config-alist RET
-```
+* **```xtdmacs-compile++-docker-params```** : like ```xtdmacs-compile++-default-params```
+  but also prompts for :
+  * a docker-compose service name, default given by ```"service"``` function/value
+  * a docker-compose file path, default given by ```"compose-file"``` function/value
 
-For a specific directory :
+* **```xtdmacs-compile++-docker-run-command```** : build the command as
+  * ```cd <dir> && docker-compose -f <compose-file> run [-e <env:key>=<env:val>] <service> <bin>```
 
+* **```xtdmacs-compile++-docker-exec-command```** : same as ```xtdmacs-compile++-docker-run-command```
+  but with exec sub command (>= docker v1.11)
+
+#### Configuration
+
+Define the number of lines displayed in compilation buffer :
+* ```M-x customize-variable RET xtdmacs-compile++-buffer-height RET```
+
+Enables automatic scrolling of compilation buffer :
+* ```M-x customize-variable RET xtdmacs-compile++-scroll-output RET```
+
+Set commands configuration interactively :
+* ```M-x customize-variable RET xtdmacs-compile++-buffer-local RET```
+
+
+Set commands for a specific project :
 ```lisp
 cat ~/.dir-locals.el
 ("dev/myproject/"
@@ -316,3 +338,7 @@ cat ~/.dir-locals.el
 | \<alt\>+\<F8\>                | kill sunning process                           |
 | \<F9>                         | goto next compile error                        |
 | \<ctrl\>+\<F9>                | goto next compile error or warning             |
+
+
+<!-- LocalWords:  xtdmacs config alist RET params cd dir env API dev -->
+<!-- LocalWords:  param filename automake's VPATH sudo ctrl goto -->

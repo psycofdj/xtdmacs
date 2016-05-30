@@ -115,7 +115,8 @@
 (defun xtdmacs-compile++-docker-params (type)
   (xtdmacs-compile++-default-params type)
   (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
-         (service (cdr (assoc "service" config))))
+         (service (cdr (assoc "service" config)))
+         (compose (cdr (assoc "compose-file" config))))
     (setcdr (assoc "service" config) (read-from-minibuffer "Service: " (funcall-or-value service))))
   )
 
@@ -124,6 +125,7 @@
          (dir     (cdr (assoc "dir"     config)))
          (env     (cdr (assoc "env"     config)))
          (bin     (cdr (assoc "bin"     config)))
+         (compose (cdr (assoc "compose-file" config)))
          (service (cdr (assoc "service" config)))
          (dockerenv (if (string= env "")
                         env
@@ -132,9 +134,10 @@
     (if (not cmd)
         (setq cmd "run"))
 
-    (format "cd %s && SRCDIR=%s docker-compose -f extra/docker-compose.yml %s %s %s %s"
+    (format "cd %s && docker-compose -f %s %s %s %s %s"
             (funcall-or-value dir)
             (funcall-or-value dir)
+            (funcall-or-value compose)
             cmd
             dockerenv
             (funcall-or-value service)
@@ -145,10 +148,12 @@
   (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
          (dir     (cdr (assoc "dir"     config)))
          (bin     (cdr (assoc "bin"     config)))
+         (compose (cdr (assoc "compose-file" config)))
          (service (cdr (assoc "service" config))))
-    (format "cd %s && SRCDIR=%s docker-compose -f extra/docker-compose.yml exec %s %s"
+    (format "cd %s && docker-compose -f %s exec %s %s"
             (funcall-or-value dir)
             (funcall-or-value dir)
+            (funcall-or-value compose)
             (funcall-or-value service)
             (funcall-or-value bin)))
   )
