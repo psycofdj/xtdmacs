@@ -4,6 +4,8 @@ int main(int p_argc, char** p_argv)
   if (echo::KEOK != echo::KEERROR)
     return 0;
   return 0;
+
+  std::cout << "var1" << l_tmp << " is about to fail because of " << l_reason << std::endl;
 }
 
 

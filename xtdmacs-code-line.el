@@ -5,7 +5,7 @@
         (list
          ;; value of current buffer name
          "%&%&%& "
-         '(:propertize "%b " face bold)
+         '(:propertize "%b " face mode-line-buffer-id)
          "- (%l:%c) - %p - ["
          '(:propertize (:eval (replace-regexp-in-string
                                "%" "%%"

@@ -96,7 +96,7 @@
 
 ;; --------------------------------------------------------------
 
-(defvar xtdmacs-compile++-last-buffer       nil nil)
+(defvar    xtdmacs-compile++-last-buffer       nil nil)
 (defcustom xtdmacs-compile++-buffer-height  13     "Command to run to start compilation."                           :group 'xtdmacs-compile++ :type 'integer)
 (defcustom xtdmacs-compile++-scroll-output  t      "Should we scroll compilation buffer while compiling ?"          :group 'xtdmacs-compile++ :type 'boolean)
 (defcustom xtdmacs-compile++-buffer-local   nil    "Set compile/deploy and test paramters buffer local."            :group 'xtdmacs-compile++ :type 'boolean :safe (lambda(val) t))
