@@ -205,6 +205,69 @@
   )
 
 
+(defcustom xtdmacs-compile++-command-1
+  "compile"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 1"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+
+(defcustom xtdmacs-compile++-command-2
+  "test"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 2"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+
+(defcustom xtdmacs-compile++-command-3
+  "deploy"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 3"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+
+(defcustom xtdmacs-compile++-command-4
+  "deploy"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 4"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+(defun xtdmacs-compile++-command-1(interactive)
+  (xtdmacs-compile++-run interactive xtdmacs-compile++-command-1)
+  )
+
+(defun xtdmacs-compile++-command-2(interactive)
+  (xtdmacs-compile++-run interactive xtdmacs-compile++-command-2)
+  )
+
+(defun xtdmacs-compile++-command-3(interactive)
+  (xtdmacs-compile++-run interactive xtdmacs-compile++-command-3)
+  )
+
+(defun xtdmacs-compile++-command-4(interactive)
+  (xtdmacs-compile++-run interactive xtdmacs-compile++-command-4)
+  )
+
 ;; --------------------------------------------------------------------------
 
 (defun xtdmacs-compile++-mode-construct()
@@ -227,20 +290,20 @@
   "Set of function beyond compilation-mode" nil " xtdmacs-compile++"
   '(
 
-    ([f6]                . (lambda () (interactive) (xtdmacs-compile++-run nil "compile")))
-    ([C-f6]              . (lambda () (interactive) (xtdmacs-compile++-run t   "compile")))
+    ([f6]                . (lambda () (interactive) (xtdmacs-compile++-command-1 nil)))
+    ([C-f6]              . (lambda () (interactive) (xtdmacs-compile++-command-1 t)))
     ([M-f6]              . kill-compilation)
 
-    ([C-S-f6]            . (lambda () (interactive) (xtdmacs-compile++-run t   "doc")))
+    ([C-S-f6]            . (lambda () (interactive) (xtdmacs-compile++-command-4 t)))
 
     ([C-e]               . code-cpp-rename-variable)
 
-    ([f7]                . (lambda () (interactive) (xtdmacs-compile++-run nil "test")))
-    ([C-f7]              . (lambda () (interactive) (xtdmacs-compile++-run t   "test")))
+    ([f7]                . (lambda () (interactive) (xtdmacs-compile++-command-2 nil)))
+    ([C-f7]              . (lambda () (interactive) (xtdmacs-compile++-command-2 t)))
     ([M-f7]              . kill-compilation)
 
-    ([f8]                . (lambda () (interactive) (xtdmacs-compile++-run nil "deploy")))
-    ([C-f8]              . (lambda () (interactive) (xtdmacs-compile++-run t   "deploy")))
+    ([f8]                . (lambda () (interactive) (xtdmacs-compile++-command-3 nil)))
+    ([C-f8]              . (lambda () (interactive) (xtdmacs-compile++-command-3 t)))
     ([M-f8]              . kill-compilation)
 
     ([f9]                . xtdmacs-compile++-next-error)
