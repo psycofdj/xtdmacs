@@ -133,8 +133,7 @@
 
     (if (not cmd)
         (setq cmd "run"))
-
-    (format "cd %s && docker-compose -f %s %s %s %s %s"
+    (format "cd %s && SRCDIR=%s docker-compose -f %s %s %s %s %s"
             (funcall-or-value dir)
             (funcall-or-value dir)
             (funcall-or-value compose)
@@ -150,7 +149,7 @@
          (bin     (cdr (assoc "bin"     config)))
          (compose (cdr (assoc "compose-file" config)))
          (service (cdr (assoc "service" config))))
-    (format "cd %s && docker-compose -f %s exec %s %s"
+    (format "cd %s && SRCDIR=%s docker-compose -f %s exec %s %s"
             (funcall-or-value dir)
             (funcall-or-value dir)
             (funcall-or-value compose)

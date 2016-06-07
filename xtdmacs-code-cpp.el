@@ -34,18 +34,25 @@
     ("\\<\$?ms\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\>"      . 'xtdmacs-code-face-class-member-static)
     ("\\<\$?mc\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\>"      . 'xtdmacs-code-face-class-member-const)
     ("\\<\$?m\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-class-member)
-    ("\\<\$?_[a-zA-Z0-9][_a-zA-Z0-9]+\\>"                      . 'xtdmacs-code-face-class-member-const-static)
-    ("\\<\$?_[a-zA-Z0-9][_a-zA-Z0-9]+\\>"                      . 'xtdmacs-code-face-class-member-static)
-    ("\\<\$?_[a-zA-Z0-9][_a-zA-Z0-9]+\\>"                      . 'xtdmacs-code-face-class-member-const)
-    ("\\<\$?_[a-zA-Z0-9][_a-zA-Z0-9]+\\>"                      . 'xtdmacs-code-face-class-member)
+    ("\\<\$?_[a-zA-Z0-9][_a-zA-Z0-9]+\\>"           . 'xtdmacs-code-face-class-member-const-static)
+    ("\\<\$?_[a-zA-Z0-9][_a-zA-Z0-9]+\\>"           . 'xtdmacs-code-face-class-member-static)
+    ("\\<\$?_[a-zA-Z0-9][_a-zA-Z0-9]+\\>"           . 'xtdmacs-code-face-class-member-const)
+    ("\\<\$?_[a-zA-Z0-9][_a-zA-Z0-9]+\\>"           . 'xtdmacs-code-face-class-member)
     ("\\<\$?my\\(_\\|[A-Z]\\)?[_a-zA-Z0-9]+\\>"     . 'xtdmacs-code-face-class-member)
-
-
     ("\\<\$?pc\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\>"      . 'xtdmacs-code-face-param-const)
     ("\\<\$?\\(p\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\)\\>" . 'xtdmacs-code-face-param)
-
     ("\\<\$?c\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-counter)
     ("\\<\$?cc\\(_\\|[A-Z]\\)[_a-zA-Z0-9]+\\>"      . 'xtdmacs-code-face-counter-const)
+
+    ("\\<\\(void\\|unsigned\\|signed\\|char\\|short\\|bool\\|int\\|long\\|float\\|double\\)\\>" . font-lock-keyword-face)
+    ("\\<\\(alignof\\|alignas\\|constexpr\\|decltype\\|noexcept\\|nullptr\\|static_assert\\|thread_local\\|override\\|final\\)\\>" . font-lock-keyword-face)
+    ("\\<\\(char16_t\\|char32_t\\)\\>" . font-lock-keyword-face)
+    ("\\<0[xX][0-9A-Fa-f]+\\>" . font-lock-constant-face)
+    ("\\<[\\-+]*[0-9]*\\.?[0-9]+\\([ulUL]+\\|[eE][\\-+]?[0-9]+\\)?\\>" . font-lock-constant-face)
+    ("\\<\\([LuU8]+\\)\".*?\"" 1 font-lock-keyword-face)
+    ("\\(\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(\\)" 1 font-lock-keyword-face t) ; start delimiter
+    ("\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(\\(.*?\\))[^\\s-\\\\()]\\{0,16\\}\"" 1 font-lock-string-face t)  ; actual string
+    ("\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(.*?\\()[^\\s-\\\\()]\\{0,16\\}\"\\)" 1 font-lock-keyword-face t) ; end delimiter
 
     ("\\<\$?BOOST_FOREACH\\>"                       . 'font-lock-keyword-face)
     ("\\<KELOG_RELEASE\\>"                          . 'xtdmacs-code-face-log)
@@ -200,4 +207,3 @@ See xtdmacs-code-cpp-header-cycle"
 
 
 (provide 'xtdmacs-code-cpp)
-
