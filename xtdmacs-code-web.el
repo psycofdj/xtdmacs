@@ -1,6 +1,7 @@
 (defun --xtdmacs-code-web-mode-construct()
   (set (make-local-variable 'comment-start)  "<!--")
   (set (make-local-variable 'comment-end)     "-->")
+  (setq web-mode-markup-indent-offset 2)
   (message "enabled : xtdmacs-code-web-mode")
   )
 

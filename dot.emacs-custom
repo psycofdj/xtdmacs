@@ -6,7 +6,8 @@
  ;; If there is more than one, they won't work right.
  '(ac-auto-show-menu 0.0)
  '(ac-auto-start 9999)
- '(ac-clang-complete-executable "/home/psyco/.emacs.d/elpa/xtdmacs-0.0.1/bin/clang-complete")
+ '(ac-clang-complete-executable
+   "/home/psyco/.emacs.d/elpa/xtdmacs-0.0.1/bin/clang-complete")
  '(ac-trigger-commands nil)
  '(ac-trigger-key nil)
  '(add-log-mailing-address nil)
@@ -35,7 +36,18 @@
  '(js2-highlight-level 1)
  '(linum-format (quote dynamic))
  '(message-log-max t)
- '(mode-line-format (quote ("%&%&%& " (:propertize "%b " face mode-line-buffer-id) "- (%l:%c) - %p - " (:eval (if (buffer-file-name) (file-name-directory (buffer-file-name)) "[not a real file]")) " %-")))
+ '(mode-line-format
+   (quote
+    ("%&%&%& "
+     (:propertize "%b " face mode-line-buffer-id)
+     "- (%l:%c) - %p - "
+     (:eval
+      (if
+          (buffer-file-name)
+          (file-name-directory
+           (buffer-file-name))
+        "[not a real file]"))
+     " %-")))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(python-check-command "pylint")
@@ -46,7 +58,21 @@
  '(require-final-newline t)
  '(rtags-local-references-enabled t)
  '(rtags-tracking t)
- '(safe-local-variable-values (quote ((highlight-80+-columns . 120) (xtdmacs-code-cpp-indent-load-autodsadsa) (xtdmacs-code-cpp-indent-load-auto . t) (xtdmacs-code-cpp-indent-save-auto . t) (xtdmacs-code-cpp-indent-save-auto) (xtdmacs-code-cpp-indent-load-auto) (xtdmacs-code-cpp-indent-save-auto . f) (xtdmacs-code-cpp-indent-load-auto . f) (eval ispell-change-dictionary "en") (ispell-current-dictionary . "en") (ispell-current-dictionary . en) (sh-indent-comment . t) (sh-basic-offset . 4))))
+ '(safe-local-variable-values
+   (quote
+    ((highlight-80+-columns . 120)
+     (xtdmacs-code-cpp-indent-load-autodsadsa)
+     (xtdmacs-code-cpp-indent-load-auto . t)
+     (xtdmacs-code-cpp-indent-save-auto . t)
+     (xtdmacs-code-cpp-indent-save-auto)
+     (xtdmacs-code-cpp-indent-load-auto)
+     (xtdmacs-code-cpp-indent-save-auto . f)
+     (xtdmacs-code-cpp-indent-load-auto . f)
+     (eval ispell-change-dictionary "en")
+     (ispell-current-dictionary . "en")
+     (ispell-current-dictionary . en)
+     (sh-indent-comment . t)
+     (sh-basic-offset . 4))))
  '(scroll-bar-mode nil)
  '(sh-basic-offset 2)
  '(show-trailing-whitespace t)
@@ -59,7 +85,9 @@
  '(user-full-name "Xavier MARCELET")
  '(user-mail-address "xavier@marcelet.com")
  '(vc-handled-backends nil)
+ '(web-mode-code-indent-offset 2)
  '(web-mode-comment-style 2)
+ '(web-mode-css-indent-offset 2)
  '(web-mode-enable-auto-indentation t)
  '(web-mode-enable-auto-pairing t)
  '(web-mode-enable-block-face t)
@@ -67,11 +95,41 @@
  '(web-mode-enable-current-element-highlight nil)
  '(web-mode-enable-indent-cycle nil)
  '(web-mode-enable-whitespaces nil)
+ '(web-mode-markup-indent-offset 2)
  '(xtdmacs-bindings-mode t)
  '(xtdmacs-code-python-default-compile-env "")
  '(xtdmacs-code-python-default-deploy-bin (lambda nil "make doc"))
- '(xtdmacs-code-spell-ignore-regexp (quote ("@subsubsection [^ ]+" "@image html [^ ]+" "@subsection [^ ]+" "@param [^ ]+" "@section [^ ]+" "//  LocalWords: *" "@ref [^ ]+" "[^ ]+\\.[^ ]+")))
- '(xtdmacs-loader-auto-minor-mode-alist (quote ((("Dockerfile") xtdmacs-code-mode dockerfile-mode) (("\\.php\\'") php-mode xtdmacs-code-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode) (("\\.xml\\.erb\\'" "\\.erb\\'" "Rakefile\\'") ruby-mode xtdmacs-code-mode) (("\\.html\\'" "\\.tpl\\'") xtdmacs-code-mode web-mode xtdmacs-code-web-mode) (("\\.py\\'") python-mode xtdmacs-code-mode xtdmacs-code-python-mode xtdmacs-code-line-mode) (("\\.h\\'" "\\.c\\'" "\\.cc\\'" "\\.hh\\'" "\\.cpp\\'" "\\.hpp\\'" "\\.hxx\\'") xtdmacs-code-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode xtdmacs-code-doxymacs-mode ac-clang-async-mode) (("\\.js\\'") js2-mode xtdmacs-code-js-mode xtdmacs-code-line-mode xtdmacs-code-mode) (("\\.json\\'") xtdmacs-code-mode json-mode xtdmacs-code-json-mode linum-mode) (("CMakeLists\\.txt\\'") cmake-mode xtdmacs-code-mode) (("\\.groovy\\'") groovy-mode xtdmacs-code-mode) (("Makefile") xtdmacs-code-mode makefile-mode xtdmacs-code-makefile-mode xtdmacs-code-line-mode) (("\\.el\\'") emacs-lisp-mode xtdmacs-code-mode xtdmacs-code-lisp-mode xtdmacs-code-line-mode) (("\\.java\\'") java-mode xtdmacs-code-mode xtdmacs-code-java-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode)))))
+ '(xtdmacs-code-spell-ignore-regexp
+   (quote
+    ("@subsubsection [^ ]+" "@image html [^ ]+" "@subsection [^ ]+" "@param [^ ]+" "@section [^ ]+" "//  LocalWords: *" "@ref [^ ]+" "[^ ]+\\.[^ ]+")))
+ '(xtdmacs-loader-auto-minor-mode-alist
+   (quote
+    ((("Dockerfile")
+      xtdmacs-code-mode dockerfile-mode)
+     (("\\.php\\'")
+      php-mode xtdmacs-code-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode)
+     (("\\.xml\\.erb\\'" "\\.erb\\'" "Rakefile\\'")
+      ruby-mode xtdmacs-code-mode)
+     (("\\.html\\'" "\\.tpl\\'" "\\.xml\\'" "\\.xsl\\'")
+      xtdmacs-code-mode web-mode xtdmacs-code-web-mode)
+     (("\\.py\\'")
+      python-mode xtdmacs-code-mode xtdmacs-code-python-mode xtdmacs-code-line-mode)
+     (("\\.h\\'" "\\.c\\'" "\\.cc\\'" "\\.hh\\'" "\\.cpp\\'" "\\.hpp\\'" "\\.hxx\\'")
+      xtdmacs-code-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode xtdmacs-code-doxymacs-mode ac-clang-async-mode)
+     (("\\.js\\'")
+      js2-mode xtdmacs-code-js-mode xtdmacs-code-line-mode xtdmacs-code-mode)
+     (("\\.json\\'")
+      xtdmacs-code-mode json-mode xtdmacs-code-json-mode linum-mode)
+     (("CMakeLists\\.txt\\'")
+      cmake-mode xtdmacs-code-mode)
+     (("\\.groovy\\'")
+      groovy-mode xtdmacs-code-mode)
+     (("Makefile")
+      xtdmacs-code-mode makefile-mode xtdmacs-code-makefile-mode xtdmacs-code-line-mode)
+     (("\\.el\\'")
+      emacs-lisp-mode xtdmacs-code-mode xtdmacs-code-lisp-mode xtdmacs-code-line-mode)
+     (("\\.java\\'")
+      java-mode xtdmacs-code-mode xtdmacs-code-java-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode)))))
 
 
 ;; ----------------------------------------------------------
