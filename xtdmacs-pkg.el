@@ -3,6 +3,7 @@
     ;;(edmacro       "2.1") vendor deps
     ;;(highlight-80+ "1.0") vendor deps
     ;;(auto-complete-clang-async "0.1") vendor deps
+    (markdown-toc   "0.1.2")
     (groovy-mode   "201203310931")
     (dockerfile-mode "20160128.951")
     (js2-mode      "20160528.1706")
