@@ -1,21 +1,45 @@
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-generate-toc again -->
+**Table of Contents**
+
+- [Install](#install)
+- [Features](#features)
+    - [xtdmacs-bindings](#xtdmacs-bindings)
+        - [Load](#load)
+            - [Manually](#manually)
+            - [From ~/.emacs:](#from-emacs)
+            - [Using emacs customization](#using-emacs-customization)
+        - [Bindings](#bindings)
+    - [xtdmacs-loader](#xtdmacs-loader)
+    - [xtdmacs-code-mode](#xtdmacs-code-mode)
+        - [highlight+80+-mode](#highlight80-mode)
+        - [linum-mode](#linum-mode)
+        - [xtdmacs-code-spell-mode](#xtdmacs-code-spell-mode)
+        - [xtdmacs-compile++-mode](#xtdmacs-compile-mode)
+        - [Aligning variables and parameters](#aligning-variables-and-parameters)
+        - [Bindings](#bindings)
+    - [xtdmacs-compile](#xtdmacs-compile)
+        - [Window managment](#window-managment)
+        - [Behind the curtain](#behind-the-curtain)
+        - [API](#api)
+        - [Configuration](#configuration)
+        - [Bindings](#bindings)
+
+<!-- markdown-toc end -->
+
 Xtdmacs provides a bunch a development tools and ready-to-use configuration.
 
-Install
-=======
+# Install
 
+ ```bash
+ wget https://github.com/psycofdj/xtdmacs/archive/0.0.1.tar.gz -O xtdmacs-0.0.1.tar.gz
+ tar xvzf xtdmacs-0.0.1.tar.gz
+ cd xtdmacs-0.0.1
+ make install
+ ```
 
-```bash
-wget https://github.com/psycofdj/xtdmacs/archive/0.0.1.tar.gz -O xtdmacs-0.0.1.tar.gz
-tar xvzf xtdmacs-0.0.1.tar.gz
-cd xtdmacs-0.0.1
-make install
-```
+# Features
 
-Features
-========
-
-xtdmacs-bindings
-----------------
+## xtdmacs-bindings
 
 This optional mode setup keyboard bindings for the most commonly used
 features.
@@ -23,20 +47,21 @@ features.
 It also configures iswitchb module to ignore standard system buffers like
 \*Help\* \*scratch\* \*Messages\* etc..
 
-### Install
+### Load
 
-##### manually
+
+#### Manually
 
 ```
 M-x xtdmacs-bindings-mode
 ```
 
-##### from ~/.emacs:
+#### From ~/.emacs:
 ```
 (xtdmacs-bindings-mode)
 ```
 
-##### using emacs customization:
+#### Using emacs customization
 
 ```M-x customize-variable RET xtdmacs-bindings-mode```
 
@@ -64,8 +89,7 @@ M-x xtdmacs-bindings-mode
 | \<F11\>                       | display menu                          |                               |                                       |
 
 
-xtdmacs-loader
---------------
+## xtdmacs-loader
 
 This package helps customizing which minors modes should be loaded for each
 file extensions.
@@ -76,8 +100,7 @@ is to customize the *xtdmacs-loader-auto-minor-mode-alist* variable.
 ![alt text](doc/xtdmacs-loader.png "Logo Title Text 1")
 
 
-xtdmacs-code-mode
------------------
+## xtdmacs-code-mode
 
 This minor mode enabled multi-language tools that help editing code.
 
@@ -185,8 +208,7 @@ void foo(void)
 | \<ctrl\>+\<F2\>               | align parameters between mark and cursor       |
 
 
-xtdmacs-compile++
------------------
+## xtdmacs-compile
 
 This minor mode wraps the default compilation mode in order to provide a set of
 pre-defined compilation commands. It also allows to use function instead of
@@ -194,7 +216,7 @@ plain string as default compile commands.
 
 There is 3 predefined commands : **compile**, **test** and **deploy**
 
-#### Window managment
+### Window managment
 
 xtdmacs-compile++ dedicates a window to the compilation buffer's preventing
 emacs to use it to open new files. It also sets this window's height according
@@ -202,7 +224,7 @@ to ```xtdmacs-compile++-buffer-height``` variable and enables optionally
 automatic scrolling if ```xtdmacs-compile++-scroll-output``` is non nil.
 
 
-#### Behind the curtain
+### Behind the curtain
 
 The predefinied commands are defined in the **xtdmacs-compile++-config-alist**
 variable.
@@ -238,7 +260,7 @@ prompted to user user. Ex :
       ("command"    . (lambda() (xtdmacs-compile++-default-command "compile"))))))
 ```
 
-#### API
+### API
 
 **xtdmacs-compile++-mode** provide utility functions that helps building your own
 **get-param** and **command** function values.
@@ -278,7 +300,7 @@ In addition the mode provides some usable default function :
 * **```xtdmacs-compile++-docker-exec-command```** : same as ```xtdmacs-compile++-docker-run-command```
   but with exec sub command (>= docker v1.11)
 
-#### Configuration
+### Configuration
 
 Define the number of lines displayed in compilation buffer :
 * ```M-x customize-variable RET xtdmacs-compile++-buffer-height RET```
