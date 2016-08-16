@@ -120,7 +120,7 @@
     (setcdr (assoc "service" config) (read-from-minibuffer "Service: " (funcall-or-value service))))
   )
 
-(defun xtdmacs-compile++-docker-run-command (type &optional cmd)
+(defun xtdmacs-compile++-docker-run-command (type)
   (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
          (dir     (cdr (assoc "dir"     config)))
          (env     (cdr (assoc "env"     config)))
@@ -131,13 +131,10 @@
                         env
                       (mapconcat 'identity (mapcar (lambda (el) (concat "-e " el)) (split-string env " ")) " "))))
 
-    (if (not cmd)
-        (setq cmd "run"))
-    (format "cd %s && SRCDIR=%s docker-compose -f %s %s %s %s %s"
+    (format "cd %s && SRCDIR=%s docker-compose -f %s run --rm %s %s %s"
             (funcall-or-value dir)
             (funcall-or-value dir)
             (funcall-or-value compose)
-            cmd
             dockerenv
             (funcall-or-value service)
             (funcall-or-value bin)))
@@ -178,6 +175,26 @@
             (funcall-or-value bin)))
   )
 
+
+(defcustom xtdmacs-compile++-iwyu-build-directory-name
+  ".release"
+  "Standard build directory name"
+  :group 'xtdmacs-compile++
+  :type 'string
+  :safe 'stringp
+  )
+
+(defun xtdmacs-compile++-iwyu-find-compile-commands ()
+  (let* ((topbuilddir (xtdmacs-compile++-get-nearest-filename xtdmacs-compile++-iwyu-build-directory-name)))
+    (concat topbuilddir "/compile_commands.json"))
+  )
+
+(defun xtdmacs-compile++-iwyu-default-cmd()
+  (format "iwyu-wrapper.py -c %s %s"
+          (xtdmacs-compile++-iwyu-find-compile-commands)
+          (buffer-file-name))
+  )
+
 (defcustom xtdmacs-compile++-config-alist
   '(("compile" .
      (("dir"        . xtdmacs-compile++-guess-directory)
@@ -197,6 +214,12 @@
        ("bin"        . "make -j")
        ("get-params" . (lambda() (xtdmacs-compile++-default-params  "deploy")))
        ("command"    . (lambda() (xtdmacs-compile++-default-command "deploy")))))
+    ("iwyu" .
+     '(("dir"        . xtdmacs-compile++-guess-directory)
+       ("env"        . "")
+       ("bin"        . xtdmacs-compile++-iwyu-default-cmd)
+       ("get-params" . (lambda() (xtdmacs-compile++-default-params  "iwyu")))
+       ("command"    . (lambda() (xtdmacs-compile++-default-command "iwyu")))))
     )
   "xtdmacs-compile++ callback configuration"
   :group 'xtdmacs-compile++
@@ -213,6 +236,7 @@
                  (const "test")
                  (const "deploy")
                  (const "doc")
+                 (const "iwyu")
                  (other :tag "Other" ""))
   :safe 'stringp)
 
@@ -225,6 +249,7 @@
                  (const "test")
                  (const "deploy")
                  (const "doc")
+                 (const "iwyu")
                  (other :tag "Other" ""))
   :safe 'stringp)
 
@@ -237,6 +262,7 @@
                  (const "test")
                  (const "deploy")
                  (const "doc")
+                 (const "iwyu")
                  (other :tag "Other" ""))
   :safe 'stringp)
 
@@ -249,6 +275,20 @@
                  (const "test")
                  (const "deploy")
                  (const "doc")
+                 (const "iwyu")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+
+(defcustom xtdmacs-compile++-command-5
+  "iwyu"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 5"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (const "iwyu")
                  (other :tag "Other" ""))
   :safe 'stringp)
 
@@ -266,6 +306,10 @@
 
 (defun xtdmacs-compile++-command-4(interactive)
   (xtdmacs-compile++-run interactive xtdmacs-compile++-command-4)
+  )
+
+(defun xtdmacs-compile++-command-5(interactive)
+  (xtdmacs-compile++-run interactive xtdmacs-compile++-command-5)
   )
 
 ;; --------------------------------------------------------------------------
@@ -293,14 +337,13 @@
     ([f6]                . (lambda () (interactive) (xtdmacs-compile++-command-1 nil)))
     ([C-f6]              . (lambda () (interactive) (xtdmacs-compile++-command-1 t)))
     ([M-f6]              . kill-compilation)
-
     ([C-S-f6]            . (lambda () (interactive) (xtdmacs-compile++-command-4 t)))
-
-    ([C-e]               . code-cpp-rename-variable)
 
     ([f7]                . (lambda () (interactive) (xtdmacs-compile++-command-2 nil)))
     ([C-f7]              . (lambda () (interactive) (xtdmacs-compile++-command-2 t)))
     ([M-f7]              . kill-compilation)
+    ([C-S-f7]            . (lambda () (interactive) (xtdmacs-compile++-command-5 nil)))
+
 
     ([f8]                . (lambda () (interactive) (xtdmacs-compile++-command-3 nil)))
     ([C-f8]              . (lambda () (interactive) (xtdmacs-compile++-command-3 t)))
@@ -325,6 +368,8 @@
 (put 'xtdmacs-compile++-buffer-local 'safe-local-variable 'booleanp)
 ;;;###autoload
 (put 'xtdmacs-compile++-config-alist 'safe-local-variable '(lambda(p) t))
+;;;###autoload
+(put 'xtdmacs-compile++-iwyu-build-directory-name 'safe-local-variable 'stringp)
 
 (provide 'xtdmacs-compile++)
 

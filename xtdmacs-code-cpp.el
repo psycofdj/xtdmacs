@@ -1,3 +1,5 @@
+(defvar xtdmacs-code-cpp-last-rename-prefix nil)
+
 (defcustom xtdmacs-code-cpp-indent-load-auto
   t
   "Enables code auto-indentation on load."
@@ -160,11 +162,16 @@ See xtdmacs-code-cpp-header-cycle"
   (let ((end (point)))
     (backward-word)
     (kill-ring-save (point) end)
+
     (let* ((word (read-from-minibuffer "label: " (current-kill 0)))
-           (prefix (read-from-minibuffer "prefix: " "l"))
+           (default-prefix (if xtdmacs-code-cpp-last-rename-prefix
+                               xtdmacs-code-cpp-last-rename-prefix
+                             "l"))
+           (prefix (read-from-minibuffer "prefix: " default-prefix))
            (repl  (read-from-minibuffer "replacement: " (concat prefix (upcase-initials word))))
            (rword (concat "\\<" word "\\>")))
-      (query-replace-regexp rword repl)))
+      (query-replace-regexp rword repl)
+      (setq xtdmacs-code-cpp-last-rename-prefix prefix)))
   )
 
 (defun --xtdmacs-code-cpp-mode-construct()
@@ -172,6 +179,8 @@ See xtdmacs-code-cpp-header-cycle"
   (add-hook 'before-save-hook '--xtdmacs-code-cpp-save-indent t t)
   (add-hook 'hack-local-variables-hook '--xtdmacs-code-cpp-load-indent t t)
   (fix-enum-class)
+  (define-key global-map (kbd "C-e")  'xtdmacs-code-cpp-rename-variable)
+  (define-key global-map (kbd "M-e")  'xtdmacs-code-cpp-rename-variable)
   (message "enabled : xtdmacs-code-cpp-mode")
   )
 
