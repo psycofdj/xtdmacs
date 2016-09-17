@@ -100,20 +100,41 @@
 
 (defun xtdmacs-compile++-run (prompt type)
   (xtdmacs-compile++-arrange-windows)
+
   (let* ((config         (cdr (assoc type xtdmacs-compile++-config-alist)))
          (get-params     (cdr (assoc "get-params" config)))
-         (command        (cdr (assoc "command"    config))))
+         (command        (cdr (assoc "command"    config)))
+         (string-command ""))
+
     (if prompt
         (funcall get-params))
-    (compile (funcall-or-value command) t))
+
+    (setq string-command (funcall-or-value command))
+    (compile string-command t)
+
+    ;; we load xtdmacs-compile++ on *compilation* buffer with a configuration that runs
+    ;; the current command
+    (with-current-buffer "*compilation*"
+      (if (mode-enabled 'xtdmacs-compile++)
+          (message "compile++ alread enabled on *compilation*")
+        (progn
+          (xtdmacs-compile++-mode t)
+          (message "enabling compile++ on *compilation*")))
+      (setq-local xtdmacs-compile++-config-alist
+                  `((,type .
+                           (("get-params" . (lambda()))
+                            ("command"    . ,string-command))))))
+    )
   )
 
 (defun xtdmacs-compile++-docker-params (type)
   (xtdmacs-compile++-default-params type)
-  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
+  (let* ((locaval (copy-tree xtdmacs-compile++-config-alist))
+         (config (cdr (assoc type locaval)))
          (service (cdr (assoc "service" config)))
          (compose (cdr (assoc "compose-file" config))))
-    (setcdr (assoc "service" config) (read-from-minibuffer "Service: " (funcall-or-value service))))
+    (setcdr (assoc "service" config) (read-from-minibuffer "Service: " (funcall-or-value service)))
+    (setq xtdmacs-compile++-config-alist locaval))
   )
 
 (defun xtdmacs-compile++-docker-run-command (type)
@@ -151,13 +172,26 @@
   )
 
 (defun xtdmacs-compile++-default-params (type)
-  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
+  (let* ((locaval (copy-tree xtdmacs-compile++-config-alist))
+         (config (cdr (assoc type locaval)))
          (dir (cdr (assoc "dir" config)))
          (env (cdr (assoc "env" config)))
-         (bin (cdr (assoc "bin" config))))
-    (setcdr (assoc "dir" config) (read-directory-name  "Directory: "   (funcall-or-value dir)))
-    (setcdr (assoc "env" config) (read-from-minibuffer "Environment: " (funcall-or-value env)))
-    (setcdr (assoc "bin" config) (read-from-minibuffer "Binary: "      (funcall-or-value bin))))
+         (bin (cdr (assoc "bin" config)))
+         (new_dir (read-directory-name  "Directory: "   (funcall-or-value dir)))
+         (new_env (read-from-minibuffer "Environment: " (funcall-or-value env)))
+         (new_bin (read-from-minibuffer "Binary: "      (funcall-or-value bin)))
+         (global  (y-or-n-p "Default for all buffers ?")))
+    (if global
+        (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist))))
+          (setcdr (assoc "dir" config) new_dir)
+          (setcdr (assoc "env" config) new_env)
+          (setcdr (assoc "bin" config) new_bin))
+      (progn
+        (setcdr (assoc "dir" config) new_dir)
+        (setcdr (assoc "env" config) new_env)
+        (setcdr (assoc "bin" config) new_bin)
+        (setq xtdmacs-compile++-config-alist locaval)))
+    )
   )
 
 (defun xtdmacs-compile++-default-command (type)
@@ -222,7 +256,6 @@
   :safe '(lambda(p) t)
   :type '(alist :key 'string :value '(alias :key string :value '(choice (string) (function))))
   )
-
 
 (defcustom xtdmacs-compile++-command-1
   "compile"
@@ -312,14 +345,11 @@
 
 (defun xtdmacs-compile++-mode-construct()
   (add-hook 'compilation-filter-hook 'xtdmacs-compile++-colorize-compilation-buffer)
-  (if xtdmacs-compile++-buffer-local
-      (make-local-variable 'xtdmacs-compile++-config-alist))
+  (make-local-variable 'xtdmacs-compile++-config-alist)
   (message "enabled : xtdmacs-compile++-mode")
   )
 
 (defun xtdmacs-compile++-mode-destroy()
-  (if xtdmacs-compile++-buffer-local
-      (kill-local-variable xtdmacs-compile++-config-alist))
   (remove-hook 'compilation-filter-hook 'xtdmacs-compile++-colorize-compilation-buffer)
   (message "disabled : xtdmacs-compile++-mode")
   )
@@ -329,9 +359,9 @@
 (define-minor-mode xtdmacs-compile++-mode
   "Set of function beyond compilation-mode" nil " xtdmacs-compile++"
   '(
-
     ([f6]                . (lambda () (interactive) (xtdmacs-compile++-command-1 nil)))
     ([C-f6]              . (lambda () (interactive) (xtdmacs-compile++-command-1 t)))
+
     ([M-f6]              . kill-compilation)
     ([C-S-f6]            . (lambda () (interactive) (xtdmacs-compile++-command-4 t)))
 
@@ -339,7 +369,6 @@
     ([C-f7]              . (lambda () (interactive) (xtdmacs-compile++-command-2 t)))
     ([M-f7]              . kill-compilation)
     ([C-S-f7]            . (lambda () (interactive) (xtdmacs-compile++-command-5 nil)))
-
 
     ([f8]                . (lambda () (interactive) (xtdmacs-compile++-command-3 nil)))
     ([C-f8]              . (lambda () (interactive) (xtdmacs-compile++-command-3 t)))
@@ -355,6 +384,8 @@
   )
 
 ;; --------------------------------------------------------------------------
+
+(make-variable-buffer-local 'xtdmacs-compile++-config-alist)
 
 ;;;###autoload
 (put 'xtdmacs-compile++-buffer-height 'safe-local-variable 'integerp)
