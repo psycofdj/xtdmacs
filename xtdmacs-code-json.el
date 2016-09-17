@@ -1,3 +1,8 @@
+(require 'js)
+
+(eval-when-compile
+  (defvar xtdmacs-code-json-mode-map))
+
 (defun --xtdmacs-code-json-mode-construct()
   (make-local-variable 'js-indent-level)
   (setq js-indent-level 2)

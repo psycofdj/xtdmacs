@@ -1,3 +1,5 @@
+(require 'xtdmacs-code)
+
 ;; Remplace les tabulations dans tout le buffer
 ;;;###autoload
 (defun xtdmacs-code-untabify-buffer ()
@@ -33,11 +35,11 @@
 ;;;###autoload
 (defun xtdmacs-code-align-vars ()
   (interactive)
-  (setq old-case-fold case-fold-search)
-  (setq case-fold-search nil)
-  (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)\\b\\(\\($\\)?[lpmcg][cs]?[cs]?\\([A-Z]\\|_\\).*\\)\\b" 1 1 0)
-  (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)=" 1 1 0)
-  (setq case-fold-search old-case-fold)
+  (let* ((old-case-fold case-fold-search))
+    (setq case-fold-search nil)
+    (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)\\b\\(\\($\\)?[lpmcg][cs]?[cs]?\\([A-Z]\\|_\\).*\\)\\b" 1 1 0)
+    (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)=" 1 1 0)
+    (setq case-fold-search old-case-fold))
   )
 
 ;;;###autoload

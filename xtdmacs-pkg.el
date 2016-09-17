@@ -1,8 +1,6 @@
 (define-package "xtdmacs" "0.0.1" "Set of developping tools."
   '((cmake-mode    "20160510.1140")
-    ;;(edmacro       "2.1") vendor deps
-    ;;(highlight-80+ "1.0") vendor deps
-    ;;(auto-complete-clang-async "0.1") vendor deps
+    (fill-column-indicator "20151030.1233")
     (markdown-toc   "0.1.2")
     (groovy-mode   "201203310931")
     (dockerfile-mode "20160128.951")
@@ -18,5 +16,8 @@
     (auto-complete "20160416.604")
     (markdown-mode "20160527.235")
     (json          "1.2"))
+
+  ;;(edmacro       "2.1") vendor deps
+  ;;(auto-complete-clang-async "0.1") vendor deps
   :url "https://github.com/psycofdj/xtdmacs"
   )

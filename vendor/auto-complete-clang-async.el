@@ -395,11 +395,11 @@ set new cflags for ac-clang from shell command output"
                     (dolist (arg sl)
                       (setq snp (concat snp ", ${" arg "}")))
                     (condition-case nil
-                        (yas/expand-snippet (concat "("  (substring snp 2) ")")
+                        (yas-expand-snippet (concat "("  (substring snp 2) ")")
                                             ac-clang-template-start-point pos) ;; 0.6.1c
                       (error
                        ;; try this one:
-                       (ignore-errors (yas/expand-snippet
+                       (ignore-errors (yas-expand-snippet
                                        ac-clang-template-start-point pos
                                        (concat "("  (substring snp 2) ")"))) ;; work in 0.5.7
                        )))
@@ -419,10 +419,10 @@ set new cflags for ac-clang from shell command output"
                       (setq s (replace-regexp-in-string "#>" "}" s))
                       (setq s (replace-regexp-in-string ", \\.\\.\\." "}, ${..." s))
                       (condition-case nil
-                          (yas/expand-snippet s ac-clang-template-start-point pos) ;; 0.6.1c
+                          (yas-expand-snippet s ac-clang-template-start-point pos) ;; 0.6.1c
                         (error
                          ;; try this one:
-                         (ignore-errors (yas/expand-snippet ac-clang-template-start-point pos s)) ;; work in 0.5.7
+                         (ignore-errors (yas-expand-snippet ac-clang-template-start-point pos s)) ;; work in 0.5.7
                          )))
                      ((featurep 'snippet)
                       (delete-region ac-clang-template-start-point pos)
@@ -524,57 +524,56 @@ set new cflags for ac-clang from shell command output"
   (ac-clang-append-process-output-to-process-buffer proc string)
   (if (string= (substring string -1 nil) "$")
       (case ac-clang-status
-            (preempted
-             (setq ac-clang-status 'idle)
-             (ac-start)
-             (ac-update))
+        (preempted
+         (setq ac-clang-status 'idle)
+         (ac-start)
+         (ac-update))
 
-            (otherwise
-             (setq ac-clang-current-candidate (ac-clang-parse-completion-results proc))
-             ;; (message "ac-clang results arrived")
-             (setq ac-clang-status 'acknowledged)
-             (ac-start :force-init t)
-             (ac-update)
-             (setq ac-clang-status 'idle)))))
+        (otherwise
+         (setq ac-clang-current-candidate (ac-clang-parse-completion-results proc))
+         ;; (message "ac-clang results arrived")
+         (setq ac-clang-status 'acknowledged)
+         (ac-start :force-init t)
+         (ac-update)
+         (setq ac-clang-status 'idle)))))
 
 
 (defun ac-clang-candidate ()
   (case ac-clang-status
-        (idle
-         ;; (message "ac-clang-candidate triggered - fetching candidates...")
-         (setq ac-clang-saved-prefix ac-prefix)
+    (idle
+     ;; (message "ac-clang-candidate triggered - fetching candidates...")
+     (setq ac-clang-saved-prefix ac-prefix)
 
-         ;; NOTE: although auto-complete would filter the result for us, but when there's
-         ;;       a HUGE number of candidates avaliable it would cause auto-complete to
-         ;;       block. So we filter it uncompletely here, then let auto-complete filter
-         ;;       the rest later, this would ease the feeling of being "stalled" at some degree.
+     ;; NOTE: although auto-complete would filter the result for us, but when there's
+     ;;       a HUGE number of candidates avaliable it would cause auto-complete to
+     ;;       block. So we filter it uncompletely here, then let auto-complete filter
+     ;;       the rest later, this would ease the feeling of being "stalled" at some degree.
 
-         ;; (message "saved prefix: %s" ac-clang-saved-prefix)
-         (with-current-buffer (process-buffer ac-clang-completion-process)
-           (erase-buffer))
-         (setq ac-clang-status 'wait)
-         (setq ac-clang-current-candidate nil)
+     ;; (message "saved prefix: %s" ac-clang-saved-prefix)
+     (with-current-buffer (process-buffer ac-clang-completion-process)
+       (erase-buffer))
+     (setq ac-clang-status 'wait)
+     (setq ac-clang-current-candidate nil)
 
-         ;; send completion request
-         (ac-clang-send-completion-request ac-clang-completion-process)
-         ac-clang-current-candidate)
+     ;; send completion request
+     (ac-clang-send-completion-request ac-clang-completion-process)
+     ac-clang-current-candidate)
 
-        (wait
-         ;; (message "ac-clang-candidate triggered - wait")
-         ac-clang-current-candidate)
+    (wait
+     ;; (message "ac-clang-candidate triggered - wait")
+     ac-clang-current-candidate)
 
-        (acknowledged
-         ;; (message "ac-clang-candidate triggered - ack")
-         (setq ac-clang-status 'idle)
-         ac-clang-current-candidate)
+    (acknowledged
+     ;; (message "ac-clang-candidate triggered - ack")
+     (setq ac-clang-status 'idle)
+     ac-clang-current-candidate)
 
-        (preempted
-         ;; (message "clang-async is preempted by a critical request")
-         nil)))
+    (preempted
+     ;; (message "clang-async is preempted by a critical request")
+     nil)))
 
 
 ;; Syntax checking with flymake
-
 (defun ac-clang-flymake-process-sentinel ()
   (interactive)
   (setq flymake-err-info flymake-new-err-info)
@@ -654,37 +653,37 @@ set new cflags for ac-clang from shell command output"
 
 
 (defun --ac-clang-async-mode-construct()
-  (make-variable-buffer-local 'ac-clang-cflags)
-  (make-variable-buffer-local 'ac-clang-compile-directory-name)
-  (make-variable-buffer-local 'ac-clang-compile-commands)
-  (make-variable-buffer-local 'ac-clang-prefix-header)
-  (make-variable-buffer-local 'ac-clang-status)
-  (make-variable-buffer-local 'ac-clang-current-candidate)
-  (make-variable-buffer-local 'ac-clang-completion-process)
+  (make-local-variable 'ac-clang-cflags)
+  (make-local-variable 'ac-clang-compile-directory-name)
+  (make-local-variable 'ac-clang-compile-commands)
+  (make-local-variable 'ac-clang-prefix-header)
+  (make-local-variable 'ac-clang-status)
+  (make-local-variable 'ac-clang-current-candidate)
+  (make-local-variable 'ac-clang-completion-process)
 
   ;; This source shall only be used internally.
   (ac-define-source
-   clang-template
-   '((candidates . ac-clang-template-candidate)
-     (prefix     . ac-clang-template-prefix)
-     (requires . 0)
-     ;; (requires . 9999)
-     (action   . ac-clang-template-action)
-     (document . ac-clang-document)
-     (cache)
-     (symbol . "t")))
+      clang-template
+    '((candidates . ac-clang-template-candidate)
+      (prefix     . ac-clang-template-prefix)
+      (requires . 0)
+      ;; (requires . 9999)
+      (action   . ac-clang-template-action)
+      (document . ac-clang-document)
+      (cache)
+      (symbol . "t")))
 
   (ac-define-source
-   clang-async
-   '((candidates     . ac-clang-candidate)
-     (candidate-face . ac-clang-candidate-face)
-     (selection-face . ac-clang-selection-face)
-     (prefix . ac-clang-prefix)
-     (requires . 0)
-     (document . ac-clang-document)
-     (action . ac-clang-action)
-     (cache)
-     (symbol . "c")))
+      clang-async
+    '((candidates     . ac-clang-candidate)
+      (candidate-face . ac-clang-candidate-face)
+      (selection-face . ac-clang-selection-face)
+      (prefix . ac-clang-prefix)
+      (requires . 0)
+      (document . ac-clang-document)
+      (action . ac-clang-action)
+      (cache)
+      (symbol . "c")))
 
   (setq ac-auto-start nil)
   (setq ac-sources '(ac-source-clang-async))

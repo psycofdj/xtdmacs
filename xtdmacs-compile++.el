@@ -2,9 +2,9 @@
 
 
 (defun xtdmacs-compile++-colorize-compilation-buffer ()
-  (toggle-read-only)
+  (read-only-mode)
   (ansi-color-apply-on-region (point-min) (point-max))
-  (toggle-read-only)
+  (read-only-mode)
   )
 
 (defun xtdmacs-compile++-arrange-windows ()
@@ -25,11 +25,8 @@
   )
 
 (defun xtdmacs-compile++-get-nearest-filename (filename)
-  (setq origin (buffer-file-name))
-  (if (not origin)
-      (setq origin xtdmacs-compile++-last-buffer))
-  (setq xtdmacs-compile++-last-buffer origin)
-  (let* ((dir (file-name-directory origin))
+  (let* ((origin (buffer-file-name))
+         (dir (file-name-directory origin))
          (dirs (split-string dir "/"))
          (result nil))
     (while (and (> (length dirs) 1) (equal nil result))
@@ -82,7 +79,7 @@
   (file-name-directory (xtdmacs-compile++-get-nearest-filename ".git")))
 
 (defun xtdmacs-compile++-guess-directory ()
-  (let* ((makefile   (xtdmacs-compile++-get-nearest-filename "Makefile.am"))
+  (let* ((makefile   (xtdmacs-compile++-get-nearest-filename "CMakeLists.txt"))
          (builddir   (xtdmacs-compile++-get-nearest-filename ".release")))
     (if (or (equal makefile nil) (equal builddir nil))
         nil
@@ -96,7 +93,6 @@
 
 ;; --------------------------------------------------------------
 
-(defvar    xtdmacs-compile++-last-buffer       nil nil)
 (defcustom xtdmacs-compile++-buffer-height  13     "Command to run to start compilation."                           :group 'xtdmacs-compile++ :type 'integer)
 (defcustom xtdmacs-compile++-scroll-output  t      "Should we scroll compilation buffer while compiling ?"          :group 'xtdmacs-compile++ :type 'boolean)
 (defcustom xtdmacs-compile++-buffer-local   nil    "Set compile/deploy and test paramters buffer local."            :group 'xtdmacs-compile++ :type 'boolean :safe (lambda(val) t))

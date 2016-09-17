@@ -1,3 +1,4 @@
+(require 'fill-column-indicator)
 (require 'linum)
 (require 'xtdmacs-code-spell)
 (require 'xtdmacs-compile++)
@@ -133,22 +134,21 @@
   :group 'code
   )
 
-
 (defcustom xtdmacs-code-indent-max-lines 2000 "Maximum number of line in buffer to permit auto-indentation." :group 'code :type 'integer)
 
-(defadvice linum-update-window (after linum-update-window-after (win) activate)
-  "fix linum for scaled text"
-  (set-window-margins win
-                      (+ 1 (ceiling (* (if (boundp 'text-scale-mode-step)
-                                           (expt text-scale-mode-step
-                                                 text-scale-mode-amount) 1)
-                                       (if (car (window-margins))
-                                           (car (window-margins)) 1)
-                                       )))))
+;; (defadvice linum-update-window (after linum-update-window-after (win) activate)
+;;   "fix linum for scaled text"
+;;   (set-window-margins win
+;;                       (+ 1 (ceiling (* (if (boundp 'text-scale-mode-step)
+;;                                            (expt text-scale-mode-step
+;;                                                  text-scale-mode-amount) 1)
+;;                                        (if (car (window-margins))
+;;                                            (car (window-margins)) 1)
+;;                                        )))))
 
 (defun --xtdmacs-code-mode-construct()
-  (unless (mode-enabled 'highlight-80+-mode)
-    (highlight-80+-mode t))
+  (unless (mode-enabled 'fci-mode)
+    (fci-mode t))
   (unless (mode-enabled 'linum-mode)
     (linum-mode t))
   (unless (mode-enabled 'xtdmacs-compile++-mode)
@@ -159,8 +159,8 @@
   )
 
 (defun --xtdmacs-code-mode-detroy()
-  (when highlight-80+-mode
-    (highlight-80+-mode nil))
+  (when fci-mode
+    (fci-mode nil))
   (when linum-mode
     (linum-mode nil))
   (when xtdmacs-code-spell-mode

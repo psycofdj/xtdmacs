@@ -1,3 +1,5 @@
+(require 'cc-align)
+
 (defvar xtdmacs-code-cpp-last-rename-prefix nil)
 
 (defcustom xtdmacs-code-cpp-indent-load-auto

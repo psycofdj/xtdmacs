@@ -11,7 +11,7 @@
         - [Bindings](#bindings)
     - [xtdmacs-loader](#xtdmacs-loader)
     - [xtdmacs-code-mode](#xtdmacs-code-mode)
-        - [highlight+80+-mode](#highlight80-mode)
+        - [fill-column-indicator](#fill-column-indicator)
         - [linum-mode](#linum-mode)
         - [xtdmacs-code-spell-mode](#xtdmacs-code-spell-mode)
         - [xtdmacs-compile++-mode](#xtdmacs-compile-mode)
@@ -104,22 +104,9 @@ is to customize the *xtdmacs-loader-auto-minor-mode-alist* variable.
 
 This minor mode enabled multi-language tools that help editing code.
 
-### highlight+80+-mode
+### fill-column-indicator
 
-Colorize lines that are longer than a specific number of columns (default 80).
-![alt text](doc/xtdmacs-code-highlight80+.png "Logo Title Text 1")
-
-To set the number of columns :
-```
-M-x customize-variable RET highlight-80+-columns RET
-```
-
-You can also customize the face used to display long lines :
-```
-M-x customize-face RET highlight-80+ RET
-M-x customize-face RET highlight-80+-first RET
-M-x customize-face RET highlight-80+-line RET
-```
+** TODO, replaced highlight-80+ by fill-column-indicator **
 
 ### linum-mode
 

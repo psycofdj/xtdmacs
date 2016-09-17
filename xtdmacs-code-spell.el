@@ -1,3 +1,8 @@
+(require 'flyspell)
+
+(eval-when-compile
+  (defvar xtdmacs-code-spell-mode-map))
+
 (defcustom xtdmacs-code-spell-on-load
   t
   "Maximum number of line in buffer to permit auto-indentation."
@@ -82,8 +87,7 @@
 (defun --xtdmacs-code-spell-mode-destroy()
   (remove-hook 'flyspell-incorrect-hook 'xtdmacs-code-spell-ignore-patterns t)
   (when (mode-enabled 'flyspell-prog-mode)
-    (flyspell-prog-mode nil))
-
+    (flyspell-prog-mode))
   (message "disabled : xtdmacs-code-spell-mode")
   )
 

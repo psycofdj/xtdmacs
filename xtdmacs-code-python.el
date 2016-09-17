@@ -1,9 +1,9 @@
-;; --------------------------------------------------------------------------- ;
+(require 'xtdmacs-compile++)
 
 (defun xtdmacs-code-python-module-root ()
   (interactive)
-  (setq origin (buffer-file-name))
-  (let* ((dir (file-name-directory origin))
+  (let* ((origin (buffer-file-name))
+         (dir (file-name-directory origin))
          (dirs (split-string dir "/"))
          (result nil))
     (while (and (> (length dirs) 1) (equal nil result))
@@ -120,8 +120,6 @@
   )
 
 (defun --xtdmacs-code-python-destroy()
-  (if xtdmacs-code-python-indent-load-auto
-      (remove-format-buffer-with-ident))
   (if xtdmacs-code-python-indent-save-auto
       (remove-hook 'before-save-hook 'xtdmacs-code-format-buffer-with-ident))
   (font-lock-remove-keywords nil xtdmacs-code-python-keywords-alist)

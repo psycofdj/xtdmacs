@@ -1,20 +1,11 @@
+(require 'swbuff)
+
 (eval-when-compile
   (defvar shell-last-visited-buffer))
 
 (defun xtdmacs-insert-date ()
   (interactive)
   (insert (format-time-string "%e-%m-%Y"))
-  )
-
-
-(defun xtdmacs-iswitchb-local-keys ()
-  (mapc (lambda (K)
-          (let* ((key (car K)) (fun (cdr K)))
-            (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
-        '(("<right>" . iswitchb-next-match)
-          ("<left>"  . iswitchb-prev-match)
-          ("<up>"    . ignore             )
-          ("<down>"  . ignore             )))
   )
 
 (defun xtdmacs-shell-toggle ()
@@ -47,10 +38,8 @@
         (define-key input-decode-map "\e\M-OA" [M-up])
         (define-key input-decode-map "\e\M-OB" [M-down])))
 
-  (iswitchb-mode 1)
-  (setq iswitchb-buffer-ignore         '("^ " "*Help*" "*scratch*" "*Messages*" "*compilation*" "*shell*" "*Completions*" "*Buffer List*"))
+  (ido-mode 1)
   (setq swbuff-exclude-buffer-regexps  '("^ " "*Help*" "*scratch*" "*Messages*" "*compilation*" "*shell*" "*Completions*" "*Buffer List*"))
-  (add-hook 'iswitchb-define-mode-map-hook 'xtdmacs-iswitchb-local-keys)
   )
 
 
@@ -75,7 +64,7 @@
     ([24 up]      . windmove-up)
     ([24 C-right] . swbuff-switch-to-next-buffer)
     ([24 C-left]  . swbuff-switch-to-previous-buffer)
-    ([24 C-down]  . iswitchb-buffer)
+    ([24 C-down]  . ido-switch-buffer)
     ("\C-xk"      . kill-buffer)
     ("\C-x\C-f"   . find-file)
     ("\M-+"       . enlarge-window)

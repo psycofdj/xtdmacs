@@ -1,3 +1,5 @@
+(require 'web-mode)
+
 (defun --xtdmacs-code-web-mode-construct()
   (set (make-local-variable 'comment-start)  "<!--")
   (set (make-local-variable 'comment-end)     "-->")
