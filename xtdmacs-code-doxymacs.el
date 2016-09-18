@@ -42,6 +42,110 @@
           nil))))
   "Doc-style template xtdmacs-code-php-mode documentation.")
 
+(defface xtdmacs-code-doxymacs-keyword-face
+  '((t (:inherit font-lock-keyword-face)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+
+(defface xtdmacs-code-doxymacs-warning-face
+  '((t (:inherit font-lock-warning-face)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+
+(defface xtdmacs-code-doxymacs-variable-face
+  '((t (:inherit font-lock-variable-name-face)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+
+(defface xtdmacs-code-doxymacs-type-face
+  '((t (:inherit font-lock-type-face)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+
+(defface xtdmacs-code-doxymacs-string-face
+  '((t (:inherit font-lock-string-face)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+
+(defface xtdmacs-code-doxymacs-bold-face
+  '((t (:weight bold)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+
+(defface xtdmacs-code-doxymacs-underline-face
+  '((t (:underline t)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+
+(defface xtdmacs-code-doxymacs-italic-face
+  '((t (:slant italic)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+
+(defcustom xtdmacs-code-doxymacs-keywords-alist
+  '(("\\([@\\\\]\\(brief\\|li\\|\\(end\\)?code\\|sa\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn\\|hideinitializer\\|showinitializer\\|\\$\\|internal\\|nosubgrouping\\|author\\|date\\|endif\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file\\|\\(end\\)?xmlonly\\|\\(end\\)?manonly\\|property\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par\\|addindex\\|line\\|skip\\|skipline\\|until\\|see\\|endlink\\|callgraph\\|endcond\\|else\\)\\)\\>"
+     (0 'xtdmacs-code-doxymacs-keyword-face prepend))
+    ("\\([@\\\\]\\(attention\\|warning\\|todo\\|bug\\)\\)\\>"
+     (0 'xtdmacs-code-doxymacs-warning-face prepend))
+    ("\\([@\\\\]\\(param\\(?:\\s-*\\[\\(?:in\\|out\\|in,out\\)\\]\\)?\\|a\\|tparam\\|namespace\\|relates\\(also\\)?\\|var\\|def\\)\\)\\s-+\\(\\sw+\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (4 'xtdmacs-code-doxymacs-variable-face prepend))
+    ("\\([@\\\\]\\(class\\|struct\\|union\\|exception\\|enum\\|throw\\|interface\\|protocol\\)\\)\\s-+\\(\\(\\sw\\|:\\)+\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (3 'xtdmacs-code-doxymacs-type-face prepend))
+    ("\\([@\\\\]retval\\)\\s-+\\([^  \n]+\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (2 font-lock-function-name-face prepend))
+    ("\\([@\\\\]b\\)\\s-+\\([^   \n]+\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (2 'xtdmacs-code-doxymacs-bold-face prepend))
+    ("\\([@\\\\][cp]\\)\\s-+\\([^  \n]+\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (2 'xtdmacs-code-doxymacs-underline-face prepend))
+    ("\\([@\\\\]e\\(m\\)?\\)\\s-+\\([^   \n]+\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (3 'xtdmacs-code-doxymacs-italic-face prepend))
+    ("\\([@\\\\]ingroup\\)\\s-+\\(\\(\\sw+\\s-*\\)+\\)\\s-*$"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (2 'xtdmacs-code-doxymacs-string-face prepend))
+    ("\\([@\\\\]\\(link\\|copydoc\\|xrefitem\\|if\\(not\\)?\\|elseif\\)\\)\\s-+\\([^   \n]+\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (4 'xtdmacs-code-doxymacs-string-face prepend))
+    ("\\([@\\\\]\\(cond\\|dir\\)\\(\\s-+[^   \n]+\\)?\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (3 'xtdmacs-code-doxymacs-string-face prepend t))
+    ("\\([@\\\\]\\(~\\)\\([^   \n]+\\)?\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (3 'xtdmacs-code-doxymacs-string-face prepend t))
+    ("\\([@\\\\]\\(example\\|\\(dont\\)?include\\|includelineno\\|htmlinclude\\|verbinclude\\)\\)\\s-+\\(\"?[~:\\/a-zA-Z0-9_. ]+\"?\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (4 'xtdmacs-code-doxymacs-string-face prepend))
+    ("\\([@\\\\]dotfile\\)\\s-+\\(\"?[~:\\/a-zA-Z0-9_. ]+\"?\\)\\(\\s-+\"[^\"]+\"\\)?"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (2 'xtdmacs-code-doxymacs-string-face prepend)
+     (3 'xtdmacs-code-doxymacs-string-face prepend t))
+    ("\\([@\\\\]image\\)\\s-+\\(html\\|latex\\)\\s-+\\(\"?[~:\\/a-zA-Z0-9_. ]+\"?\\)\\(\\s-+\"[^\"]+\"\\)?\\(\\s-+\\sw+=[0-9]+\\sw+\\)?"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (2 'xtdmacs-code-doxymacs-string-face prepend)
+     (3 'xtdmacs-code-doxymacs-string-face prepend)
+     (4 'xtdmacs-code-doxymacs-string-face prepend t)
+     (5 'xtdmacs-code-doxymacs-string-face prepend t))
+    ("\\([@\\\\]\\(addtogroup\\|defgroup\\|weakgroup\\|page\\|anchor\\|ref\\|section\\|subsection\\)\\)\\s-+\\(\\sw+\\)"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (3 'xtdmacs-code-doxymacs-string-face prepend)))
+  "List of keywords for xtdmacs-code-doxymacs mode"
+  :group 'xtdmacs-code-doxymacs
+  :safe '(lambda(val) t)
+  )
+
 (defun xtdmacs-code-doxymacs-param-phpdoc (parms)
   "Inserts tempo elements for the given parms in the given style."
   (if parms
@@ -71,6 +175,7 @@
   (setq doxymacs-function-comment-template xtdmacs-code-doxymacs-template-doxystyle)
   (define-key doxymacs-mode-map (kbd "C-x d") 'doxymacs-insert-function-comment)
   (define-key doxymacs-mode-map (kbd "C-x m") 'doxymacs-insert-member-comment)
+  (font-lock-add-keywords nil xtdmacs-code-doxymacs-keywords-alist)
   (message "enabled : xtdmacs-code-doxymacs-mode")
   )
 
