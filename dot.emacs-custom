@@ -33,7 +33,6 @@
  '(gud-gdb-command-name "/ke/local/toolchain3-x86_64-nptl/tools/bin/gdb -i=mi")
  '(ido-create-new-buffer (quote always))
  '(ido-ignore-buffers (quote ("\\` " "^*")))
- '(ido-max-window-height nil)
  '(ido-mode (quote buffer) nil (ido))
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
@@ -111,7 +110,7 @@
  '(xtdmacs-compile++-config-alist
    (quote
     (("compile"
-      ("dir" . xtdmacs-compile++-guess-directory)
+      ("dir" . "~/dev/xtdcpp/.release/")
       ("env" . "")
       ("bin" . "make -j")
       ("get-params" lambda nil
@@ -121,15 +120,15 @@
      ("test"
       ("dir" . "~/dev/xtdcpp/.release/common/")
       ("env" . "")
-      ("bin" . "make check-common-verbose")
+      ("bin" . "make check-common-verbose -j16")
       ("get-params" lambda nil
        (xtdmacs-compile++-default-params "test"))
       ("command" lambda nil
        (xtdmacs-compile++-default-command "test")))
      ("deploy"
-      ("dir" . xtdmacs-compile++-guess-directory)
+      ("dir" . "~/dev/xtdcpp/.release/common/")
       ("env" . "")
-      ("bin" . "make -j")
+      ("bin" . "make cov-common")
       ("get-params" lambda nil
        (xtdmacs-compile++-default-params "deploy"))
       ("command" lambda nil
