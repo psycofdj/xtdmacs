@@ -107,40 +107,6 @@
  '(xtdmacs-code-spell-ignore-regexp
    (quote
     ("@subsubsection [^ ]+" "@image html [^ ]+" "@subsection [^ ]+" "@param [^ ]+" "@section [^ ]+" "//  LocalWords: *" "@ref [^ ]+" "[^ ]+\\.[^ ]+")))
- '(xtdmacs-compile++-config-alist
-   (quote
-    (("compile"
-      ("dir" . "~/dev/xtdcpp/.release/")
-      ("env" . "")
-      ("bin" . "make -j")
-      ("get-params" lambda nil
-       (xtdmacs-compile++-default-params "compile"))
-      ("command" lambda nil
-       (xtdmacs-compile++-default-command "compile")))
-     ("test"
-      ("dir" . "~/dev/xtdcpp/.release/common/")
-      ("env" . "")
-      ("bin" . "make check-common-verbose -j16")
-      ("get-params" lambda nil
-       (xtdmacs-compile++-default-params "test"))
-      ("command" lambda nil
-       (xtdmacs-compile++-default-command "test")))
-     ("deploy"
-      ("dir" . "~/dev/xtdcpp/.release/common/")
-      ("env" . "")
-      ("bin" . "make cov-common")
-      ("get-params" lambda nil
-       (xtdmacs-compile++-default-params "deploy"))
-      ("command" lambda nil
-       (xtdmacs-compile++-default-command "deploy")))
-     ("iwyu"
-      ("dir" . xtdmacs-compile++-guess-directory)
-      ("env" . "")
-      ("bin" . xtdmacs-compile++-iwyu-default-cmd)
-      ("get-params" lambda nil
-       (xtdmacs-compile++-default-params "iwyu"))
-      ("command" lambda nil
-       (xtdmacs-compile++-default-command "iwyu"))))))
  '(xtdmacs-loader-auto-minor-mode-alist
    (quote
     ((("Dockerfile")
