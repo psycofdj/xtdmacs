@@ -60,6 +60,12 @@
   :group 'code
   )
 
+(defface xtdmacs-code-doxymacs-parameter-face
+  '((t (:inherit font-lock-string-face)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+
 (defface xtdmacs-code-doxymacs-type-face
   '((t (:inherit font-lock-type-face)))
   "Face for doxygen keyword."
@@ -116,7 +122,7 @@
     ("\\([@\\\\]ingroup\\)\\s-+\\(\\(\\sw+\\s-*\\)+\\)\\s-*$"
      (1 'xtdmacs-code-doxymacs-keyword-face prepend)
      (2 'xtdmacs-code-doxymacs-string-face prepend))
-    ("\\([@\\\\]\\(link\\|copydoc\\|xrefitem\\|if\\(not\\)?\\|elseif\\)\\)\\s-+\\([^   \n]+\\)"
+    ("\\([@\\\\]\\(link\\|copydoc\\|copybrief\\|xrefitem\\|if\\(not\\)?\\|elseif\\)\\)\\s-+\\([^ \n]+\\)"
      (1 'xtdmacs-code-doxymacs-keyword-face prepend)
      (4 'xtdmacs-code-doxymacs-string-face prepend))
     ("\\([@\\\\]\\(cond\\|dir\\)\\(\\s-+[^   \n]+\\)?\\)"
@@ -138,9 +144,13 @@
      (3 'xtdmacs-code-doxymacs-string-face prepend)
      (4 'xtdmacs-code-doxymacs-string-face prepend t)
      (5 'xtdmacs-code-doxymacs-string-face prepend t))
-    ("\\([@\\\\]\\(addtogroup\\|defgroup\\|weakgroup\\|page\\|anchor\\|ref\\|section\\|subsection\\)\\)\\s-+\\(\\sw+\\)"
+    ("\\([@\\\\]\\(addtogroup\\|defgroup\\|weakgroup\\|page\\|anchor\\)\\)\\s-+\\([^ \n]+\\)"
      (1 'xtdmacs-code-doxymacs-keyword-face prepend)
-     (3 'xtdmacs-code-doxymacs-string-face prepend)))
+     (3 'xtdmacs-code-doxymacs-string-face prepend))
+    ("\\([@\\\\]\\(ref\\|section\\|subsection\\|subsubsection\\)\\)\\s-+\\([^ \n]+\\)\\(\\s-+\"[^\"]+\"\\)?"
+     (1 'xtdmacs-code-doxymacs-keyword-face prepend)
+     (3 'xtdmacs-code-doxymacs-string-face prepend)
+     (4 'xtdmacs-code-doxymacs-parameter-face prepend)))
   "List of keywords for xtdmacs-code-doxymacs mode"
   :group 'xtdmacs-code-doxymacs
   :safe '(lambda(val) t)
