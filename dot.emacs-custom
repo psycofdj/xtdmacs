@@ -21,7 +21,7 @@
  '(fci-rule-character 9482)
  '(fci-rule-character-color nil)
  '(fci-rule-color "#333333")
- '(fill-column 90)
+ '(fill-column 84)
  '(flyspell-default-dictionary "fr")
  '(flyspell-duplicate-distance 0)
  '(flyspell-issue-message-flag nil)
