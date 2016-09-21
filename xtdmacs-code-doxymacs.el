@@ -44,37 +44,37 @@
 
 (defface xtdmacs-code-doxymacs-keyword-face
   '((t (:inherit font-lock-keyword-face)))
-  "Face for doxygen keyword."
+  "Face for doxygen keywords command such as @brief, @section..."
   :group 'code
   )
 
 (defface xtdmacs-code-doxymacs-warning-face
-  '((t (:inherit font-lock-warning-face)))
-  "Face for doxygen keyword."
+  '((t (:inherit xtdmacs-code-doxymacs-keyword-face)))
+  "Face for doxygen @warning keyword."
   :group 'code
   )
 
 (defface xtdmacs-code-doxymacs-variable-face
   '((t (:inherit font-lock-variable-name-face)))
-  "Face for doxygen keyword."
+  "Face for doxygen variables of commands like @param, @tparam, @def..."
   :group 'code
   )
 
 (defface xtdmacs-code-doxymacs-parameter-face
   '((t (:inherit font-lock-string-face)))
-  "Face for doxygen keyword."
+  "Face for doxygen parameters of commands such as @section, @ref..."
   :group 'code
   )
 
 (defface xtdmacs-code-doxymacs-type-face
   '((t (:inherit font-lock-type-face)))
-  "Face for doxygen keyword."
+  "Face for doxygen argument applying to types, @class, @interface, @union..."
   :group 'code
   )
 
 (defface xtdmacs-code-doxymacs-string-face
   '((t (:inherit font-lock-string-face)))
-  "Face for doxygen keyword."
+  "Face for doxygen  keyword."
   :group 'code
   )
 
@@ -95,6 +95,28 @@
   "Face for doxygen keyword."
   :group 'code
   )
+
+(defface xtdmacs-code-doxymacs-h1-face
+  '((t (:inherit font-lock-keyword-face)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+(defface xtdmacs-code-doxymacs-h2-face
+  '((t (:inherit font-lock-keyword-face)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+(defface xtdmacs-code-doxymacs-h3-face
+  '((t (:inherit font-lock-keyword-face)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+(defface xtdmacs-code-doxymacs-h4-face
+  '((t (:inherit font-lock-keyword-face)))
+  "Face for doxygen keyword."
+  :group 'code
+  )
+
 
 (defcustom xtdmacs-code-doxymacs-keywords-alist
   '(("\\([@\\\\]\\(brief\\|li\\|\\(end\\)?code\\|sa\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn\\|hideinitializer\\|showinitializer\\|\\$\\|internal\\|nosubgrouping\\|author\\|date\\|endif\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file\\|\\(end\\)?xmlonly\\|\\(end\\)?manonly\\|property\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par\\|addindex\\|line\\|skip\\|skipline\\|until\\|see\\|endlink\\|callgraph\\|endcond\\|else\\)\\)\\>"
@@ -147,10 +169,20 @@
     ("\\([@\\\\]\\(addtogroup\\|defgroup\\|weakgroup\\|page\\|anchor\\)\\)\\s-+\\([^ \n]+\\)"
      (1 'xtdmacs-code-doxymacs-keyword-face prepend)
      (3 'xtdmacs-code-doxymacs-string-face prepend))
-    ("\\([@\\\\]\\(ref\\|section\\|subsection\\|subsubsection\\)\\)\\s-+\\([^ \n]+\\)\\(\\s-+\"[^\"]+\"\\)?"
+    ("\\([@\\\\]\\(ref\\|section\\|subsection\\|subsubsection\\)\\)\\s-+\\([^ \n]+\\)\\(\\s-+\"[^\n\"]+\"\\)"
+     (4 'xtdmacs-code-doxymacs-parameter-face prepend))
+    ("\\([@\\\\]\\(ref\\|section\\|subsection\\|subsubsection\\)\\)\\s-+\\([^ \n]+\\)"
      (1 'xtdmacs-code-doxymacs-keyword-face prepend)
-     (3 'xtdmacs-code-doxymacs-string-face prepend)
-     (4 'xtdmacs-code-doxymacs-parameter-face prepend)))
+     (3 'xtdmacs-code-doxymacs-string-face prepend))
+    ("\\(^[* ]+\\)\\(#\\s-+[^\n]+\\)"
+     (2 'xtdmacs-code-doxymacs-h1-face prepend))
+    ("\\(^[* ]+\\)\\(##\\s-+[^\n]+\\)"
+     (2 'xtdmacs-code-doxymacs-h2-face prepend))
+    ("\\(^[* ]+\\)\\(###\\s-+[^\n]+\\)"
+     (2 'xtdmacs-code-doxymacs-h3-face prepend))
+    ("\\(^[* ]+\\)\\(####\\s-+[^\n]+\\)"
+     (2 'xtdmacs-code-doxymacs-h4-face prepend))
+    )
   "List of keywords for xtdmacs-code-doxymacs mode"
   :group 'xtdmacs-code-doxymacs
   :safe '(lambda(val) t)
@@ -204,3 +236,7 @@
   )
 
 (provide 'xtdmacs-code-doxymacs)
+
+;; Local Variables:
+;; ispell-local-dictionary: "american"
+;; End:
