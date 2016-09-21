@@ -74,46 +74,46 @@
 
 (defface xtdmacs-code-doxymacs-string-face
   '((t (:inherit font-lock-string-face)))
-  "Face for doxygen  keyword."
+  "Face for doxygen argument of commands such as @exemple, @image..."
   :group 'code
   )
 
 (defface xtdmacs-code-doxymacs-bold-face
   '((t (:weight bold)))
-  "Face for doxygen keyword."
+  "Face for doxygen @b command."
   :group 'code
   )
 
 (defface xtdmacs-code-doxymacs-underline-face
   '((t (:underline t)))
-  "Face for doxygen keyword."
+  "Face for doxygen @c and @p emphases commands"
   :group 'code
   )
 
 (defface xtdmacs-code-doxymacs-italic-face
   '((t (:slant italic)))
-  "Face for doxygen keyword."
+  "Face for doxygen @e and @em emphases commands."
   :group 'code
   )
 
 (defface xtdmacs-code-doxymacs-h1-face
   '((t (:inherit font-lock-keyword-face)))
-  "Face for doxygen keyword."
+  "Face for doxygen markdown style level 1 title. (# command)"
   :group 'code
   )
 (defface xtdmacs-code-doxymacs-h2-face
   '((t (:inherit font-lock-keyword-face)))
-  "Face for doxygen keyword."
+  "Face for doxygen markdown style level 2 title.  (## command)"
   :group 'code
   )
 (defface xtdmacs-code-doxymacs-h3-face
   '((t (:inherit font-lock-keyword-face)))
-  "Face for doxygen keyword."
+  "Face for doxygen markdown style level 3 title.  (### command)"
   :group 'code
   )
 (defface xtdmacs-code-doxymacs-h4-face
   '((t (:inherit font-lock-keyword-face)))
-  "Face for doxygen keyword."
+  "Face for doxygen markdown style level 4 title. (#### command)"
   :group 'code
   )
 
