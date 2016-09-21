@@ -119,7 +119,7 @@
 
 
 (defcustom xtdmacs-code-doxymacs-keywords-alist
-  '(("\\([@\\\\]\\(brief\\|li\\|\\(end\\)?code\\|sa\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn\\|hideinitializer\\|showinitializer\\|\\$\\|internal\\|nosubgrouping\\|author\\|date\\|endif\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file\\|\\(end\\)?xmlonly\\|\\(end\\)?manonly\\|property\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par\\|addindex\\|line\\|skip\\|skipline\\|until\\|see\\|endlink\\|callgraph\\|endcond\\|else\\)\\)\\>"
+  '(("\\([@\\\\]\\(brief\\|li\\|details\\|\\(end\\)?code\\|sa\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn\\|hideinitializer\\|showinitializer\\|\\$\\|internal\\|nosubgrouping\\|author\\|date\\|endif\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file\\|\\(end\\)?xmlonly\\|\\(end\\)?manonly\\|property\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par\\|addindex\\|line\\|skip\\|skipline\\|until\\|see\\|endlink\\|callgraph\\|endcond\\|else\\)\\)\\>"
      (0 'xtdmacs-code-doxymacs-keyword-face prepend))
     ("\\([@\\\\]\\(attention\\|warning\\|todo\\|bug\\)\\)\\>"
      (0 'xtdmacs-code-doxymacs-warning-face prepend))
