@@ -1,6 +1,19 @@
 (require 'ansi-color)
 
 
+(defface xtdmacs-compile++-compiling-face
+  '((t (:background "green")))
+  "Overriding face of mode-line and mode-line-inactive when compilation is running"
+  :group 'xtdmacs-compile++
+  )
+
+(defface xtdmacs-compile++-error-face
+  '((t (:background "blue")))
+  "Overriding face of buffer when compilation exited in error"
+  :group 'xtdmacs-compile++
+  )
+
+
 (defun xtdmacs-compile++-colorize-compilation-buffer ()
   (read-only-mode)
   (ansi-color-apply-on-region (point-min) (point-max))
@@ -35,13 +48,6 @@
         (nbutlast dirs 1))
       )
     result)
-  )
-
-(defun xtdmacs-compile++-safe-kill ()
-  (interactive)
-  (if (equal (get-buffer "*compilation*") nil)
-      nil
-    (kill-buffer "*compilation*"))
   )
 
 (defun xtdmacs-compile++-previous-error ()
@@ -115,11 +121,13 @@
     ;; we load xtdmacs-compile++ on *compilation* buffer with a configuration that runs
     ;; the current command
     (with-current-buffer "*compilation*"
+      (face-remap-add-relative 'mode-line          'xtdmacs-compile++-compiling-face)
+      (face-remap-add-relative 'mode-line-inactive 'xtdmacs-compile++-compiling-face)
+      (face-remap-set-base     'default            nil)
       (if (mode-enabled 'xtdmacs-compile++)
           (message "compile++ alread enabled on *compilation*")
         (progn
-          (xtdmacs-compile++-mode t)
-          (message "enabling compile++ on *compilation*")))
+          (xtdmacs-compile++-mode t)))
       (setq-local xtdmacs-compile++-config-alist
                   `((,type .
                            (("get-params" . (lambda()))
@@ -341,12 +349,28 @@
   (xtdmacs-compile++-run interactive xtdmacs-compile++-command-5)
   )
 
+(defun xtdmacs-compile++-compilation-finished(buffer status)
+  (with-current-buffer buffer
+    (if (not (string-prefix-p "finished" status))
+        (progn
+          (face-remap-add-relative 'mode-line          'xtdmacs-compile++-error-face)
+          (face-remap-add-relative 'mode-line-inactive 'xtdmacs-compile++-error-face)
+          )
+      (progn
+        (face-remap-set-base 'mode-line          nil)
+        (face-remap-set-base 'mode-line-inactive nil))
+      )))
+
 ;; --------------------------------------------------------------------------
 
 (defun xtdmacs-compile++-mode-construct()
   (add-hook 'compilation-filter-hook 'xtdmacs-compile++-colorize-compilation-buffer)
   (make-local-variable 'xtdmacs-compile++-config-alist)
+  (make-local-variable 'mode-line)
+  (make-local-variable 'mode-line-inactive)
+  (make-local-variable 'default)
   (message "enabled : xtdmacs-compile++-mode")
+  (add-to-list 'compilation-finish-functions 'xtdmacs-compile++-compilation-finished)
   )
 
 (defun xtdmacs-compile++-mode-destroy()

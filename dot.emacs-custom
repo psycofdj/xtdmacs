@@ -149,7 +149,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit :height 90 :width normal :family "DejaVu Sans Mono"))))
+ '(default ((t (:inherit nil :stipple nil :background "unspecified-bg" :foreground "unspecified-fg" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1 :width normal :foundry "default" :family "default"))))
  '(custom-variable-tag ((((min-colors 256) (background dark)) (:foreground "#ff00ff" :weight bold)) (((background light)) (:foreground "#blue1" :weight bold))))
  '(flyspell-duplicate ((((min-colors 256) (background dark)) (:background "#d7af00")) (((min-colors 256) (background light)) (:inherit warning :underline (:color foreground-color :style line)))))
  '(flyspell-incorrect ((t (:underline (:color "red" :style wave)))))
@@ -189,4 +189,6 @@
  '(xtdmacs-code-doxymacs-h4-face ((t (:foreground "color-24"))))
  '(xtdmacs-code-doxymacs-keyword-face ((t (:foreground "color-103"))))
  '(xtdmacs-code-doxymacs-parameter-face ((t (:inherit font-lock-string-face :foreground "color-69"))))
- '(xtdmacs-code-doxymacs-variable-face ((t (:inherit xtdmacs-code-face-param)))))
+ '(xtdmacs-code-doxymacs-variable-face ((t (:inherit xtdmacs-code-face-param))))
+ '(xtdmacs-compile++-compiling ((t (:background "color-22"))))
+ '(xtdmacs-compile++-error-face ((t (:background "color-52")))))
