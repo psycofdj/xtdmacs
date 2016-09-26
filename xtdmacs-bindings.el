@@ -37,9 +37,7 @@
         (define-key input-decode-map "\M-[D"   [C-left])
         (define-key input-decode-map "\e\M-OA" [M-up])
         (define-key input-decode-map "\e\M-OB" [M-down])))
-
   (ido-mode 'buffers)
-  (setq swbuff-exclude-buffer-regexps  '("^ " "*Help*" "*scratch*" "*Messages*" "*compilation*" "*shell*" "*Completions*" "*Buffer List*"))
   )
 
 

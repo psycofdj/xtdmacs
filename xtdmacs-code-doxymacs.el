@@ -42,81 +42,98 @@
           nil))))
   "Doc-style template xtdmacs-code-php-mode documentation.")
 
+(defun xtdmacs-code-doxymacs-param-phpdoc (parms)
+  "Inserts tempo elements for the given parms in the given style."
+  (if parms
+      (let ((prompt (concat "Parameter " (car parms) ": ")))
+        (list 'l " * " (doxymacs-doxygen-command-char)
+              "param " (car parms) " " (list 'p prompt) '> 'n
+              (xtdmacs-code-doxymacs-param-phpdoc (cdr parms))))
+    nil))
+
+(defun xtdmacs-code-doxymacs-param-doxstyle (parms)
+  "Inserts tempo elements for the given parms in the given style."
+  (if parms
+      (let ((prompt (concat "Parameter " (car parms) ": ")))
+        (list 'l " ** " (doxymacs-doxygen-command-char)
+              "param " (car parms) " " (list 'p prompt) '> 'n
+              (xtdmacs-code-doxymacs-param-doxstyle (cdr parms))))
+    nil))
+
 (defface xtdmacs-code-doxymacs-keyword-face
   '((t (:inherit font-lock-keyword-face)))
   "Face for doxygen keywords command such as @brief, @section..."
-  :group 'code
+  :group 'code-doxymacs
   )
 
 (defface xtdmacs-code-doxymacs-warning-face
   '((t (:inherit xtdmacs-code-doxymacs-keyword-face)))
   "Face for doxygen @warning keyword."
-  :group 'code
+  :group 'code-doxymacs
   )
 
 (defface xtdmacs-code-doxymacs-variable-face
   '((t (:inherit font-lock-variable-name-face)))
   "Face for doxygen variables of commands like @param, @tparam, @def..."
-  :group 'code
+  :group 'code-doxymacs
   )
 
 (defface xtdmacs-code-doxymacs-parameter-face
   '((t (:inherit font-lock-string-face)))
   "Face for doxygen parameters of commands such as @section, @ref..."
-  :group 'code
+  :group 'code-doxymacs
   )
 
 (defface xtdmacs-code-doxymacs-type-face
   '((t (:inherit font-lock-type-face)))
   "Face for doxygen argument applying to types, @class, @interface, @union..."
-  :group 'code
+  :group 'code-doxymacs
   )
 
 (defface xtdmacs-code-doxymacs-string-face
   '((t (:inherit font-lock-string-face)))
   "Face for doxygen argument of commands such as @exemple, @image..."
-  :group 'code
+  :group 'code-doxymacs
   )
 
 (defface xtdmacs-code-doxymacs-bold-face
   '((t (:weight bold)))
   "Face for doxygen @b command."
-  :group 'code
+  :group 'code-doxymacs
   )
 
 (defface xtdmacs-code-doxymacs-underline-face
   '((t (:underline t)))
   "Face for doxygen @c and @p emphases commands"
-  :group 'code
+  :group 'code-doxymacs
   )
 
 (defface xtdmacs-code-doxymacs-italic-face
   '((t (:slant italic)))
   "Face for doxygen @e and @em emphases commands."
-  :group 'code
+  :group 'code-doxymacs
   )
 
 (defface xtdmacs-code-doxymacs-h1-face
   '((t (:inherit font-lock-keyword-face)))
   "Face for doxygen markdown style level 1 title. (# command)"
-  :group 'code
+  :group 'code-doxymacs
   )
 (defface xtdmacs-code-doxymacs-h2-face
   '((t (:inherit font-lock-keyword-face)))
   "Face for doxygen markdown style level 2 title.  (## command)"
-  :group 'code
+  :group 'code-doxymacs
   )
 (defface xtdmacs-code-doxymacs-h3-face
   '((t (:inherit font-lock-keyword-face)))
   "Face for doxygen markdown style level 3 title.  (### command)"
-  :group 'code
+  :group 'code-doxymacs
   )
 (defface xtdmacs-code-doxymacs-h4-face
   '((t (:inherit font-lock-keyword-face)))
   "Face for doxygen markdown style level 4 title. (#### command)"
-  :group 'code
+  :group 'code-doxymacs
   )
-
 
 (defcustom xtdmacs-code-doxymacs-keywords-alist
   '(("\\([@\\\\]\\(brief\\|li\\|details\\|\\(end\\)?code\\|sa\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn\\|hideinitializer\\|showinitializer\\|\\$\\|internal\\|nosubgrouping\\|author\\|date\\|endif\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file\\|\\(end\\)?xmlonly\\|\\(end\\)?manonly\\|property\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par\\|addindex\\|line\\|skip\\|skipline\\|until\\|see\\|endlink\\|callgraph\\|endcond\\|else\\)\\)\\>"
@@ -187,24 +204,6 @@
   :group 'xtdmacs-code-doxymacs
   :safe '(lambda(val) t)
   )
-
-(defun xtdmacs-code-doxymacs-param-phpdoc (parms)
-  "Inserts tempo elements for the given parms in the given style."
-  (if parms
-      (let ((prompt (concat "Parameter " (car parms) ": ")))
-        (list 'l " * " (doxymacs-doxygen-command-char)
-              "param " (car parms) " " (list 'p prompt) '> 'n
-              (xtdmacs-code-doxymacs-param-phpdoc (cdr parms))))
-    nil))
-
-(defun xtdmacs-code-doxymacs-param-doxstyle (parms)
-  "Inserts tempo elements for the given parms in the given style."
-  (if parms
-      (let ((prompt (concat "Parameter " (car parms) ": ")))
-        (list 'l " ** " (doxymacs-doxygen-command-char)
-              "param " (car parms) " " (list 'p prompt) '> 'n
-              (xtdmacs-code-doxymacs-param-doxstyle (cdr parms))))
-    nil))
 
 
 (defun --xtdmacs-code-doxymacs-construct()

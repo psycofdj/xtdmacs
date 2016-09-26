@@ -2,31 +2,46 @@
 **Table of Contents**
 
 - [Install](#install)
-- [Features](#features)
+- [General purpose modes](#general-purpose-modes)
     - [xtdmacs-bindings](#xtdmacs-bindings)
         - [Load](#load)
             - [Manually](#manually)
             - [From ~/.emacs:](#from-emacs)
             - [Using emacs customization](#using-emacs-customization)
-        - [Bindings](#bindings)
+        - [ido-mode and swbuff](#ido-mode-and-swbuff)
+            - [Bindings](#bindings)
+        - [Other bindings](#other-bindings)
     - [xtdmacs-loader](#xtdmacs-loader)
     - [xtdmacs-code-mode](#xtdmacs-code-mode)
         - [fill-column-indicator](#fill-column-indicator)
         - [linum-mode](#linum-mode)
-        - [xtdmacs-code-spell-mode](#xtdmacs-code-spell-mode)
-        - [xtdmacs-compile++-mode](#xtdmacs-compile-mode)
         - [Aligning variables and parameters](#aligning-variables-and-parameters)
         - [Bindings](#bindings)
-    - [xtdmacs-compile](#xtdmacs-compile)
+    - [xtdmacs-compile++-mode](#xtdmacs-compile-mode)
         - [Window managment](#window-managment)
         - [Behind the curtain](#behind-the-curtain)
         - [API](#api)
         - [Configuration](#configuration)
         - [Bindings](#bindings)
+    - [xtdmacs-code-doxygen-mode](#xtdmacs-code-doxygen-mode)
+    - [xtdmacs-code-line-mode](#xtdmacs-code-line-mode)
+    - [xtdmacs-code-spell-mode](#xtdmacs-code-spell-mode)
+- [Language specific modes](#language-specific-modes)
+    - [xtdmacs-code-cpp-mode](#xtdmacs-code-cpp-mode)
+    - [xtdmacs-code-java-mode](#xtdmacs-code-java-mode)
+    - [xtdmacs-code-js-mode](#xtdmacs-code-js-mode)
+    - [xtdmacs-code-json-mode](#xtdmacs-code-json-mode)
+    - [xtdmacs-code-lisp-mode](#xtdmacs-code-lisp-mode)
+    - [xtdmacs-code-makefile-mode](#xtdmacs-code-makefile-mode)
+    - [xtdmacs-code-python-mode](#xtdmacs-code-python-mode)
+    - [xtdmacs-code-php-mode](#xtdmacs-code-php-mode)
+    - [xtdmacs-code-web-mode](#xtdmacs-code-web-mode)
 
 <!-- markdown-toc end -->
 
 Xtdmacs provides a bunch a development tools and ready-to-use configuration.
+
+---
 
 # Install
 
@@ -37,18 +52,15 @@ Xtdmacs provides a bunch a development tools and ready-to-use configuration.
  make install
  ```
 
-# Features
+
+# General purpose modes
 
 ## xtdmacs-bindings
 
 This optional mode setup keyboard bindings for the most commonly used
 features.
 
-It also configures iswitchb module to ignore standard system buffers like
-\*Help\* \*scratch\* \*Messages\* etc..
-
 ### Load
-
 
 #### Manually
 
@@ -67,26 +79,62 @@ M-x xtdmacs-bindings-mode
 
 -> change value to on, then apply and save
 
-### Bindings
+### ido-mode and swbuff
+
+The ido (Interactively do things) mode provides an efficient way to navigate among
+openned buffers. Ido display available buffer names in minibuffer and filters the
+list as you type characters.
+
+swbuffer defines functions to directly cycle among existing buffers. It also
+provides a way to ignore a list of buffer names in this cycle. Typically,
+users will ignore systems buffers like ```*Help*``` or ```*Message*```.
+
+To customize list of ignore buffers :
+
+```M-x customize-variable RET swbuff-exclude-buffer-regexps```
+
+ido completion will also ignore patterns defined in
+```swbuff-exclude-buffer-regexps``` but will suggest them if typed characters
+matches nothing but filtered buffer names.
+
+
+Example:
+![IDO mode](doc/ido-mode.png "IDO mode")
+
+#### Bindings
+
+| Key                           | Effect                                |
+|-------------------------------|---------------------------------------|
+| \<ctrl\>+x \<ctrl\>+\<down\>  | Run ido interactive buffer selection  |
+| \<left\>                      | (in ido) next buffer suggestion       |
+| \<left\>                      | (in ido) previous buffer suggestion   |
+| RET                           | (in ido) display selected buffer      |
+| \<ctrl\>+x \<ctrl\>+\<right\> | display next buffer                   |
+| \<ctrl\>+x \<ctrl\>+\<left\>  | display previous buffer               |
+
+
+### Other bindings
 
 | Key                           | Effect                                | Key                           | Effect                                |
 |-------------------------------|---------------------------------------|-------------------------------|---------------------------------------|
-| \<home\>                      | move cursor to end of line            | \<ctrl\>+x \<ctrl\>+\<right\> | display next buffer                   |
-| \<select\>                    | move cursor to end of line            | \<ctrl\>+x \<ctrl\>+\<left\>  | display previous buffer               |
-| \<alt\>+\<up\>                | move cursor to beginning of buffer    | \<ctrl\>+x \<ctrl\>+\<down\>  | prompt buffer to display              |
-| \<alt\>+\<down\>              | move cursor to end of buffer          | \<ctrl\>+x k                  | close current buffer                  |
-| \<ctrl\>+\<right\>            | move cursor to end of word            | \<ctrl\>+x \<ctrl\>+f         | open file                             |
-| \<ctrl\>+\<left\>             | move cursor to beginning of word      | \<alt\>+\<plus\>              | enlarge current window's height       |
-| \<ctrl\>+c \<ctrl\>+g         | goto given line                       | \<alt\>+\<minus\>             | shrink current window's height        |
-| \<ctrl\>+d                    | search and replace                    | \<alt\>+\<delete\>            | delete previous word                  |
-| \<ctrl\>+f                    | search and replace regexp             | \<alt\>+s                     | display speedbar                      |
-| \<alt\>+d                     | align regexp                          | \<alt\>+/                     | autocomplete current word             |
-| \<ctrl\>+x \<right\>          | move cursor to the right window       | \<ctrl\>+l                    | insert current date                   |
-| \<ctrl\>+x \<left\>           | move cursor to the left window        | \<alt\>+q                     | comment region                        |
-| \<ctrl\>+x \<up\>             | move cursor to the top window         | \<alt\>+a                     | uncomment region                      |
-| \<ctrl\>+x \<down\>           | move cursor to the bottom window      | \<F5\>                        | delete buffer's trailing whitespaces  |
-| \<ctrl\>+\<F5\>               | refresh buffer syntax colors          | \<ctrl\>+\<F11\>              | toggle terminal shell                 |
+| \<home\>                      | move cursor to end of line            | \<ctrl\>+x \<ctrl\>+f         | open file                             |
+| \<select\>                    | move cursor to end of line            | \<alt\>+\<plus\>              | enlarge current window's height       |
+| \<alt\>+\<up\>                | move cursor to beginning of buffer    | \<alt\>+\<minus\>             | shrink current window's height        |
+| \<alt\>+\<down\>              | move cursor to end of buffer          | \<alt\>+\<delete\>            | delete previous word                  |
+| \<ctrl\>+\<right\>            | move cursor to end of word            | \<alt\>+s                     | display speedbar                      |
+| \<ctrl\>+\<left\>             | move cursor to beginning of word      | \<alt\>+/                     | autocomplete current word             |
+| \<ctrl\>+c \<ctrl\>+g         | goto given line                       | \<ctrl\>+l                    | insert current date                   |
+| \<ctrl\>+d                    | search and replace                    | \<alt\>+q                     | comment region                        |
+| \<ctrl\>+f                    | search and replace regexp             | \<alt\>+a                     | uncomment region                      |
+| \<alt\>+d                     | align regexp                          | \<F5\>                        | delete buffer's trailing whitespaces  |
+| \<ctrl\>+x \<right\>          | move cursor to the right window       | \<ctrl\>+\<F11\>              | toggle terminal shell                 |
+| \<ctrl\>+x \<left\>           | move cursor to the left window        |                               |                                       |
+| \<ctrl\>+x \<up\>             | move cursor to the top window         |                               |                                       |
+| \<ctrl\>+x \<down\>           | move cursor to the bottom window      |                               |                                       |
+| \<ctrl\>+\<F5\>               | refresh buffer syntax colors          |                               |                                       |
 | \<F11\>                       | display menu                          |                               |                                       |
+
+
 
 
 ## xtdmacs-loader
@@ -100,13 +148,31 @@ is to customize the *xtdmacs-loader-auto-minor-mode-alist* variable.
 ![alt text](doc/xtdmacs-loader.png "Logo Title Text 1")
 
 
+
+
 ## xtdmacs-code-mode
 
 This minor mode enabled multi-language tools that help editing code.
 
 ### fill-column-indicator
 
-** TODO, replaced highlight-80+ by fill-column-indicator **
+Displays a vertical line at the specified column number, discouraging (but not
+preventing) the developper to make too long lines.
+
+The following variables custimize the behaviour of this minor mode :
+
+| Variable           | Effect                                | Default   |
+|--------------------|---------------------------------------|-----------|
+| fci-rule-character | Character to use to display the line. | ┊ (UTF-8) |
+| fci-rule-color     | Color of the rule character           | #333333   |
+| fill-column        | Column number of the line rule        | 90        |
+
+
+
+Example : (vertical line on extreme right)
+
+![Fill columns indicator](doc/fci-mode.png "Fill columns indicator")
+
 
 ### linum-mode
 
@@ -118,14 +184,6 @@ To customize columns number face :
 ```
 M-x customize-face RET linum RET
 ```
-
-### xtdmacs-code-spell-mode
-
-See dedicated section
-
-### xtdmacs-compile++-mode
-
-See dedicated section
 
 ### Aligning variables and parameters
 
@@ -195,7 +253,8 @@ void foo(void)
 | \<ctrl\>+\<F2\>               | align parameters between mark and cursor       |
 
 
-## xtdmacs-compile
+
+## xtdmacs-compile++-mode
 
 This minor mode wraps the default compilation mode in order to provide a set of
 pre-defined compilation commands. It also allows to use function instead of
@@ -298,6 +357,12 @@ Enables automatic scrolling of compilation buffer :
 Set commands configuration interactively :
 * ```M-x customize-variable RET xtdmacs-compile++-buffer-local RET```
 
+Customize mode-line face when compile process is running :
+* ```M-x customize-face RET xtdmacs-compile++-compiling-face RET```
+
+Customize mode-line face when compile exited with error :
+* ```M-x customize-face RET xtdmacs-compile++-error-face RET```
+
 
 Set commands for a specific project :
 ```lisp
@@ -349,5 +414,143 @@ cat ~/.dir-locals.el
 | \<ctrl\>+\<F9>                | goto next compile error or warning             |
 
 
+
+## xtdmacs-code-doxygen-mode
+
+This minor mode provides an enchanched initialization of doxymacs minor mode.
+
+### Templates
+
+It defines two standard doxumentation templates :
+
+- ```xtdmacs-code-doxymacs-template-doxystyle``` : function documentation layout suitable
+  for doxygen
+
+- ```xtdmacs-code-doxymacs-template-phpdoc`` : function documentation layout suitable
+  for phpdoc
+
+Doxymacs' current template is defined by the variable
+```doxymacs-function-comment-template```, its default value is
+ ```xtdmacs-code-doxymacs-template-doxystyle``` .
+
+### Keyword and faces
+
+The defines font lock keywords for doxygen style documentation through the
+customizable variable ```xtdmacs-code-doxymacs-keywords-alist```. The defined
+keywords handle new doxygen markdown compatibility style.
+
+Defined keywords and arguments are fontified with faces defined in the group
+```code-doxymacs``` .
+
+To modify the faces :
+
+```M-x customize-group RET code-doxymacs RET```
+
+Example:
+
+![xtdmacs-code-doxymacs-mode](doc/code-doxymacs.png "xtdmacs-code-doxymacs-mode")
+
+
+### Bindings
+
+| Key                           | Effect                                         |
+|-------------------------------|------------------------------------------------|
+| \<ctrl\>+x d                  | insert function/method comment at point        |
+| \<ctrl\>+x m                  | insert member variable comment at point        |
+
+## xtdmacs-code-line-mode
+
+This minor mode tweaks the ```mode-line``` format in order to display :
+- the ```buffer name``` with the customizable face ```mode-line-buffer-id```
+- ```line``` and ```column``` of current point position
+- the ```purcentage``` of the current buffer
+- the current ```function name```, if any, or the current ```buffer directory```
+
+The function name is deduces by ```which-func-mode``` which is customizable with
+the following command:
+
+```C-u M-x customize-mode RET which-func-mode RET```
+
+
+Example:
+
+![xtdmacs-code-line-mode](doc/code-line-mode.png "xtdmacs-code-line-mode")
+
+
+## xtdmacs-code-spell-mode
+
+### Configuration
+
+The mode is affected by the following customizable variables :
+
+- ```M-x customize-variable RET xtdmacs-code-spell-ignore-regexp RET``` : list of
+  regexp partterns to ignore while spelling the buffer.
+
+- ```M-x customize-variable RET xtdmacs-code-spell-max-lines RET``` : maximum
+  allowed buffer lines to automatically run flyspell on buffer.
+
+- ```M-x customize-variable RET ispell-local-dictionary RET``` : default spelling dictionnary
+
+### Faces
+
+- ```M-x customize-face RET flyspell-incorrect RET``` : Face to display detected
+  spelling errors
+- ```M-x customize-face RET flyspell-duplicate RET``` : Face to display detected
+  duplucated words.
+
+### API
+
+- ```M-X flyspell-buffer RET``` :
+- ```M-X xtdmacs-code-spell-change-dictionary RET``` :
+- ```M-X xtdmacs-code-spell-next-word RET``` :
+- ```M-X xtdmacs-code-spell-prev-word RET``` :
+
+
+### Bindings
+
+| Key                           | Effect                                                  |
+|-------------------------------|---------------------------------------------------------|
+| \<ctrl\>+c \<ctrl\>+c         | refresh flyspell for buffer                             |
+| \<ctrl\>+c \<ctrl\>+\<down\>  | change spelling dictonary, saved as file local variable |
+| \<ctrl\>+c \<ctrl\>+\<right\> | interactivaly correct next detected spell error         |
+| \<ctrl\>+c \<ctrl\>+\<left\>  | interactivaly correct previous detected spell error     |
+
+![xtdmacs-code-spell-mode](doc/code-spell-mode.png "xtdmacs-code-spell-mode")
+
+@todo
+
+# Language specific modes
+
+## xtdmacs-code-cpp-mode
+@todo
+
+## xtdmacs-code-java-mode
+@todo
+
+## xtdmacs-code-js-mode
+@todo
+
+## xtdmacs-code-json-mode
+@todo
+
+## xtdmacs-code-lisp-mode
+@todo
+
+## xtdmacs-code-makefile-mode
+@todo
+
+## xtdmacs-code-python-mode
+@todo
+
+## xtdmacs-code-php-mode
+@todo
+
+## xtdmacs-code-web-mode
+@todo
+
+
 <!-- LocalWords:  xtdmacs config alist RET params cd dir env API dev -->
 <!-- LocalWords:  param filename automake's VPATH sudo ctrl goto -->
+<!-- Local Variables: -->
+<!-- ispell-local-dictionary: "american" -->
+<!-- End: -->

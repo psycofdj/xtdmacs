@@ -8,6 +8,8 @@
   (package-initialize))
 
 ;; Custom file definition
+
+
 (setq custom-file "~/.emacs-custom")
 (load custom-file)
 

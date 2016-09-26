@@ -3,12 +3,12 @@
 (eval-when-compile
   (defvar xtdmacs-code-spell-mode-map))
 
-(defcustom xtdmacs-code-spell-on-load
-  t
-  "Maximum number of line in buffer to permit auto-indentation."
+(defcustom xtdmacs-code-spell-max-lines
+  9999999
+  "Maximum number of line in buffer to permit automatic activation of spell."
   :group 'xtdmacs-code-spell
-  :type 'boolean
-  :safe 'booleanp
+  :type 'integer
+  :safe 'integerp
   )
 
 (defcustom xtdmacs-code-spell-ignore-regexp
@@ -67,7 +67,7 @@
     (let* ((start   (line-beginning-position))
            (stop    (line-end-position))
            (content (buffer-substring start stop)))
-      ;; (message "\n\n begin : %d, end : %d, start : %d, stop : %d" begin end start stop)
+      ;; (message "\n\n begin : %d, end : %d, start : %d, stop : %d" begidsdn end start stop)
       ;; (message " begin : %d, end : %d, start : %d, stop : %d" begin end (- begin start) (- end start))
       (xtdmacs-code-spell-check-patterns content (- begin start) (- end start)))))
 
@@ -75,8 +75,10 @@
   (unless (mode-enabled 'flyspell-prog-mode)
     (flyspell-prog-mode))
   (add-hook 'flyspell-incorrect-hook 'xtdmacs-code-spell-ignore-patterns t t)
-  (when xtdmacs-code-spell-on-load
+
+  (when (< (count-lines (point-min) (point-max)) xtdmacs-code-spell-max-lines)
     (flyspell-buffer))
+
   (define-key xtdmacs-code-spell-mode-map (kbd "C-c C-c")       'flyspell-buffer)
   (define-key xtdmacs-code-spell-mode-map (kbd "C-c C-<down>")  'xtdmacs-code-spell-change-dictionary)
   (define-key xtdmacs-code-spell-mode-map (kbd "C-c C-<right>") 'xtdmacs-code-spell-next-word)
