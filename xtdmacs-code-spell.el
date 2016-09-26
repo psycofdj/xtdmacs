@@ -71,11 +71,15 @@
       ;; (message " begin : %d, end : %d, start : %d, stop : %d" begin end (- begin start) (- end start))
       (xtdmacs-code-spell-check-patterns content (- begin start) (- end start)))))
 
-(defun --xtdmacs-code-spell-mode-construct()
-  (unless (mode-enabled 'flyspell-prog-mode)
-    (flyspell-prog-mode))
-  (add-hook 'flyspell-incorrect-hook 'xtdmacs-code-spell-ignore-patterns t t)
 
+(defun --xtdmacs-code-spell-mode-construct(isprog)
+  (if isprog
+      (unless (mode-enabled 'flyspell-prog-mode)
+        (flyspell-prog-mode))
+    (unless (mode-enabled 'flyspell-mode)
+      (flyspell-mode)))
+
+  (add-hook 'flyspell-incorrect-hook 'xtdmacs-code-spell-ignore-patterns t t)
   (when (< (count-lines (point-min) (point-max)) xtdmacs-code-spell-max-lines)
     (flyspell-buffer))
 
@@ -86,19 +90,31 @@
   (message "enabled : xtdmacs-code-spell-mode")
   )
 
-(defun --xtdmacs-code-spell-mode-destroy()
+(defun --xtdmacs-code-spell-mode-destroy(isprog)
   (remove-hook 'flyspell-incorrect-hook 'xtdmacs-code-spell-ignore-patterns t)
-  (when (mode-enabled 'flyspell-prog-mode)
-    (flyspell-prog-mode))
+  (if isprog
+      (when (mode-enabled 'flyspell-prog-mode)
+        (flyspell-prog-mode))
+    (when (mode-enabled 'flyspell-mode)
+      (flyspell-mode)))
   (message "disabled : xtdmacs-code-spell-mode")
   )
 
+
 ;;;###autoload
-(define-minor-mode xtdmacs-code-spell-mode "Spell comments and strings" nil "Code"
+(define-minor-mode xtdmacs-code-spell-prog-mode "On the fly spelling for code modes" nil "Code"
   '()
   (if xtdmacs-code-spell-mode
-      (--xtdmacs-code-spell-mode-construct)
-    (--xtdmacs-code-spell-mode-destroy))
+      (--xtdmacs-code-spell-mode-construct t)
+    (--xtdmacs-code-spell-mode-destroy t))
+  )
+
+;;;###autoload
+(define-minor-mode xtdmacs-code-spell-mode "On the fly spelling for text modes" nil "Code"
+  '()
+  (if xtdmacs-code-spell-mode
+      (--xtdmacs-code-spell-mode-construct nil)
+    (--xtdmacs-code-spell-mode-destroy nil))
   )
 
 

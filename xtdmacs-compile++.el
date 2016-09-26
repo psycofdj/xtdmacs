@@ -88,7 +88,9 @@
   (let* ((makefile   (xtdmacs-compile++-get-nearest-filename "CMakeLists.txt"))
          (builddir   (xtdmacs-compile++-get-nearest-filename ".release")))
     (if (or (equal makefile nil) (equal builddir nil))
-        nil
+        (if buffer-file-name
+            (file-name-directory (file-truename buffer-file-name))
+          default-directory)
       (let*
           ((moduledir  (file-name-directory makefile))
            (rootdir    (file-name-directory builddir))

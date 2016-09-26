@@ -1,33 +1,45 @@
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-generate-toc again -->
 **Table of Contents**
 
+- [Introduction](#introduction)
 - [Install](#install)
+- [Loading modes](#loading-modes)
+    - [Manually](#manually)
+    - [From ~/.emacs:](#from-emacs)
+    - [Using emacs customization](#using-emacs-customization)
+    - [Using xtdmacs-loader](#using-xtdmacs-loader)
 - [General purpose modes](#general-purpose-modes)
     - [xtdmacs-bindings](#xtdmacs-bindings)
-        - [Load](#load)
-            - [Manually](#manually)
-            - [From ~/.emacs:](#from-emacs)
-            - [Using emacs customization](#using-emacs-customization)
         - [ido-mode and swbuff](#ido-mode-and-swbuff)
-            - [Bindings](#bindings)
+            - [Ido Bindings](#ido-bindings)
         - [Other bindings](#other-bindings)
-    - [xtdmacs-loader](#xtdmacs-loader)
     - [xtdmacs-code-mode](#xtdmacs-code-mode)
         - [fill-column-indicator](#fill-column-indicator)
         - [linum-mode](#linum-mode)
         - [Aligning variables and parameters](#aligning-variables-and-parameters)
-        - [Bindings](#bindings)
+        - [Code Bindings](#code-bindings)
     - [xtdmacs-compile++-mode](#xtdmacs-compile-mode)
-        - [Window managment](#window-managment)
+        - [Window management](#window-management)
         - [Behind the curtain](#behind-the-curtain)
-        - [API](#api)
-        - [Configuration](#configuration)
-        - [Bindings](#bindings)
+        - [Compile API](#compile-api)
+        - [Compile Configuration](#compile-configuration)
+        - [Compile Bindings](#compile-bindings)
     - [xtdmacs-code-doxygen-mode](#xtdmacs-code-doxygen-mode)
+        - [Templates](#templates)
+        - [Keyword and faces](#keyword-and-faces)
+        - [Doxymacs Bindings](#doxymacs-bindings)
     - [xtdmacs-code-line-mode](#xtdmacs-code-line-mode)
-    - [xtdmacs-code-spell-mode](#xtdmacs-code-spell-mode)
+    - [xtdmacs-code-spell-mode & xtdmacs-code-spell-prod-mode](#xtdmacs-code-spell-mode--xtdmacs-code-spell-prod-mode)
+        - [Spell Configuration](#spell-configuration)
+        - [Spell Faces](#spell-faces)
+        - [Spell API](#spell-api)
+        - [Spell Bindings](#spell-bindings)
 - [Language specific modes](#language-specific-modes)
     - [xtdmacs-code-cpp-mode](#xtdmacs-code-cpp-mode)
+        - [C++ Configuration](#c-configuration)
+        - [C++ Faces](#c-faces)
+        - [C++ API](#c-api)
+        - [C++ Bindings](#c-bindings)
     - [xtdmacs-code-java-mode](#xtdmacs-code-java-mode)
     - [xtdmacs-code-js-mode](#xtdmacs-code-js-mode)
     - [xtdmacs-code-json-mode](#xtdmacs-code-json-mode)
@@ -39,18 +51,55 @@
 
 <!-- markdown-toc end -->
 
-Xtdmacs provides a bunch a development tools and ready-to-use configuration.
+# Introduction
 
----
+Xtdmacs provides a bunch a development tools and ready-to-use configuration.
+Each feature is bundled as a separate minor mode.
+
 
 # Install
 
+The following procedure downloads latest package version and install xtdmacs and
+all its dependencies in your elpa directory, usually ```~/.emacs.d/elpa```.
+
  ```bash
- wget https://github.com/psycofdj/xtdmacs/archive/0.0.1.tar.gz -O xtdmacs-0.0.1.tar.gz
- tar xvzf xtdmacs-0.0.1.tar.gz
- cd xtdmacs-0.0.1
+ wget https://github.com/psycofdj/xtdmacs/archive/0.0.1.tar.gz -O xtdmacs-0.2.tar.gz
+ tar xvzf xtdmacs-0.2.tar.gz
+ cd xtdmacs-0.2
  make install
  ```
+
+# Loading modes
+
+Each mode provided by xtdmacs can be loaded like every other minor mode. However
+we recommend to use the xtdmacs-loader described below.
+
+## Manually
+
+```M-x xtdmacs-bindings-mode RET```
+
+## From ~/.emacs:
+
+``` (xtdmacs-bindings-mode) ```
+
+## Using emacs customization
+
+```M-x customize-variable RET xtdmacs-bindings-mode RET```
+
+## Using xtdmacs-loader
+
+Xtdmacs' package provides is own minor mode management system. It is very similar
+to default ```minor-mode-alist``` system but allows to define the same mode list
+to several file extensions.
+
+This package helps customizing which minors modes should be loaded for each
+file extensions.
+
+In order modify associations between file extensions are minor modes, the simpler
+is to customize the *xtdmacs-loader-auto-minor-mode-alist* variable.
+
+![alt text](doc/xtdmacs-loader.png "Logo Title Text 1")
+
 
 
 # General purpose modes
@@ -60,32 +109,13 @@ Xtdmacs provides a bunch a development tools and ready-to-use configuration.
 This optional mode setup keyboard bindings for the most commonly used
 features.
 
-### Load
-
-#### Manually
-
-```
-M-x xtdmacs-bindings-mode
-```
-
-#### From ~/.emacs:
-```
-(xtdmacs-bindings-mode)
-```
-
-#### Using emacs customization
-
-```M-x customize-variable RET xtdmacs-bindings-mode```
-
--> change value to on, then apply and save
-
 ### ido-mode and swbuff
 
 The ido (Interactively do things) mode provides an efficient way to navigate among
-openned buffers. Ido display available buffer names in minibuffer and filters the
+opened buffers. Ido display available buffer names in mini-buffer and filters the
 list as you type characters.
 
-swbuffer defines functions to directly cycle among existing buffers. It also
+swbuff defines functions to directly cycle among existing buffers. It also
 provides a way to ignore a list of buffer names in this cycle. Typically,
 users will ignore systems buffers like ```*Help*``` or ```*Message*```.
 
@@ -101,7 +131,7 @@ matches nothing but filtered buffer names.
 Example:
 ![IDO mode](doc/ido-mode.png "IDO mode")
 
-#### Bindings
+#### Ido Bindings
 
 | Key                           | Effect                                |
 |-------------------------------|---------------------------------------|
@@ -121,12 +151,12 @@ Example:
 | \<select\>                    | move cursor to end of line            | \<alt\>+\<plus\>              | enlarge current window's height       |
 | \<alt\>+\<up\>                | move cursor to beginning of buffer    | \<alt\>+\<minus\>             | shrink current window's height        |
 | \<alt\>+\<down\>              | move cursor to end of buffer          | \<alt\>+\<delete\>            | delete previous word                  |
-| \<ctrl\>+\<right\>            | move cursor to end of word            | \<alt\>+s                     | display speedbar                      |
-| \<ctrl\>+\<left\>             | move cursor to beginning of word      | \<alt\>+/                     | autocomplete current word             |
+| \<ctrl\>+\<right\>            | move cursor to end of word            | \<alt\>+s                     | display speed-bar                     |
+| \<ctrl\>+\<left\>             | move cursor to beginning of word      | \<alt\>+/                     | auto-complete current word            |
 | \<ctrl\>+c \<ctrl\>+g         | goto given line                       | \<ctrl\>+l                    | insert current date                   |
 | \<ctrl\>+d                    | search and replace                    | \<alt\>+q                     | comment region                        |
 | \<ctrl\>+f                    | search and replace regexp             | \<alt\>+a                     | uncomment region                      |
-| \<alt\>+d                     | align regexp                          | \<F5\>                        | delete buffer's trailing whitespaces  |
+| \<alt\>+d                     | align regexp                          | \<F5\>                        | delete buffer's trailing white-spaces |
 | \<ctrl\>+x \<right\>          | move cursor to the right window       | \<ctrl\>+\<F11\>              | toggle terminal shell                 |
 | \<ctrl\>+x \<left\>           | move cursor to the left window        |                               |                                       |
 | \<ctrl\>+x \<up\>             | move cursor to the top window         |                               |                                       |
@@ -136,16 +166,6 @@ Example:
 
 
 
-
-## xtdmacs-loader
-
-This package helps customizing which minors modes should be loaded for each
-file extensions.
-
-In order modify associations between file extensions are minor modes, the simpler
-is to customize the *xtdmacs-loader-auto-minor-mode-alist* variable.
-
-![alt text](doc/xtdmacs-loader.png "Logo Title Text 1")
 
 
 
@@ -157,9 +177,9 @@ This minor mode enabled multi-language tools that help editing code.
 ### fill-column-indicator
 
 Displays a vertical line at the specified column number, discouraging (but not
-preventing) the developper to make too long lines.
+preventing) the developer to make too long lines.
 
-The following variables custimize the behaviour of this minor mode :
+The following variables customize the behavior of this minor mode :
 
 | Variable           | Effect                                | Default   |
 |--------------------|---------------------------------------|-----------|
@@ -238,7 +258,7 @@ void foo(void)
 }
 ```
 
-### Bindings
+### Code Bindings
 
 
 | Key                           | Effect                                         |
@@ -257,12 +277,12 @@ void foo(void)
 ## xtdmacs-compile++-mode
 
 This minor mode wraps the default compilation mode in order to provide a set of
-pre-defined compilation commands. It also allows to use function instead of
+predefined compilation commands. It also allows to use function instead of
 plain string as default compile commands.
 
 There is 3 predefined commands : **compile**, **test** and **deploy**
 
-### Window managment
+### Window management
 
 xtdmacs-compile++ dedicates a window to the compilation buffer's preventing
 emacs to use it to open new files. It also sets this window's height according
@@ -272,7 +292,7 @@ automatic scrolling if ```xtdmacs-compile++-scroll-output``` is non nil.
 
 ### Behind the curtain
 
-The predefinied commands are defined in the **xtdmacs-compile++-config-alist**
+The predefined commands are defined in the **xtdmacs-compile++-config-alist**
 variable.
 
 Where **xtdmacs-compile++-config-alist** is an alist of the form
@@ -306,7 +326,7 @@ prompted to user user. Ex :
       ("command"    . (lambda() (xtdmacs-compile++-default-command "compile"))))))
 ```
 
-### API
+### Compile API
 
 **xtdmacs-compile++-mode** provide utility functions that helps building your own
 **get-param** and **command** function values.
@@ -346,7 +366,7 @@ In addition the mode provides some usable default function :
 * **```xtdmacs-compile++-docker-exec-command```** : same as ```xtdmacs-compile++-docker-run-command```
   but with exec sub command (>= docker v1.11)
 
-### Configuration
+### Compile Configuration
 
 Define the number of lines displayed in compilation buffer :
 * ```M-x customize-variable RET xtdmacs-compile++-buffer-height RET```
@@ -395,7 +415,7 @@ cat ~/.dir-locals.el
 
 
 
-### Bindings
+### Compile Bindings
 
 
 | Key                           | Effect                                         |
@@ -417,11 +437,11 @@ cat ~/.dir-locals.el
 
 ## xtdmacs-code-doxygen-mode
 
-This minor mode provides an enchanched initialization of doxymacs minor mode.
+This minor mode provides an enhanced initialization of doxymacs minor mode.
 
 ### Templates
 
-It defines two standard doxumentation templates :
+It defines two standard documentation templates :
 
 - ```xtdmacs-code-doxymacs-template-doxystyle``` : function documentation layout suitable
   for doxygen
@@ -451,7 +471,7 @@ Example:
 ![xtdmacs-code-doxymacs-mode](doc/code-doxymacs.png "xtdmacs-code-doxymacs-mode")
 
 
-### Bindings
+### Doxymacs Bindings
 
 | Key                           | Effect                                         |
 |-------------------------------|------------------------------------------------|
@@ -463,7 +483,7 @@ Example:
 This minor mode tweaks the ```mode-line``` format in order to display :
 - the ```buffer name``` with the customizable face ```mode-line-buffer-id```
 - ```line``` and ```column``` of current point position
-- the ```purcentage``` of the current buffer
+- the ```percentage``` of the current buffer
 - the current ```function name```, if any, or the current ```buffer directory```
 
 The function name is deduces by ```which-func-mode``` which is customizable with
@@ -477,51 +497,144 @@ Example:
 ![xtdmacs-code-line-mode](doc/code-line-mode.png "xtdmacs-code-line-mode")
 
 
-## xtdmacs-code-spell-mode
+## xtdmacs-code-spell-mode & xtdmacs-code-spell-prod-mode
 
-### Configuration
 
-The mode is affected by the following customizable variables :
+This modes are wrapping of ```flyspell-mode``` and ``flyspell-prog-mode```. They
+both detected spelling error in current buffer. The first analyzes all available
+text and the second only analyzes strings and comment.
+
+### Spell Configuration
+
+The modes are affected by the following customizable variables :
 
 - ```M-x customize-variable RET xtdmacs-code-spell-ignore-regexp RET``` : list of
-  regexp partterns to ignore while spelling the buffer.
+  regexp patterns to ignore while spelling the buffer.
 
 - ```M-x customize-variable RET xtdmacs-code-spell-max-lines RET``` : maximum
   allowed buffer lines to automatically run flyspell on buffer.
 
-- ```M-x customize-variable RET ispell-local-dictionary RET``` : default spelling dictionnary
+- ```M-x customize-variable RET ispell-local-dictionary RET``` : default spelling
+  dictionary
 
-### Faces
+
+### Spell Faces
+
+The following faces are used by underlying flyspell mode :
 
 - ```M-x customize-face RET flyspell-incorrect RET``` : Face to display detected
   spelling errors
+
 - ```M-x customize-face RET flyspell-duplicate RET``` : Face to display detected
-  duplucated words.
-
-### API
-
-- ```M-X flyspell-buffer RET``` :
-- ```M-X xtdmacs-code-spell-change-dictionary RET``` :
-- ```M-X xtdmacs-code-spell-next-word RET``` :
-- ```M-X xtdmacs-code-spell-prev-word RET``` :
+  duplicated words.
 
 
-### Bindings
+### Spell API
 
-| Key                           | Effect                                                  |
-|-------------------------------|---------------------------------------------------------|
-| \<ctrl\>+c \<ctrl\>+c         | refresh flyspell for buffer                             |
-| \<ctrl\>+c \<ctrl\>+\<down\>  | change spelling dictonary, saved as file local variable |
-| \<ctrl\>+c \<ctrl\>+\<right\> | interactivaly correct next detected spell error         |
-| \<ctrl\>+c \<ctrl\>+\<left\>  | interactivaly correct previous detected spell error     |
+Useful functions :
+
+- ```M-X flyspell-buffer RET``` : refresh spelling analysis of current buffer
+
+- ```M-X xtdmacs-code-spell-change-dictionary RET``` : changes spelling dictionary
+  and set new dictionary are local file variable.
+
+- ```M-X xtdmacs-code-spell-next-word RET``` : interactively correct the next
+  detected error
+
+- ```M-X xtdmacs-code-spell-prev-word RET``` : interactively correct the previous
+  detected error
+
+### Spell Bindings
+
+| Key                           | Effect                                     |
+|-------------------------------|--------------------------------------------|
+| \<ctrl\>+c \<ctrl\>+c         | ```xtdmacs-code-spell-change-dictionary``` |
+| \<ctrl\>+c \<ctrl\>+\<down\>  | ```flyspell-buffer```                      |
+| \<ctrl\>+c \<ctrl\>+\<right\> | ```xtdmacs-code-spell-next-word```         |
+| \<ctrl\>+c \<ctrl\>+\<left\>  | ```xtdmacs-code-spell-prev-word```         |
+
 
 ![xtdmacs-code-spell-mode](doc/code-spell-mode.png "xtdmacs-code-spell-mode")
-
-@todo
 
 # Language specific modes
 
 ## xtdmacs-code-cpp-mode
+
+This minor modes provides the following features :
+
+- **Fix -std=c++11 enum class** : Aging c++-mode doesn't handle new enum
+  class syntax available in c++11 and leads to a broken indentation. This minor
+  mode fixes ```c-offsets-alist``` and properly indents this structure.
+
+- **Cycling through headers and implementation files** : When editing a c++ header
+  (.hh), we often need to visit the corresponding implementation (.cc) and vice
+  versa. The mode defines a function that searches for file that matches current
+  buffer file name with the correct extension. Another function does the same but
+  creates the file if it doesn't already exist. Because c++ extensions are not
+  well standardized, you can set the list of searched extension in the variable
+  ```xtdmacs-code-cpp-header-extensions``` .
+
+- **Automatic indentation** : The mode offers to automatically indent
+  the whole buffer at open and/or at close. (*)
+
+  (*) Personnal note : Emacs is the best market product for editing and indenting
+  code. Sadly, not everybody uses Emacs and real world code is often poorly indented.
+  This usage is certainly highly arguable but I've been using this in industrial
+  collaborative environment for the past ten years and automatic code indentation
+  solved far more problems than it has created.
+
+- **Keywords** : The mode provides many font-lock additional keywords. Some of them
+  try to catch the new C++11/14 language keywords like ```nullptr``` or
+  ```decltype``` or ```utf-8 strings``` . Others define font-lock rules to color
+  particular naming patterns, allowing to easily distinguish local variables,
+  parameter, class members, const and static attributes without need to use
+  heavy syntax analyzers that often need to actually compile the code.
+
+- **Renaming variables** : The mode defines a function that generated the correct
+  ```query-replace-regexp``` call to rename symbol at point to match one of the
+  prefix rule defined for local variable, parameters or class member syntax
+  coloring.
+
+### C++ Configuration
+
+- ```M-x customize-variable RET xtdmacs-code-cpp-indent-load-auto RET``` : tells
+  if buffer should be automatically indented at load.
+
+- ```M-x customize-variable RET xtdmacs-code-cpp-indent-save-auto RET``` :  tells
+  if buffer should be automatically indented at save.
+
+- ```M-x customize-variable RET xtdmacs-code-cpp-header-extensions RET``` : defines
+  the list of extensions that are searched when cycling through headers and
+  implementation files. Note: this list can have more than two elements, this is
+  useful to handle template implementations or inline definition files like
+  ```.hpp``` or ```.hxx``` .
+
+- ```M-x customize-variable RET xtdmacs-code-cpp-keywords-alist RET``` : alist of
+  keywords and faces to add to font-lock when mode is activated.
+
+### C++ Faces
+
+The mode uses faces defined in ```xtdmacs-code-mode```.
+
+### C++ API
+
+- ```M-x xtdmacs-code-cpp-header-cycle RET``` : cycle through extensions defined
+  by ```xtdmacs-code-cpp-header-extensions``` .
+
+- ```M-x xtdmacs-code-cpp-header-cycle-create RET``` : cycle through extensions defined
+  by ```xtdmacs-code-cpp-header-extensions```, create files if they don't exist.
+
+- ```M-x xtdmacs-code-cpp-rename-variable RET``` : rename variable under cursor. The
+  function prompt interactively for renaming prefix.
+
+### C++ Bindings
+
+| Key                           | Effect                              |
+|-------------------------------|-------------------------------------|
+| \<F12\>                       | ```xtdmacs-code-cpp-header-cycle``` |
+| \<ctrl\>+\<F12\>              | ```xtdmacs-code-cpp-header-cycle``` |
+
+
 @todo
 
 ## xtdmacs-code-java-mode
@@ -549,8 +662,9 @@ The mode is affected by the following customizable variables :
 @todo
 
 
-<!-- LocalWords:  xtdmacs config alist RET params cd dir env API dev -->
-<!-- LocalWords:  param filename automake's VPATH sudo ctrl goto -->
+<!-- LocalWords:  xtdmacs config alist RET params cd dir env API dev toc wget -->
+<!-- LocalWords:  param filename automake's VPATH sudo ctrl goto xvzf ido fci -->
+<!-- LocalWords:  swbuff multi linum doxymacs flyspell --> 
 <!-- Local Variables: -->
 <!-- ispell-local-dictionary: "american" -->
 <!-- End: -->

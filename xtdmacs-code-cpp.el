@@ -148,15 +148,6 @@ See xtdmacs-code-cpp-header-cycle"
       (xtdmacs-code-format-buffer-with-ident)
     ))
 
-(defun --xtdmacs-code-cpp-find-tag(otherwin)
-  (forward-word)
-  (let ((end (point)))
-    (backward-word)
-    (kill-ring-save (point) end)
-    (if otherwin
-        (find-tag-other-window (current-kill 0))
-      (find-tag (current-kill 0))))
-  )
 
 (defun xtdmacs-code-cpp-rename-variable()
   (interactive)
@@ -197,9 +188,7 @@ See xtdmacs-code-cpp-header-cycle"
 ;;;###autoload
 (define-minor-mode xtdmacs-code-cpp-mode "Code for C/C++" nil "Code"
   '(([f12]   . xtdmacs-code-cpp-header-cycle)
-    ([C-f12] . xtdmacs-code-cpp-header-cycle-create)
-    ([f3]    . (lambda() (interactive) (--xtdmacs-code-cpp-find-tag nil)))
-    ([C-f3]  . (lambda() (interactive) (--xtdmacs-code-cpp-find-tag t))))
+    ([C-f12] . xtdmacs-code-cpp-header-cycle-create))
 
   (if xtdmacs-code-cpp-mode
       (--xtdmacs-code-cpp-mode-construct)

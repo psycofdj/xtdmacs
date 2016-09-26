@@ -153,8 +153,6 @@
     (linum-mode t))
   (unless (mode-enabled 'xtdmacs-compile++-mode)
     (xtdmacs-compile++-mode t))
-  (unless (mode-enabled 'xtdmacs-code-spell-mode)
-    (xtdmacs-code-spell-mode t))
   (message "enabled : xtdmacs-code-mode")
   )
 
@@ -163,8 +161,6 @@
     (fci-mode nil))
   (when linum-mode
     (linum-mode nil))
-  (when xtdmacs-code-spell-mode
-    (xtdmacs-code-spell-mode nil))
   (when xtdmacs-compile++-mode
     (xtdmacs-compile++-mode nil))
   (message "disabled : xtdmacs-code-mode")
