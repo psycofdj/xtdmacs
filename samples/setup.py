@@ -5,8 +5,8 @@
 """
 
 __version__ = "0.1"
-__date__ =  "Jul 2007"
-__author__ = "Marcelet Xavier"
+__date__    =  "Jul 2007"
+__author__  = "Marcelet Xavier"
 
 #===========================================================================#
 
@@ -82,7 +82,7 @@ def moduleImport(l_moduleName):
   try:
     l_module = __import__(l_moduleName)
   except ImportError:
-    print "error : unknown target module module '%s'" % l_moduleName
+    print("error : unknown target module module '%s'" % l_moduleName)
     sys.exit(1)
     l_module.name = l_moduleName
     os.chdir(app_path)
@@ -105,7 +105,7 @@ def checkCircularReference(tested, modules, module, tmp):
     tmp.append(module.name)
     for dep in module.installer.dependencies:
       if (dep in tmp) and (dep == tested):
-        print "error : cirucular dependency between modules %s and %s" % (module.name, dep)
+        print("error : cirucular dependency between modules %s and %s" % (module.name, dep))
         sys.exit(1)
       else:
         tmp.append(dep)
@@ -132,7 +132,7 @@ def execute(modules, arg, method, force):
 
 def main():
   if os.getuid() != 0:
-    print "You need to be root to run this script"
+    print("You need to be root to run this script")
     sys.exit(1)
 
     l_parser = _initOptParser()
@@ -159,29 +159,29 @@ def main():
     res = {}
     while len(modules):
       name, module = modules.popitem()
-      print "... check module dependency %s" % name
+      print("... check module dependency %s" % name)
       for dep in module.installer.dependencies:
         if not moduleExists(dep):
-          print "error : requiered dependency %s not found" % dep
+          print("error : requiered dependency %s not found" % dep)
           sys.exit(1)
           if (not dep in res) and not (dep in modules):
-            print "... loading dependency %s" % dep
+            print("... loading dependency %s" % dep)
             m = moduleImport(dep)
             m.installer = m.Installer(options)
             modules[dep] = m
         for dep in module.installer.getReverseDeps():
           if not moduleExists(dep):
-            print "error : requiered reverse dependency %s not found" % dep
+            print("error : requiered reverse dependency %s not found" % dep)
             sys.exit(1)
             if (not dep in res) and not (dep in modules):
-              print "... loading dependency %s" % dep
+              print("... loading dependency %s" % dep)
               m = moduleImport(dep)
               m.installer = m.Installer(options)
               modules[dep] = m
         res[name] = module
     modules = res
     for m in modules.keys():
-      print "... checking circular references for %s" % m
+      print("... checking circular references for %s" % m)
       checkCircularReference(m, modules, modules[m], [])
 
     for m in modules:
@@ -203,4 +203,3 @@ def main():
 
 if __name__ == "__main__":
   main()
-

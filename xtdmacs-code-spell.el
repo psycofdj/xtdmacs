@@ -83,11 +83,9 @@
   (when (< (count-lines (point-min) (point-max)) xtdmacs-code-spell-max-lines)
     (flyspell-buffer))
 
-  (define-key xtdmacs-code-spell-mode-map (kbd "C-c C-c")       'flyspell-buffer)
-  (define-key xtdmacs-code-spell-mode-map (kbd "C-c C-<down>")  'xtdmacs-code-spell-change-dictionary)
-  (define-key xtdmacs-code-spell-mode-map (kbd "C-c C-<right>") 'xtdmacs-code-spell-next-word)
-  (define-key xtdmacs-code-spell-mode-map (kbd "C-c C-<left>")  'xtdmacs-code-spell-prev-word)
-  (message "enabled : xtdmacs-code-spell-mode")
+  (if isprog
+      (message "enabled : xtdmacs-code-spell-prog-mode")
+    (message "enabled : xtdmacs-code-spell-mode"))
   )
 
 (defun --xtdmacs-code-spell-mode-destroy(isprog)
@@ -97,21 +95,28 @@
         (flyspell-prog-mode))
     (when (mode-enabled 'flyspell-mode)
       (flyspell-mode)))
-  (message "disabled : xtdmacs-code-spell-mode")
+  (if isprog
+      (message "disabled : xtdmacs-code-spell-prog-mode")
+    (message "disabled : xtdmacs-code-spell-mode"))
   )
-
 
 ;;;###autoload
 (define-minor-mode xtdmacs-code-spell-prog-mode "On the fly spelling for code modes" nil "Code"
-  '()
-  (if xtdmacs-code-spell-mode
+  `((,(kbd "C-c C-c")       . flyspell-buffer)
+    (,(kbd "C-c C-<down>")  . xtdmacs-code-spell-change-dictionary)
+    (,(kbd "C-c C-<right>") . xtdmacs-code-spell-next-word)
+    (,(kbd "C-c C-<left>")  . xtdmacs-code-spell-prev-word))
+  (if xtdmacs-code-spell-prog-mode
       (--xtdmacs-code-spell-mode-construct t)
     (--xtdmacs-code-spell-mode-destroy t))
   )
 
 ;;;###autoload
 (define-minor-mode xtdmacs-code-spell-mode "On the fly spelling for text modes" nil "Code"
-  '()
+  `((,(kbd "C-c C-c")       . flyspell-buffer)
+    (,(kbd "C-c C-<down>")  . xtdmacs-code-spell-change-dictionary)
+    (,(kbd "C-c C-<right>") . xtdmacs-code-spell-next-word)
+    (,(kbd "C-c C-<left>")  . xtdmacs-code-spell-prev-word))
   (if xtdmacs-code-spell-mode
       (--xtdmacs-code-spell-mode-construct nil)
     (--xtdmacs-code-spell-mode-destroy nil))

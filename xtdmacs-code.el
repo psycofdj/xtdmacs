@@ -1,6 +1,5 @@
 (require 'fill-column-indicator)
 (require 'linum)
-(require 'xtdmacs-code-spell)
 (require 'xtdmacs-compile++)
 
 (defface xtdmacs-code-face-status-ok

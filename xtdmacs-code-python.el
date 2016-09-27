@@ -1,62 +1,21 @@
 (require 'xtdmacs-compile++)
+(require 'package)
 
-(defun xtdmacs-code-python-module-root ()
-  (interactive)
-  (let* ((origin (buffer-file-name))
-         (dir (file-name-directory origin))
-         (dirs (split-string dir "/"))
-         (result nil))
-    (while (and (> (length dirs) 1) (equal nil result))
-      (if (not (file-exists-p (concat (mapconcat 'identity dirs "/") "/__init__.py")))
-          (setq result (directory-file-name (concat (mapconcat 'identity dirs "/"))))
-        (nbutlast dirs 1))
-      )
-    result))
-
-(defun xtdmacs-code-python-pylint-bin ()
-  (let* ((root       (xtdmacs-code-python-module-root))
-         (sourcefile (file-truename buffer-file-name))
-         (rcpath     (concat root "/.pylintrc"))
-         (cmd        (concat "./devtools/xtdlint.py -j4 -f parseable --reports=n")))
-    (if (file-exists-p rcpath)
-        (concat cmd " --rcfile=" rcpath " " sourcefile)
-      (concat cmd " " sourcefile))
-    ))
-
-
-(defun xtdmacs-code-python-test-bin ()
-  (concat "./devtools/unittests.py -v " (file-truename buffer-file-name))
-  )
-
-(defun xtdmacs-code-python-params (mode)
-  (let* ((config (cdr (assoc mode xtdmacs-compile++-config-alist)))
-         (dir  (cdr (assoc "dir"  config)))
-         (bin  (cdr (assoc "bin"  config))))
-    (setcdr (assoc "dir"  config) (read-directory-name  "Directory: "  (funcall-or-value dir)))
-    (setcdr (assoc "bin"  config) (read-from-minibuffer "Command: "    (funcall-or-value bin)))
-    )
-  )
-
-(defun xtdmacs-code-python-command (mode)
-  (let* ((config (cdr (assoc mode xtdmacs-compile++-config-alist)))
-         (dir  (cdr (assoc "dir"  config)))
-         (bin  (cdr (assoc "bin"  config))))
-    (format "cd %s && %s" dir bin))
-  )
-
-;; --------------------------------------------------------------------------- ;
-
-(defcustom xtdmacs-code-python-indent-load-auto
-  nil
-  "Enables code auto-indentation on load."
+(defcustom xtdmacs-code-python-compile-alist
+  '(("compile" .
+     (("dir"        . xtdmacs-code-python-project-root)
+      ("bin"        . xtdmacs-code-python-pylint-bin)
+      ("get-params" . (lambda() (xtdmacs-code-python-params  "compile")))
+      ("command"    . (lambda() (xtdmacs-code-python-command "compile")))))
+    ("test" .
+     (("dir"        . xtdmacs-code-python-project-root)
+      ("bin"        . xtdmacs-code-python-test-bin)
+      ("get-params" . (lambda() (xtdmacs-code-python-params  "test")))
+      ("command"    . (lambda() (xtdmacs-code-python-command "test"))))))
+  "Xtdmacs-Code-python compilation configuration"
   :group 'xtdmacs-code-python
-  :type 'boolean)
-
-(defcustom xtdmacs-code-python-indent-save-auto
-  nil
-  "Enables code auto-indentation on save."
-  :group 'xtdmacs-code-python
-  :type 'boolean
+  :safe '(lambda(p) t)
+  :type '(alist :key-type string :value-type (alist :key-type string :value-type (choice (string) (function))))
   )
 
 (defcustom xtdmacs-code-python-keywords-alist
@@ -84,21 +43,122 @@
   :group 'xtdmacs-code-python
   :safe '(lambda(p) t))
 
-(defcustom xtdmacs-code-python-compile-alist
-  '(("compile" .
-     (("dir"        . xtdmacs-code-python-module-root)
-      ("bin"        . xtdmacs-code-python-pylint-bin)
-      ("get-params" . (lambda() (xtdmacs-code-python-params  "compile")))
-      ("command"    . (lambda() (xtdmacs-code-python-command "compile")))))
-    ("test" .
-     (("dir"        . xtdmacs-code-python-module-root)
-      ("bin"        . xtdmacs-code-python-test-bin)
-      ("get-params" . (lambda() (xtdmacs-code-python-params  "test")))
-      ("command"    . (lambda() (xtdmacs-code-python-command "test"))))))
-  "Xtdmacs-Code-python compilation configuration"
+(defcustom xtdmacs-code-python-indent-load-auto
+  nil
+  "Enables python code auto-indentation on load."
   :group 'xtdmacs-code-python
-  :safe '(lambda(p) t)
-  :type '(alist :key-type string :value-type (alist :key-type string :value-type (choice (string) (function))))
+  :type 'boolean)
+
+(defcustom xtdmacs-code-python-indent-save-auto
+  nil
+  "Enables python code auto-indentation on save."
+  :group 'xtdmacs-code-python
+  :type 'boolean
+  )
+
+(defcustom xtdmacs-code-python-pylint-args 'xtdmacs-code-python-pylint-getargs
+  "Static string or function to use as pylint script argument"
+  :group 'xtdmacs-code-python
+  :type '(choice (string :tag "string")
+                 (function :tag "function"))
+  :safe '(lambda()(t)))
+
+(defcustom xtdmacs-code-python-pylint-bin-path "/usr/local/bin/pylint"
+  "pylint static code checker file path"
+  :group 'xtdmacs-code-python
+  :type 'file
+  :safe 'file-exists-p)
+
+(defcustom xtdmacs-code-python-test-args "-v"
+  "Static string or function to use as test binary arguments"
+  :group 'xtdmacs-code-python
+  :type '(choice (string :tag "string")
+                 (function :tag "function"))
+  :safe '(lambda()(t)))
+
+(defcustom xtdmacs-code-python-test-bin-path nil
+  "Unit test runner file path. If nil, use default xtdmacs runner"
+  :group 'xtdmacs-code-python
+  :type 'file
+  :safe 'file-exists-p)
+
+;; --------------------------------------------------------------------------- ;
+
+(defun xtdmacs-code-python-module-root ()
+  (let* ((origin   (buffer-file-name))
+         (dir      (file-name-directory origin))
+         (dirs     (split-string dir "/"))
+         (last-dir (car (last dirs)))
+         (result   nil))
+
+    (while (and (> (length dirs) 1) (equal nil result))
+      (let* ((init-dir  (concat (mapconcat 'identity dirs "/")))
+             (init-file (concat init-dir "/__init__.py")))
+        (if (not (file-exists-p init-file))
+            (setq result (concat init-dir "/" last-dir)))
+        (setq last-dir (car (last dirs)))
+        (nbutlast dirs 1)))
+
+    (if result
+        result
+      (directory-file-name (buffer-file-name)))
+    )
+  )
+
+(defun xtdmacs-code-python-project-root ()
+  (let* ((module-root (xtdmacs-code-python-module-root))
+         (buffer-dir  (directory-file-name (buffer-file-name))))
+    (if (string= module-root buffer-dir)
+        buffer-dir
+      (file-name-directory (directory-file-name module-root))))
+  )
+
+(defun xtdmacs-code-python-pylint-getargs()
+  (let* ((root       (xtdmacs-code-python-project-root))
+         (rcpath     (concat root "/.pylintrc"))
+         (args       (concat "-j4 -f parseable --reports=n")))
+    (if (file-exists-p rcpath)
+        (concat args " --rcfile=" rcpath)
+      args))
+  )
+
+(defun xtdmacs-code-python-pylint-bin ()
+  (let* ((sourcefile (file-truename buffer-file-name))
+         (args       (funcall-or-value xtdmacs-code-python-pylint-args))
+         (bin        xtdmacs-code-python-pylint-bin-path))
+    (concat bin " " args " " sourcefile))
+  )
+
+(defun xtdmacs-code-python-test-bin ()
+  (concat
+   (if xtdmacs-code-python-test-bin-path
+       xtdmacs-code-python-test-bin-path
+     (concat (xtdmacs-get-install-dir) "/bin/unittests.py"))
+   " "
+   (funcall-or-value xtdmacs-code-python-test-args) " ")
+  )
+
+(defun xtdmacs-code-python-params (type)
+  (let* ((locaval (copy-tree xtdmacs-compile++-config-alist))
+         (config (cdr (assoc type locaval)))
+         (dir (cdr (assoc "dir" config)))
+         (bin (cdr (assoc "bin" config)))
+         (new_dir (read-directory-name  "Directory: " (funcall-or-value dir)))
+         (new_bin (read-from-minibuffer "Binary: "    (funcall-or-value bin))))
+    (progn
+      (setcdr (assoc "dir" config) new_dir)
+      (setcdr (assoc "bin" config) new_bin)
+      (setq xtdmacs-compile++-config-alist locaval))
+    )
+  )
+
+(defun xtdmacs-code-python-command (mode)
+  (let* ((config (cdr (assoc mode xtdmacs-compile++-config-alist)))
+         (dir  (cdr (assoc "dir"  config)))
+         (bin  (cdr (assoc "bin"  config))))
+    (format "cd %s && %s"
+            (funcall-or-value dir)
+            (funcall-or-value bin)))
   )
 
 ;; --------------------------------------------------------------------------- ;
@@ -135,3 +195,7 @@
   )
 
 (provide 'xtdmacs-code-python)
+
+;; Local Variables:
+;; ispell-local-dictionary: "american"
+;; End:

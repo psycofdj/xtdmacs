@@ -107,6 +107,7 @@
  '(xtdmacs-bindings-mode t)
  '(xtdmacs-code-python-default-compile-env "")
  '(xtdmacs-code-python-default-deploy-bin (lambda nil "make doc"))
+ '(xtdmacs-code-python-pylint-args (quote xtdmacs-code-python-pylint-getargs))
  '(xtdmacs-code-spell-ignore-regexp
    (quote
     ("@subsubsection [^ ]+" "@image html [^ ]+" "@subsection [^ ]+" "@param [^ ]+" "@section [^ ]+" "//  LocalWords: *" "@ref [^ ]+" "[^ ]+\\.[^ ]+")))

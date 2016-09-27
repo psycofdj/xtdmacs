@@ -1,4 +1,16 @@
 ;;;###autoload
+(defun xtdmacs-get-install-dir()
+  (package-desc-dir (or
+                     (if (package-desc-p 'xtdmacs) 'xtdmacs)
+                     (cadr (assq 'xtdmacs package-alist))
+                     (let ((built-in (assq 'xtdmacs package--builtins)))
+                       (if built-in
+                           (package--from-builtin built-in)
+                         (cadr (assq 'xtdmacs package-archive-contents))))))
+  )
+
+
+;;;###autoload
 (defun function-or-string-p (value)
   (or (functionp value) (stringp value))
   )

@@ -614,7 +614,8 @@ This minor modes provides the following features :
 
 ### C++ Faces
 
-The mode uses faces defined in ```xtdmacs-code-mode```.
+The mode uses faces defined in ```xtdmacs-code-mode```. See
+```M-x customize-group RET code RET``` .
 
 ### C++ API
 
@@ -635,7 +636,79 @@ The mode uses faces defined in ```xtdmacs-code-mode```.
 | \<ctrl\>+\<F12\>              | ```xtdmacs-code-cpp-header-cycle``` |
 
 
-@todo
+
+## xtdmacs-code-python-mode
+
+- Automatic indentation on load and/or save
+
+- Overrides default xtdmacs-compile++ configuration :
+  - run pylint on current buffer
+  - run unittest script
+
+- Defines font-lock keywords to identify local variables, parameters and class
+  members
+
+- Defines useful functions used in compilation commands
+
+### Python Faces
+
+The mode uses faces defined in ```xtdmacs-code-mode```.
+
+### Python API
+
+- ```xtdmacs-code-python-module-root``` : Returns buffers' most distant parent directory
+  containing a ```___init__.py``` file. If no such file found, returns buffer's
+  file directory.
+
+- ```xtdmacs-code-python-project-root``` : Returns parent directory of module root. If
+  module root couldn't be identified, returns buffer's file directory.
+
+- ```xtdmacs-code-python-pylint-getargs``` : Constructs argument string to pass to
+  compile command. If ```.pylintrc``` is found in project root, includes
+  ```--rcfile=file``` in constructed string.
+
+- ```xtdmacs-code-python-pylint-bin``` : Constructs compile command from
+  ```xtdmacs-code-python-pylint-bin-path``` and
+  ```xtdmacs-code-python-pylint-args``` . The buffer's file path is added as last
+  argument on the returned command.
+
+- ```xtdmacs-code-python-test-bin```  Constructs compile command from
+  ```xtdmacs-code-python-test-bin-path``` and
+  ```xtdmacs-code-python-test-args``` .
+
+- ```xtdmacs-code-python-params``` : same as ```xtdmacs-compile++-default-params```,
+  prompt only for directory and binary command.
+
+- ```xtdmacs-code-python-command``` : same as ```xtdmacs-compile++-default-command```,
+  construct final compile command from parameters built by
+  ```xtdmacs-code-python-params``` .
+
+### Python Configuration
+
+- ```M-x customize-variable RET xtdmacs-code-python-pylint-bin-path RET```
+  - pylint static code checker file path
+
+- ```M-x customize-variable RET xtdmacs-code-python-pylint-args RET```
+  - Static string or function to use as pylint script argument
+
+- ```M-x customize-variable RET xtdmacs-code-python-test-bin-path RET```
+  - Unit test runner file path. If nil, use default xtdmacs runner
+
+- ```M-x customize-variable RET xtdmacs-code-python-test-args RET```
+  - Static string or function to use as test binary arguments
+
+- ```M-x customize-variable RET xtdmacs-code-python-indent-save-auto RET```
+  - Enables python code auto-indentation on save.
+
+- ```M-x customize-variable RET xtdmacs-code-python-indent-load-auto RET```
+  - Enables python code auto-indentation on load.
+
+- ```M-x customize-variable RET xtdmacs-code-python-keywords-alist RET```
+  - List of additional python font-lock keywords
+
+- ```M-x customize-variable RET xtdmacs-code-python-compile-alist RET```
+  - overrides ```xtdmacs-compile++-config-alist```
+
 
 ## xtdmacs-code-java-mode
 @todo
@@ -652,9 +725,6 @@ The mode uses faces defined in ```xtdmacs-code-mode```.
 ## xtdmacs-code-makefile-mode
 @todo
 
-## xtdmacs-code-python-mode
-@todo
-
 ## xtdmacs-code-php-mode
 @todo
 
@@ -664,7 +734,7 @@ The mode uses faces defined in ```xtdmacs-code-mode```.
 
 <!-- LocalWords:  xtdmacs config alist RET params cd dir env API dev toc wget -->
 <!-- LocalWords:  param filename automake's VPATH sudo ctrl goto xvzf ido fci -->
-<!-- LocalWords:  swbuff multi linum doxymacs flyspell --> 
+<!-- LocalWords:  swbuff multi linum doxymacs flyspell -->
 <!-- Local Variables: -->
 <!-- ispell-local-dictionary: "american" -->
 <!-- End: -->

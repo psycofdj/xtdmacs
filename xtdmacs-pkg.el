@@ -17,7 +17,7 @@
     (markdown-mode "20160527.235")
     (json          "1.2"))
 
-  ;;(edmacro       "2.1") vendor deps
+  ;;(edmacro       "2.1")             vendor deps
   ;;(auto-complete-clang-async "0.1") vendor deps
   :url "https://github.com/psycofdj/xtdmacs"
   )
