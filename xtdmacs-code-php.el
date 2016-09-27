@@ -1,8 +1,3 @@
-(defface xtdmacs-code-php-operator
-  '((t (:foreground "#af5fd7")))
-  "arrow operator."
-  :group 'code
-  )
 
 (defcustom xtdmacs-code-php-indent-load-auto
   t
@@ -39,6 +34,13 @@
   :safe '(lambda(p) t))
 
 
+(defface xtdmacs-code-php-operator
+  '((t (:foreground "#af5fd7")))
+  "Used to fontify PHP language operators such as ';' or '::'"
+  :group 'code
+  )
+
+
 (defun --xtdmacs-code-php-mode-construct()
   (font-lock-add-keywords nil xtdmacs-code-php-keywords-alist)
   (c-set-offset   'arglist-cont-nonempty 'c-lineup-arglist)
@@ -70,3 +72,7 @@
 
 
 (provide 'xtdmacs-code-php)
+
+;; Local Variables:
+;; ispell-local-dictionary: "american"
+;; End:

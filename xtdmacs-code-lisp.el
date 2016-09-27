@@ -1,5 +1,14 @@
-(defcustom xtdmacs-code-lisp-indent-load-auto t "Enables code auto-indentation on load." :group 'xtdmacs-code-lisp :type 'boolean :safe 'booleanp)
-(defcustom xtdmacs-code-lisp-indent-save-auto t "Enables code auto-indentation on save." :group 'xtdmacs-code-lisp :type 'boolean :safe 'booleanp)
+(defcustom xtdmacs-code-lisp-indent-load-auto t
+  "Enables code auto-indentation on load."
+  :group 'xtdmacs-code-lisp
+  :type 'boolean
+  :safe 'booleanp)
+
+(defcustom xtdmacs-code-lisp-indent-save-auto t
+  "Enables code auto-indentation on save."
+  :group 'xtdmacs-code-lisp
+  :type 'boolean
+  :safe 'booleanp)
 
 (defun --xtdmacs-code-lisp-mode-construct()
   (when xtdmacs-code-lisp-indent-save-auto

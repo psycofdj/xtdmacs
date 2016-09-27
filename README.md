@@ -40,14 +40,21 @@
         - [C++ Faces](#c-faces)
         - [C++ API](#c-api)
         - [C++ Bindings](#c-bindings)
+    - [xtdmacs-code-python-mode](#xtdmacs-code-python-mode)
+        - [Python Faces](#python-faces)
+        - [Python API](#python-api)
+        - [Python Configuration](#python-configuration)
+    - [xtdmacs-code-php-mode](#xtdmacs-code-php-mode)
+        - [Php Faces](#php-faces)
+        - [Php Configuration](#php-configuration)
+    - [xtdmacs-code-lisp-mode](#xtdmacs-code-lisp-mode)
+        - [Configuration](#configuration)
+    - [xtdmacs-code-json-mode](#xtdmacs-code-json-mode)
+        - [Json Bindings](#json-bindings)
+    - [xtdmacs-code-web-mode](#xtdmacs-code-web-mode)
+    - [xtdmacs-code-makefile-mode](#xtdmacs-code-makefile-mode)
     - [xtdmacs-code-java-mode](#xtdmacs-code-java-mode)
     - [xtdmacs-code-js-mode](#xtdmacs-code-js-mode)
-    - [xtdmacs-code-json-mode](#xtdmacs-code-json-mode)
-    - [xtdmacs-code-lisp-mode](#xtdmacs-code-lisp-mode)
-    - [xtdmacs-code-makefile-mode](#xtdmacs-code-makefile-mode)
-    - [xtdmacs-code-python-mode](#xtdmacs-code-python-mode)
-    - [xtdmacs-code-php-mode](#xtdmacs-code-php-mode)
-    - [xtdmacs-code-web-mode](#xtdmacs-code-web-mode)
 
 <!-- markdown-toc end -->
 
@@ -635,9 +642,9 @@ The mode uses faces defined in ```xtdmacs-code-mode```. See
 | \<F12\>                       | ```xtdmacs-code-cpp-header-cycle``` |
 | \<ctrl\>+\<F12\>              | ```xtdmacs-code-cpp-header-cycle``` |
 
-
-
 ## xtdmacs-code-python-mode
+
+This module provides the following features :
 
 - Automatic indentation on load and/or save
 
@@ -710,26 +717,80 @@ The mode uses faces defined in ```xtdmacs-code-mode```.
   - overrides ```xtdmacs-compile++-config-alist```
 
 
-## xtdmacs-code-java-mode
-@todo
-
-## xtdmacs-code-js-mode
-@todo
-
-## xtdmacs-code-json-mode
-@todo
-
-## xtdmacs-code-lisp-mode
-@todo
-
-## xtdmacs-code-makefile-mode
-@todo
 
 ## xtdmacs-code-php-mode
-@todo
+
+This minor mode provides de following features :
+- Fix anonymous function indentation introduced in PHP 5.3.0
+
+- Sets default doxymacs comment template ```doxymacs-function-comment-template``` to
+  to phpdoc compatible ```xtdmacs-code-doxymacs-template-phpdoc``` .
+  
+- Adds font-lock keywords to identify local variables, parameters and class members
+
+- Fixes syntax table for a better work boundary detection
+
+- Automatic indentation on buffer load and/or save
+
+### Php Faces
+
+In addition to faces defined in ```xtdmacs-code-mode```. (See
+```M-x customize-group RET code RET``` ), the mode defines :
+
+- ```M-x customize-face RET xtdmacs-code-php-operator RET``` : Used to fontify PHP
+  language operators such as ';' or '::'"
+
+
+### Php Configuration
+
+- ```M-x customize-variable RET xtdmacs-code-php-indent-load-auto RET``` : Enables
+  code auto-indentation on buffer load.
+
+- ```M-x customize-variable RET xtdmacs-code-php-indent-save-auto RET``` : Enables
+  code auto-indentation on buffer save.
+
+
+## xtdmacs-code-lisp-mode
+
+### Configuration
+
+- ```M-x customize-variable RET xtdmacs-code-lisp-indent-load-auto RET``` : Enables
+  code auto-indentation on buffer load.
+
+- ```M-x customize-variable RET xtdmacs-code-lisp-indent-save-auto RET``` : Enables
+  code auto-indentation on buffer save.
+
+## xtdmacs-code-json-mode
+
+This mode loads ```yafolding-mode``` and binds a key to ```yafolding-toggle-element```.
+It also sets ```js-indent-level``` to 2.
+
+### Json Bindings
+
+| Key                           | Effect                              |
+|-------------------------------|-------------------------------------|
+| \<ctrl\>+c \<ctrl\>+f         | toggle node under cursor            |
+
 
 ## xtdmacs-code-web-mode
-@todo
+
+The modes override default ```comment-start``` and ```comment-end``` that are
+poorly set by ```web-mode```.
+
+## xtdmacs-code-makefile-mode
+
+Highlights tabs with ```hi-yellow``` face.
+
+## xtdmacs-code-java-mode
+
+This mode simple adds font-lock keywords :
+```M-x customize-variable RET xtdmacs-code-java-keywords-alist RET```
+
+## xtdmacs-code-js-mode
+
+This mode simple adds font-lock keywords :
+```M-x customize-variable RET xtdmacs-code-js-keywords-alist RET```
+
 
 
 <!-- LocalWords:  xtdmacs config alist RET params cd dir env API dev toc wget -->
