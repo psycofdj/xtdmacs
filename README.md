@@ -70,9 +70,10 @@ The following procedure downloads latest package version and install xtdmacs and
 all its dependencies in your elpa directory, usually ```~/.emacs.d/elpa```.
 
  ```bash
- wget https://github.com/psycofdj/xtdmacs/archive/0.0.1.tar.gz -O xtdmacs-0.2.1.tar.gz
- tar xvzf xtdmacs-0.2.1.tar.gz
- cd xtdmacs-0.2.1
+ tag=$(curl -s https://api.github.com/repos/psycofdj/xtdmacs/tags | jq -r '[ .[] | .["name"] ] | sort | last')
+ wget https://github.com/psycofdj/xtdmacs/archive/${tag}.tar.gz -O xtdmacs-${tag}.tar.gz
+ tar xvzf xtdmacs-${tag}.tar.gz
+ cd xtdmacs-${tag}
  make install
  ```
 

@@ -1,4 +1,4 @@
-(define-package "xtdmacs" "0.2.2" "Set of developping tools."
+(define-package "xtdmacs" "0.2.4" "Set of developping tools."
   '((cmake-mode    "20160510.1140")
     (fill-column-indicator "20151030.1233")
     (markdown-toc   "0.1.2")
