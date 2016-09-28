@@ -385,6 +385,16 @@ Enables automatic scrolling of compilation buffer :
 Set commands configuration interactively :
 * ```M-x customize-variable RET xtdmacs-compile++-buffer-local RET```
 
+
+
+The following variables targets one of the ```xtdmacs-compile++-config-alist``` keys.
+Each command is bound to a specific keyboard key.
+- ```M-x customize-variable RET xtdmacs-compile++-command-1 RET``` : default ```compile```
+- ```M-x customize-variable RET xtdmacs-compile++-command-2 RET``` : default ```test```
+- ```M-x customize-variable RET xtdmacs-compile++-command-3 RET``` : default ```deploy```
+- ```M-x customize-variable RET xtdmacs-compile++-command-4 RET``` : default ```deploy```
+- ```M-x customize-variable RET xtdmacs-compile++-command-5 RET``` : default ```iwyu```
+
 Customize mode-line face when compile process is running :
 * ```M-x customize-face RET xtdmacs-compile++-compiling-face RET```
 
@@ -426,21 +436,22 @@ cat ~/.dir-locals.el
 ### Compile Bindings
 
 
-| Key                           | Effect                                         |
-|-------------------------------|------------------------------------------------|
-| \<F6\>                        | run *compile* command                          |
-| \<F7\>                        | run *test* command                             |
-| \<F8\>                        | run *deploy* command                           |
-| \<ctrl\>+\<F6\>               | prompt before running *compile* command        |
-| \<ctrl\>+\<F7\>               | prompt before running *test* command           |
-| \<ctrl\>+\<F8\>               | prompt before running *deploy* command         |
-| \<ctrl\>+\<alt\>+\<F6\>       | run *doc* command                              |
-| \<alt\>+\<F6\>                | kill sunning process                           |
-| \<alt\>+\<F7\>                | kill sunning process                           |
-| \<alt\>+\<F8\>                | kill sunning process                           |
-| \<F9>                         | goto next compile error                        |
-| \<ctrl\>+\<F9>                | goto next compile error or warning             |
-
+| Key                           | Effect                                                                   |
+|-------------------------------|--------------------------------------------------------------------------|
+| \<F6\>                        | run xtdmacs-compile++-command-1 command (*compile*)                      |
+| \<ctrl\>+\<F6\>               | run xtdmacs-compile++-command-1 command (*compile*), interactive version |
+| \<F7\>                        | run xtdmacs-compile++-command-2 command (*test*)                         |
+| \<ctrl\>+\<F7\>               | run xtdmacs-compile++-command-2 command (*test*), interactive version    |
+| \<F8\>                        | run xtdmacs-compile++-command-3 command (*deploy*)                       |
+| \<ctrl\>+\<F8\>               | run xtdmacs-compile++-command-3 command (*deploy*), interactive version  |
+| \<F8\>                        | run xtdmacs-compile++-command-3 command (*deploy*)                       |
+| \<ctrl\>+\<shift\>+\<F6\>     | run xtdmacs-compile++-command-4 command (*deploy*)                       |
+| \<ctrl\>+\<shift\>+\<F7\>     | run xtdmacs-compile++-command-5 command (*iwyu*)                         |
+| \<alt\>+\<F6\>                | kill running process                                                     |
+| \<alt\>+\<F7\>                | kill running process                                                     |
+| \<alt\>+\<F8\>                | kill running process                                                     |
+| \<F9>                         | goto next compile error                                                  |
+| \<ctrl\>+\<F9>                | goto next compile error or warning                                       |
 
 
 ## xtdmacs-code-doxygen-mode
@@ -726,7 +737,7 @@ This minor mode provides de following features :
 
 - Sets default doxymacs comment template ```doxymacs-function-comment-template``` to
   to phpdoc compatible ```xtdmacs-code-doxymacs-template-phpdoc``` .
-  
+
 - Adds font-lock keywords to identify local variables, parameters and class members
 
 - Fixes syntax table for a better work boundary detection
