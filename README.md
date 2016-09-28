@@ -29,7 +29,7 @@
         - [Keyword and faces](#keyword-and-faces)
         - [Doxymacs Bindings](#doxymacs-bindings)
     - [xtdmacs-code-line-mode](#xtdmacs-code-line-mode)
-    - [xtdmacs-code-spell-mode & xtdmacs-code-spell-prod-mode](#xtdmacs-code-spell-mode--xtdmacs-code-spell-prod-mode)
+    - [xtdmacs-code-spell-mode & xtdmacs-code-spell-prog-mode](#xtdmacs-code-spell-mode--xtdmacs-code-spell-prog-mode)
         - [Spell Configuration](#spell-configuration)
         - [Spell Faces](#spell-faces)
         - [Spell API](#spell-api)
@@ -504,7 +504,7 @@ Example:
 ![xtdmacs-code-line-mode](doc/code-line-mode.png "xtdmacs-code-line-mode")
 
 
-## xtdmacs-code-spell-mode & xtdmacs-code-spell-prod-mode
+## xtdmacs-code-spell-mode & xtdmacs-code-spell-prog-mode
 
 
 This modes are wrapping of ```flyspell-mode``` and ``flyspell-prog-mode```. They
