@@ -18,6 +18,7 @@
  '(compilation-context-lines 0)
  '(compilation-scroll-output t)
  '(confirm-kill-emacs nil)
+ '(create-lockfiles nil)
  '(fci-rule-character 9482)
  '(fci-rule-character-color nil)
  '(fci-rule-color "#333333")
