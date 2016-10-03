@@ -1,5 +1,5 @@
-(require 'ansi-color)
-
+;;(require 'ansi-color)
+(require 'xterm-color)
 
 (defface xtdmacs-compile++-compiling-face
   '((t (:background "green")))
@@ -14,11 +14,11 @@
   )
 
 
-(defun xtdmacs-compile++-colorize-compilation-buffer ()
-  (read-only-mode)
-  (ansi-color-apply-on-region (point-min) (point-max))
-  (read-only-mode)
-  )
+;; (defun xtdmacs-compile++-colorize-compilation-buffer ()
+;;   (read-only-mode)
+;;   (ansi-color-apply-on-region (point-min) (point-max))
+;;   (read-only-mode)
+;;   )
 
 (defun xtdmacs-compile++-arrange-windows ()
   (let* ((exists  (member "*compilation*" (mapcar 'buffer-name (mapcar 'window-buffer (window-list))))))
@@ -123,6 +123,7 @@
     ;; we load xtdmacs-compile++ on *compilation* buffer with a configuration that runs
     ;; the current command
     (with-current-buffer "*compilation*"
+      ;;(ansi-color-for-comint-mode-on)
       (face-remap-add-relative 'mode-line          'xtdmacs-compile++-compiling-face)
       (face-remap-add-relative 'mode-line-inactive 'xtdmacs-compile++-compiling-face)
       (face-remap-set-base     'default            nil)
@@ -366,17 +367,31 @@
 ;; --------------------------------------------------------------------------
 
 (defun xtdmacs-compile++-mode-construct()
-  (add-hook 'compilation-filter-hook 'xtdmacs-compile++-colorize-compilation-buffer)
+  ;;(add-hook 'compilation-filter-hook 'xtdmacs-compile++-colorize-compilation-buffer)
   (make-local-variable 'xtdmacs-compile++-config-alist)
   (make-local-variable 'mode-line)
   (make-local-variable 'mode-line-inactive)
   (make-local-variable 'default)
   (message "enabled : xtdmacs-compile++-mode")
   (add-to-list 'compilation-finish-functions 'xtdmacs-compile++-compilation-finished)
+
+  ;; comint install
+  (progn (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
+         (setq comint-output-filter-functions (remove 'ansi-color-process-output comint-output-filter-functions))
+         (setq font-lock-unfontify-region-function 'xterm-color-unfontify-region))
+
   )
 
 (defun xtdmacs-compile++-mode-destroy()
-  (remove-hook 'compilation-filter-hook 'xtdmacs-compile++-colorize-compilation-buffer)
+  ;;(remove-hook 'compilation-filter-hook 'xtdmacs-compile++-colorize-compilation-buffer)
+
+
+
+  ;; comint uninstall
+  (progn (remove-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
+         (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+         (setq font-lock-unfontify-region-function 'font-lock-default-unfontify-region))
+
   (message "disabled : xtdmacs-compile++-mode")
   )
 
