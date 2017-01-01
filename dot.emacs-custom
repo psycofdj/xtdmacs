@@ -143,7 +143,7 @@
      (("\\.md\\'")
       xtdmacs-code-mode xtdmacs-code-spell-mode)
      (("\\.rst\\'")
-      xtdmacs-code-spell-mode)))))
+      xtdmacs-code-mode xtdmacs-code-spell-mode xtdmacs-code-sphinx-mode xtdmacs-code-line-mode)))))
 
 
 ;; ----------------------------------------------------------
