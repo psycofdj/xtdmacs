@@ -6,7 +6,7 @@
   (add-to-list 'package-archives '("melpa"        . "http://melpa.milkbox.net/packages/"))
   (add-to-list 'package-archives '("marmalade"    . "https://marmalade-repo.org/packages/"))
   (package-initialize))
-
+(fset 'xterm-color-unfontify-region 'font-lock-default-unfontify-region)
 ;; Custom file definition
 
 

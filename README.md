@@ -55,6 +55,7 @@
     - [xtdmacs-code-makefile-mode](#xtdmacs-code-makefile-mode)
     - [xtdmacs-code-java-mode](#xtdmacs-code-java-mode)
     - [xtdmacs-code-js-mode](#xtdmacs-code-js-mode)
+    - [xtdmacs-code-sphinx-mode](#xtdmacs-code-sphinx-mode)
 
 <!-- markdown-toc end -->
 
@@ -803,11 +804,20 @@ This mode simple adds font-lock keywords :
 This mode simple adds font-lock keywords :
 ```M-x customize-variable RET xtdmacs-code-js-keywords-alist RET```
 
+## xtdmacs-code-sphinx-mode
 
+This module overrides default xtdmacs-compile++ configuration :
+  - search for directory containing conf.py as compile directory
+  - detects compile command as follow :
+    - ```make html``` when compile directory has a Makefile
+    - ```sphinx-build -M html . build``` otherwise
+
+It also turns off electric-indent-mode which appear to not work very properly
+with reStructuredText.
 
 <!-- LocalWords:  xtdmacs config alist RET params cd dir env API dev toc wget -->
 <!-- LocalWords:  param filename automake's VPATH sudo ctrl goto xvzf ido fci -->
-<!-- LocalWords:  swbuff multi linum doxymacs flyspell -->
+<!-- LocalWords:  swbuff multi linum doxymacs flyspell reStructuredText --> 
 <!-- Local Variables: -->
 <!-- ispell-local-dictionary: "american" -->
 <!-- End: -->

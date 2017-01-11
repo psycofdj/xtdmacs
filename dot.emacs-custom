@@ -131,7 +131,7 @@
      (("\\.json\\'")
       json-mode xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-json-mode)
      (("CMakeLists\\.txt\\'")
-      cmake-mode xtdmacs-code-mode xtdmacs-code-spell-prog-mode)
+      cmake-mode xtdmacs-code-mode xtdmacs-code-spell-prog-mode linum-mode)
      (("\\.groovy\\'")
       groovy-mode xtdmacs-code-mode xtdmacs-code-spell-prog-mode)
      (("Makefile")
@@ -141,7 +141,9 @@
      (("\\.java\\'" "\\.bsh\\'")
       java-mode xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-java-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode)
      (("\\.md\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-mode)))))
+      xtdmacs-code-mode xtdmacs-code-spell-mode)
+     (("\\.rst\\'")
+      xtdmacs-code-mode xtdmacs-code-spell-mode xtdmacs-code-sphinx-mode xtdmacs-code-line-mode)))))
 
 
 ;; ----------------------------------------------------------
