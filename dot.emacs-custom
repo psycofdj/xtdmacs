@@ -138,7 +138,7 @@
       makefile-mode xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-makefile-mode xtdmacs-code-line-mode)
      (("\\.el\\'")
       emacs-lisp-mode xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-lisp-mode xtdmacs-code-line-mode)
-     (("\\.java\\'")
+     (("\\.java\\'" "\\.bsh\\'")
       java-mode xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-java-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode)
      (("\\.md\\'")
       xtdmacs-code-mode xtdmacs-code-spell-mode)))))
