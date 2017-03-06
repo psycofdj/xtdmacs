@@ -152,6 +152,7 @@
     (linum-mode t))
   (unless (mode-enabled 'xtdmacs-compile++-mode)
     (xtdmacs-compile++-mode t))
+  (highlight-regexp " +$" 'trailing-whitespace)
   (message "enabled : xtdmacs-code-mode")
   )
 
