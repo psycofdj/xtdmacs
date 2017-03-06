@@ -47,21 +47,23 @@
   nil
   "Enables python code auto-indentation on load."
   :group 'xtdmacs-code-python
-  :type 'boolean)
+  :type 'boolean
+  :safe 'booleanp)
 
 (defcustom xtdmacs-code-python-indent-save-auto
   nil
   "Enables python code auto-indentation on save."
   :group 'xtdmacs-code-python
   :type 'boolean
+  :safe 'booleanp
   )
 
 (defcustom xtdmacs-code-python-pylint-args 'xtdmacs-code-python-pylint-getargs
   "Static string or function to use as pylint script argument"
   :group 'xtdmacs-code-python
-  :type '(choice (string :tag "string")
+  :type '(choice (string   :tag "string")
                  (function :tag "function"))
-  :safe '(lambda()(t)))
+  :safe '(lambda(p) t))
 
 (defcustom xtdmacs-code-python-pylint-bin-path "/usr/local/bin/pylint"
   "pylint static code checker file path"
@@ -74,7 +76,7 @@
   :group 'xtdmacs-code-python
   :type '(choice (string :tag "string")
                  (function :tag "function"))
-  :safe '(lambda()(t)))
+  :safe '(lambda(p) t))
 
 (defcustom xtdmacs-code-python-test-bin-path nil
   "Unit test runner file path. If nil, use default xtdmacs runner"
@@ -176,7 +178,7 @@
       (add-hook 'before-save-hook 'xtdmacs-code-format-buffer-with-ident t t))
   (if xtdmacs-code-python-indent-load-auto
       (xtdmacs-code-format-buffer-with-ident))
-  (message "disabled : xtdmacs-code-python-mode")
+  (message "enabled : xtdmacs-code-python-mode")
   )
 
 (defun --xtdmacs-code-python-destroy()
@@ -193,6 +195,26 @@
       (--xtdmacs-code-python-construct)
     (--xtdmacs-code-python-destroy))
   )
+
+
+;; --------------------------------------------------------------------------- ;
+
+;;;###autoload
+(put 'xtdmacs-code-python-compile-alist 'safe-local-variable '(lambda(val) t))
+;;;###autoload
+(put 'xtdmacs-code-python-keywords-alist 'safe-local-variable '(lambda(val) t))
+;;;###autoload
+(put 'xtdmacs-code-python-indent-load-auto 'safe-local-variable 'booleanp)
+;;;###autoload
+(put 'xtdmacs-code-python-indent-save-auto 'safe-local-variable 'booleanp)
+;;;###autoload
+(put 'xtdmacs-code-python-pylint-args 'safe-local-variable '(lambda(val) t))
+;;;###autoload
+(put 'xtdmacs-code-python-pylint-bin-path 'safe-local-variable 'file-exists-p)
+;;;###autoload
+(put 'xtdmacs-code-python-test-args 'safe-local-variable '(lambda(val) t))
+;;;###autoload
+(put 'xtdmacs-code-python-test-bin-path 'safe-local-variable 'file-exists-p)
 
 (provide 'xtdmacs-code-python)
 
