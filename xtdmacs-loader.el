@@ -71,7 +71,6 @@ see `auto-mode-alist'."
   )
 
 (xtdmacs-loader-define-major-modes)
-
 (add-hook 'find-file-hook 'xtdmacs-loader-load-minor-modes)
 
 (provide 'xtdmacs-loader)

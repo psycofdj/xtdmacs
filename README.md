@@ -13,6 +13,7 @@
         - [ido-mode and swbuff](#ido-mode-and-swbuff)
             - [Ido Bindings](#ido-bindings)
         - [Other bindings](#other-bindings)
+    - [xtdmacs-find package](#xtdmacs-find-package)
     - [xtdmacs-code-mode](#xtdmacs-code-mode)
         - [fill-column-indicator](#fill-column-indicator)
         - [linum-mode](#linum-mode)
@@ -174,8 +175,32 @@ Example:
 | \<F11\>                       | display menu                          |                               |                                       |
 
 
+## xtdmacs-find package
+
+```xtdmacs-find``` package provides an overload of standard emacs' ```find-file```
+function. This overload allows to open existing files to specified line and
+column number.
 
 
+```elisp
+;;in your .emacs:
+(require 'xtdmacs-find)
+```
+
+```bash
+# open file to line 38
+$ emacs -nw ~/.emacs:38
+
+# open file to line 38 and column 5
+$ emacs -nw ~/.emacs:38:5
+
+# open file normally
+$ emacs -nw ~/.emacs
+
+# open unexisting file
+$ emacs -nw ~/does_not_exist:20:4
+# this will literally open the file named "does_not_exist:20:4"
+```
 
 
 
@@ -817,7 +842,7 @@ with reStructuredText.
 
 <!-- LocalWords:  xtdmacs config alist RET params cd dir env API dev toc wget -->
 <!-- LocalWords:  param filename automake's VPATH sudo ctrl goto xvzf ido fci -->
-<!-- LocalWords:  swbuff multi linum doxymacs flyspell reStructuredText --> 
+<!-- LocalWords:  swbuff multi linum doxymacs flyspell reStructuredText -->
 <!-- Local Variables: -->
 <!-- ispell-local-dictionary: "american" -->
 <!-- End: -->

@@ -29,4 +29,6 @@
   (setq frame-background-mode 'dark))
 
 (require 'flyspell)
+(require 'xtdmacs-find)
 (require 'xtdmacs-loader)
+
