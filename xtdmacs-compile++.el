@@ -14,6 +14,30 @@
   )
 
 
+(defun --xtdmacs-compile++-get-value (type key)
+  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
+         (value  (cdr (assoc key config))))
+    value
+    )
+  )
+
+(defun --xtdmacs-compile++-set-value (type key value &optional global)
+  (let* ((target (if global
+                     xtdmacs-compile++-config-alist
+                   (copy-tree xtdmacs-compile++-config-alist)))
+         (config (cdr (assoc type target))))
+    (setcdr (assoc key config) value)
+    (unless global
+      (setq xtdmacs-compile++-config-alist target))
+    )
+  )
+
+(defun --xtdmacs-compile++-promt-value (type key label)
+  (let* ((value (--xtdmacs-compile++-get-value type key)))
+    (read-from-minibuffer (format "%s : " label) (funcall-or-value value))
+    )
+  )
+
 (defun xtdmacs-compile++-colorize-compilation-buffer ()
   (read-only-mode)
   (ansi-color-apply-on-region (point-min) (point-max))
@@ -138,14 +162,39 @@
     )
   )
 
+
+(defun xtdmacs-compile++-default-params (type)
+  (let* ((dir (--xtdmacs-compile++-promt-value type "dir" "Directory"))
+         (env (--xtdmacs-compile++-promt-value type "env" "Environment"))
+         (bin (--xtdmacs-compile++-promt-value type "bin" "Binary"))
+         (global (y-or-n-p "Default for all buffers ?")))
+    (--xtdmacs-compile++-set-value type "dir" dir global)
+    (--xtdmacs-compile++-set-value type "env" env global)
+    (--xtdmacs-compile++-set-value type "bin" bin global)
+    global)
+  )
+
 (defun xtdmacs-compile++-compose-params (type)
-  (xtdmacs-compile++-default-params type)
-  (let* ((locaval (copy-tree xtdmacs-compile++-config-alist))
-         (config (cdr (assoc type locaval)))
-         (service (cdr (assoc "service" config)))
-         (compose (cdr (assoc "compose-file" config))))
-    (setcdr (assoc "service" config) (read-from-minibuffer "Service: " (funcall-or-value service)))
-    (setq xtdmacs-compile++-config-alist locaval))
+  (let* ((global  (xtdmacs-compile++-default-params type))
+         (compose (--xtdmacs-compile++-promt-value type "compose-file" "Compose-file"))
+         (service (--xtdmacs-compile++-promt-value type "service"      "Service")))
+    (--xtdmacs-compile++-set-value type "compose-file" compose global)
+    (--xtdmacs-compile++-set-value type "service"      service global)
+    global)
+  )
+
+(defun xtdmacs-compile++-docker-exec-params (type)
+  (let* ((global    (xtdmacs-compile++-default-params type))
+         (container (--xtdmacs-compile++-promt-value type "container" "Container")))
+    (--xtdmacs-compile++-set-value type "container" container global)
+    global)
+  )
+
+(defun xtdmacs-compile++-docker-run-params (type)
+  (let* ((global (xtdmacs-compile++-default-params type))
+         (image  (--xtdmacs-compile++-promt-value type "image" "Image")))
+    (--xtdmacs-compile++-set-value type "image" image global)
+    global)
   )
 
 (defun xtdmacs-compile++-compose-run-command (type)
@@ -167,6 +216,17 @@
             (funcall-or-value bin)))
   )
 
+(defun xtdmacs-compile++-default-command (type)
+  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
+         (dir (cdr (assoc "dir" config)))
+         (env (cdr (assoc "env" config)))
+         (bin (cdr (assoc "bin" config))))
+    (format "cd %s && %s %s"
+            (funcall-or-value dir)
+            (funcall-or-value env)
+            (funcall-or-value bin)))
+  )
+
 (defun xtdmacs-compile++-compose-exec-command (type)
   (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
          (dir     (cdr (assoc "dir"     config)))
@@ -179,30 +239,6 @@
             (funcall-or-value compose)
             (funcall-or-value service)
             (funcall-or-value bin)))
-  )
-
-
-
-(defun xtdmacs-compile++-docker-exec-params (type)
-  (xtdmacs-compile++-default-params type)
-  (let* ((locaval   (copy-tree xtdmacs-compile++-config-alist))
-         (config    (cdr (assoc type locaval)))
-         (container (cdr (assoc "container" config))))
-    (setcdr
-     (assoc "container" config)
-     (read-from-minibuffer "Container: " (funcall-or-value container)))
-    (setq xtdmacs-compile++-config-alist locaval))
-  )
-
-(defun xtdmacs-compile++-docker-run-params (type)
-  (xtdmacs-compile++-default-params type)
-  (let* ((locaval   (copy-tree xtdmacs-compile++-config-alist))
-         (config    (cdr (assoc type    locaval)))
-         (image     (cdr (assoc "image" config))))
-    (setcdr
-     (assoc "image" config)
-     (read-from-minibuffer "Image: " (funcall-or-value container)))
-    (setq xtdmacs-compile++-config-alist locaval))
   )
 
 (defun xtdmacs-compile++-docker-exec-command (type)
@@ -218,7 +254,6 @@
             env
             (funcall-or-value bin)))
   )
-
 (defun xtdmacs-compile++-docker-run-command (type)
   (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
          (dir     (cdr (assoc "dir"     config)))
@@ -236,41 +271,6 @@
             (funcall-or-value bin))
     )
   )
-
-(defun xtdmacs-compile++-default-params (type)
-  (let* ((locaval (copy-tree xtdmacs-compile++-config-alist))
-         (config (cdr (assoc type locaval)))
-         (dir (cdr (assoc "dir" config)))
-         (env (cdr (assoc "env" config)))
-         (bin (cdr (assoc "bin" config)))
-         (new_dir (read-directory-name  "Directory: "   (funcall-or-value dir)))
-         (new_env (read-from-minibuffer "Environment: " (funcall-or-value env)))
-         (new_bin (read-from-minibuffer "Binary: "      (funcall-or-value bin)))
-         (global  (y-or-n-p "Default for all buffers ?")))
-    (if global
-        (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist))))
-          (setcdr (assoc "dir" config) new_dir)
-          (setcdr (assoc "env" config) new_env)
-          (setcdr (assoc "bin" config) new_bin))
-      (progn
-        (setcdr (assoc "dir" config) new_dir)
-        (setcdr (assoc "env" config) new_env)
-        (setcdr (assoc "bin" config) new_bin)
-        (setq xtdmacs-compile++-config-alist locaval)))
-    )
-  )
-
-(defun xtdmacs-compile++-default-command (type)
-  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
-         (dir (cdr (assoc "dir" config)))
-         (env (cdr (assoc "env" config)))
-         (bin (cdr (assoc "bin" config))))
-    (format "cd %s && %s %s"
-            (funcall-or-value dir)
-            (funcall-or-value env)
-            (funcall-or-value bin)))
-  )
-
 
 (defcustom xtdmacs-compile++-iwyu-build-directory-name
   ".release"
