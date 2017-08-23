@@ -1,5 +1,6 @@
 ;;(require 'ansi-color)
 (require 'xterm-color)
+(eval-when-compile (require 'subr-x))
 
 (defface xtdmacs-compile++-compiling-face
   '((t (:background "green")))
@@ -13,6 +14,12 @@
   :group 'xtdmacs-compile++
   )
 
+(defun xtdmacs-compile++-get-current-branch ()
+  (let* ((target-dir (file-name-directory (buffer-file-name)))
+         (cmd        (format "cd %s && git rev-parse --abbrev-ref HEAD" target-dir))
+         (raw-branch (shell-command-to-string cmd))
+         (branch     (string-trim raw-branch)))
+    branch))
 
 (defun --xtdmacs-compile++-get-value (type key)
   (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
@@ -242,10 +249,10 @@
   )
 
 (defun xtdmacs-compile++-docker-exec-command (type)
-  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
-         (dir     (cdr (assoc "dir"     config)))
-         (bin     (cdr (assoc "bin"     config)))
-         (env     (cdr (assoc "env"     config)))
+  (let* ((config   (cdr (assoc type xtdmacs-compile++-config-alist)))
+         (dir       (cdr (assoc "dir"       config)))
+         (bin       (cdr (assoc "bin"       config)))
+         (env       (cdr (assoc "env"       config)))
          (container (cdr (assoc "container" config)))
          )
     (format "docker exec -t %s /bin/bash -c 'cd %s && %s %s'"
