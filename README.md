@@ -10,8 +10,8 @@
     - [Using xtdmacs-loader](#using-xtdmacs-loader)
 - [General purpose modes](#general-purpose-modes)
     - [xtdmacs-bindings](#xtdmacs-bindings)
-        - [ido-mode and swbuff](#ido-mode-and-swbuff)
-            - [Ido Bindings](#ido-bindings)
+        - [Ido Bindings](#ido-bindings)
+        - [Cursor Bindings](#cursor-bindings)
         - [Other bindings](#other-bindings)
     - [xtdmacs-find package](#xtdmacs-find-package)
     - [xtdmacs-code-mode](#xtdmacs-code-mode)
@@ -98,8 +98,8 @@ we recommend to use the xtdmacs-loader described below.
 
 ## Using xtdmacs-loader
 
-Xtdmacs' package provides is own minor mode management system. It is very similar
-to default ```minor-mode-alist``` system but allows to define the same mode list
+Xtdmacs' package provides is own minor-mode loading system. It is very similar
+to default ```minor-mode-alist``` but allows to define the same mode list
 to several file extensions.
 
 This package helps customizing which minors modes should be loaded for each
@@ -111,6 +111,13 @@ is to customize the *xtdmacs-loader-auto-minor-mode-alist* variable.
 ![alt text](doc/xtdmacs-loader.png "Logo Title Text 1")
 
 
+To enable Xtdmacs' loader, you need to load package at start up :
+```elisp
+;; in your ~/.emacs
+(require 'xtdmacs-loader)
+```
+
+
 
 # General purpose modes
 
@@ -119,7 +126,7 @@ is to customize the *xtdmacs-loader-auto-minor-mode-alist* variable.
 This optional mode setup keyboard bindings for the most commonly used
 features.
 
-### ido-mode and swbuff
+### Ido Bindings
 
 The ido (Interactively do things) mode provides an efficient way to navigate among
 opened buffers. Ido display available buffer names in mini-buffer and filters the
@@ -141,8 +148,6 @@ matches nothing but filtered buffer names.
 Example:
 ![IDO mode](doc/ido-mode.png "IDO mode")
 
-#### Ido Bindings
-
 | Key                           | Effect                                |
 |-------------------------------|---------------------------------------|
 | \<ctrl\>+x \<ctrl\>+\<down\>  | Run ido interactive buffer selection  |
@@ -153,26 +158,42 @@ Example:
 | \<ctrl\>+x \<ctrl\>+\<left\>  | display previous buffer               |
 
 
+### Cursor Bindings
+
+| Key                           | Effect                                |
+|-------------------------------|---------------------------------------|
+| \<home\>                      | move cursor to beginning of line      |
+| \<select\>                    | move cursor to end of line            |
+| \<alt\>+\<up\>                | move cursor to beginning of buffer    |
+| \<alt\>+\<down\>              | move cursor to end of buffer          |
+| \<ctrl\>+\<left\>             | move cursor to beginning of word      |
+| \<ctrl\>+\<right\>            | move cursor to end of word            |
+| \<ctrl\>+x \<right\>          | move cursor to the right window       |
+| \<ctrl\>+x \<left\>           | move cursor to the left window        |
+| \<ctrl\>+x \<up\>             | move cursor to the top window         |
+| \<ctrl\>+x \<down\>           | move cursor to the bottom window      |
+| \<ctrl\>+x \<ctrl\>+g         | move cursor to given line             |
+
 ### Other bindings
 
-| Key                           | Effect                                | Key                           | Effect                                |
-|-------------------------------|---------------------------------------|-------------------------------|---------------------------------------|
-| \<home\>                      | move cursor to end of line            | \<ctrl\>+x \<ctrl\>+f         | open file                             |
-| \<select\>                    | move cursor to end of line            | \<alt\>+\<plus\>              | enlarge current window's height       |
-| \<alt\>+\<up\>                | move cursor to beginning of buffer    | \<alt\>+\<minus\>             | shrink current window's height        |
-| \<alt\>+\<down\>              | move cursor to end of buffer          | \<alt\>+\<delete\>            | delete previous word                  |
-| \<ctrl\>+\<right\>            | move cursor to end of word            | \<alt\>+s                     | display speed-bar                     |
-| \<ctrl\>+\<left\>             | move cursor to beginning of word      | \<alt\>+/                     | auto-complete current word            |
-| \<ctrl\>+c \<ctrl\>+g         | goto given line                       | \<ctrl\>+l                    | insert current date                   |
-| \<ctrl\>+d                    | search and replace                    | \<alt\>+q                     | comment region                        |
-| \<ctrl\>+f                    | search and replace regexp             | \<alt\>+a                     | uncomment region                      |
-| \<alt\>+d                     | align regexp                          | \<F5\>                        | delete buffer's trailing white-spaces |
-| \<ctrl\>+x \<right\>          | move cursor to the right window       | \<ctrl\>+\<F11\>              | toggle terminal shell                 |
-| \<ctrl\>+x \<left\>           | move cursor to the left window        |                               |                                       |
-| \<ctrl\>+x \<up\>             | move cursor to the top window         |                               |                                       |
-| \<ctrl\>+x \<down\>           | move cursor to the bottom window      |                               |                                       |
-| \<ctrl\>+\<F5\>               | refresh buffer syntax colors          |                               |                                       |
-| \<F11\>                       | display menu                          |                               |                                       |
+| Key                           | Effect                                |
+|-------------------------------|---------------------------------------|
+| \<ctrl\>+x \<ctrl\>+f         | open file                             |
+| \<alt\>+\<plus\>              | enlarge current window's height       |
+| \<alt\>+\<minus\>             | shrink current window's height        |
+| \<alt\>+\<delete\>            | delete previous word                  |
+| \<alt\>+s                     | display speed-bar                     |
+| \<alt\>+/                     | auto-complete current word            |
+| \<ctrl\>+d                    | search and replace                    |
+| \<ctrl\>+f                    | search and replace regexp             |
+| \<alt\>+d                     | align regexp                          |
+| \<ctrl\>+\<F11\>              | toggle terminal shell                 |
+| \<ctrl\>+l                    | insert current date                   |
+| \<alt\>+q                     | comment region                        |
+| \<alt\>+a                     | uncomment region                      |
+| \<F5\>                        | delete buffer's trailing white-spaces |
+| \<ctrl\>+\<F5\>               | refresh buffer syntax colors          |
+| \<F11\>                       | display menu                          |
 
 
 ## xtdmacs-find package
@@ -180,12 +201,6 @@ Example:
 ```xtdmacs-find``` package provides an overload of standard emacs' ```find-file```
 function. This overload allows to open existing files to specified line and
 column number.
-
-
-```elisp
-;;in your .emacs:
-(require 'xtdmacs-find)
-```
 
 ```bash
 # open file to line 38
@@ -200,6 +215,12 @@ $ emacs -nw ~/.emacs
 # open unexisting file
 $ emacs -nw ~/does_not_exist:20:4
 # this will literally open the file named "does_not_exist:20:4"
+```
+
+To enable Xtdmacs' find overload, you need to load package at start up :
+```elisp
+;;in your .emacs:
+(require 'xtdmacs-find)
 ```
 
 
@@ -239,10 +260,18 @@ To customize columns number face :
 M-x customize-face RET linum RET
 ```
 
+More generally, to customize the linum mode :
+```
+M-x customize-group RET linum RET
+```
+
 ### Aligning variables and parameters
 
-xtdmacs-code-mode provides two utility functions : *xtdmacs-code-align-vars* and
-*xtdmacs-code-align-args* that format a specific region to a **matrix readable** form.
+xtdmacs-code-mode provides two utility functions that format a specific region
+to a **matrix readable** form :
+
+- *xtdmacs-code-align-vars*
+- *xtdmacs-code-align-args*
 
 ```c++
 // given this code snippet :
@@ -291,6 +320,18 @@ void foo(void)
   const vector<string> l_contacts = { "foo", "bar" };
 }
 ```
+
+
+This feature relies on a strict parameter and variables naming convention.
+- parameters : ```p[cs]?_.* | p[cs]?[A-Z].*```
+- variables  : ```l[cs]?_.* | l[cs]?[A-Z].*```
+- members    : ```m[cs]?_.* | m[cs]?[A-Z].*```
+- globals    : ```g[cs]?_.* | g[cs]?[A-Z].*```
+- counters   : ```c[cs]?_.* | c[cs]?[A-Z].*```
+
+Note: ```c``` and ```s``` optional modifiers stands respectively for const and static
+
+
 
 ### Code Bindings
 
@@ -377,6 +418,8 @@ prompted to user user. Ex :
 * **```xtdmacs-compile++-guess-directory```** returns the build directory assuming your
   are using automake's VPATH builds in a directory named .release in your project root
 
+* **``xtdmacs-compile++-get-current-branch``** returns (if any) the git branch name of
+  the current buffer
 
 In addition the mode provides some usable default function :
 
@@ -675,10 +718,11 @@ The mode uses faces defined in ```xtdmacs-code-mode```. See
 
 ### C++ Bindings
 
-| Key                           | Effect                              |
-|-------------------------------|-------------------------------------|
-| \<F12\>                       | ```xtdmacs-code-cpp-header-cycle``` |
-| \<ctrl\>+\<F12\>              | ```xtdmacs-code-cpp-header-cycle``` |
+| Key                           | Effect                                                             |
+|-------------------------------|--------------------------------------------------------------------|
+| \<F12\>                       | ```xtdmacs-code-cpp-header-cycle```                                |
+| \<ctrl\>+\<F12\>              | ```xtdmacs-code-cpp-header-cycle``` (create file if dosen't exist) |
+| \<ctrl\>+e                    | ```xtdmacs-code-cpp-rename-variable```                             |
 
 ## xtdmacs-code-python-mode
 
