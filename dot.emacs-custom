@@ -33,6 +33,8 @@
    (quote
     (go-plain-gopath go-godep-gopath go-wgo-gopath go-gb-gopath go-plain-gopath)))
  '(godoc-and-godef-command "godoc")
+ '(gofmt-args nil)
+ '(gofmt-show-errors (quote buffer))
  '(gud-gdb-command-name "/ke/local/toolchain3-x86_64-nptl/tools/bin/gdb -i=mi")
  '(ido-create-new-buffer (quote always))
  '(ido-ignore-buffers (quote ("\\` " "^*")))

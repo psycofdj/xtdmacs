@@ -55,7 +55,6 @@
     ("\C-c\C-g"   . goto-line)
     ("\C-d"       . query-replace)
     ("\C-f"       . query-replace-regexp)
-    ("\M-d"       . align-regexp)
     ([24 down]    . windmove-down)
     ([24 right]   . windmove-right)
     ([24 left]    . windmove-left)

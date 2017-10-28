@@ -23,10 +23,12 @@
   )
 
 (defcustom xtdmacs-code-go-keywords-alist
-  '(("\\<g_[_a-zA-Z0-9]+\\>" .       'xtdmacs-code-face-global-variable)
-    ("\\<l_[_a-zA-Z0-9]+\\>" .       'xtdmacs-code-face-local-variable)
+  '(("\\<g_[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-global-variable)
+    ("\\<l_[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-local-variable)
     ("\\<\\(p_[_a-zA-Z0-9]+\\)\\>" . 'xtdmacs-code-face-param)
-    ("\\<c_[_a-zA-Z0-9]+\\>" .       'xtdmacs-code-face-counter)
+    ("\\<c_[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-counter)
+    ("[&*]"                        . 'font-lock-constant-face)
+    ("self"                        . 'font-lock-keyword-face)
     )
   "List of additional go font-lock keywords"
   :group 'xtdmacs-code-go
@@ -48,6 +50,116 @@
   )
 
 ;; --------------------------------------------------------------------------- ;
+
+
+(defun --xtdmacs-code-go-region-matches (line len min max)
+  (and
+   (<= min line)
+   (>= max (+ line len))))
+
+(defun --xtdmacs-code-go-apply-rcs-patch-region (patch-buffer beg end)
+  "Apply an RCS-formatted diff from PATCH-BUFFER to the current buffer."
+  (let ((target-buffer (current-buffer))
+        (min-line (line-number-at-pos beg))
+        (max-line (line-number-at-pos end))
+        ;; Relative offset between buffer line numbers and line numbers
+        ;; in patch.
+        ;;
+        ;; Line numbers in the patch are based on the source file, so
+        ;; we have to keep an offset when making changes to the
+        ;; buffer.
+        ;;
+        ;; Appending lines decrements the offset (possibly making it
+        ;; negative), deleting lines increments it. This order
+        ;; simplifies the forward-line invocations.
+        (line-offset 0))
+    (save-excursion
+      (with-current-buffer patch-buffer
+        (goto-char (point-min))
+        (while (not (eobp))
+          (unless (looking-at "^\\([ad]\\)\\([0-9]+\\) \\([0-9]+\\)")
+            (error "Invalid rcs patch or internal error in --xtdmacs-code-go-apply-rcs-patch-region"))
+          (forward-line)
+          (let ((action (match-string 1))
+                (from (string-to-number (match-string 2)))
+                (len  (string-to-number (match-string 3))))
+            (cond
+             ((equal action "a")
+              (let ((start (point)))
+                (forward-line len)
+                (if (not (--xtdmacs-code-go-region-matches (- from line-offset) len min-line max-line))
+                    (cl-decf line-offset len)
+                  (let ((text (buffer-substring start (point))))
+                    (with-current-buffer target-buffer
+                      (cl-decf line-offset len)
+                      (goto-char (point-min))
+                      (forward-line (- from len line-offset))
+                      (insert text))))))
+             ((equal action "d")
+              (if (not (--xtdmacs-code-go-region-matches from len min-line max-line))
+                  (cl-incf line-offset len)
+                (with-current-buffer target-buffer
+                  (go--goto-line (- from line-offset))
+                  (cl-incf line-offset len)
+                  (go--delete-whole-line len))))
+             (t
+              (error "Invalid rcs patch or internal error in --xtdmacs-code-go-apply-rcs-patch-region"))))
+          )))))
+
+(defun xtdmacs-code-go-format-region ()
+  "Format the current buffer according to the formatting tool.
+
+The tool used can be set via ‘gofmt-command` (default: gofmt) and additional
+arguments can be set as a list via ‘gofmt-args`."
+  (interactive)
+  (let ((tmpfile (make-temp-file "gofmt" nil ".go"))
+        (patchbuf (get-buffer-create "*Gofmt patch*"))
+        (errbuf (if gofmt-show-errors (get-buffer-create "*Gofmt Errors*")))
+        (coding-system-for-read 'utf-8)
+        (coding-system-for-write 'utf-8)
+        our-gofmt-args)
+
+    (unwind-protect
+        (save-restriction
+          (widen)
+          (if errbuf
+              (with-current-buffer errbuf
+                (setq buffer-read-only nil)
+                (erase-buffer)))
+          (with-current-buffer patchbuf
+            (erase-buffer))
+
+          (write-region nil nil tmpfile)
+
+          (when (and (gofmt--is-goimports-p) buffer-file-name)
+            (setq our-gofmt-args
+                  (append our-gofmt-args
+                          ;; srcdir, despite its name, supports
+                          ;; accepting a full path, and some features
+                          ;; of goimports rely on knowing the full
+                          ;; name.
+                          (list "-srcdir" (file-truename buffer-file-name)))))
+          (setq our-gofmt-args (append our-gofmt-args
+                                       gofmt-args
+                                       (list "-w" tmpfile)))
+          (message "Calling gofmt: %s %s" gofmt-command our-gofmt-args)
+          ;; We're using errbuf for the mixed stdout and stderr output. This
+          ;; is not an issue because gofmt -w does not produce any stdout
+          ;; output in case of success.
+          (if (zerop (apply #'call-process gofmt-command nil errbuf nil our-gofmt-args))
+              (progn
+                (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
+                    (message "Buffer is already gofmted")
+                  (--xtdmacs-code-go-apply-rcs-patch-region patchbuf (region-beginning) (region-end))
+                  (message "Applied gofmt"))
+                (if errbuf (gofmt--kill-error-buffer errbuf)))
+            (message "Could not apply gofmt")
+            (if errbuf (gofmt--process-errors (buffer-file-name) tmpfile errbuf))))
+
+      (kill-buffer patchbuf)
+      (delete-file tmpfile)
+      )))
+
 (defun xtdmacs-code-go-get-project-name ()
   (file-name-nondirectory
    (directory-file-name
@@ -87,7 +199,7 @@
   (if xtdmacs-code-go-indent-save-auto
       (add-hook 'before-save-hook '(lambda() (xtdmacs-code-format-buffer t nil)) t t))
   (if xtdmacs-code-go-indent-load-auto
-      (xtdmacs-code-format-buffer-with-ident))
+      (xtdmacs-code-format-buffer t nil))
 
   (message "enabled : xtdmacs-code-go-mode")
   )
@@ -103,7 +215,9 @@
 
 ;;;###autoload
 (define-minor-mode xtdmacs-code-go-mode
-  "Code for Go" nil "Code" nil
+  "Code for Go" nil "Code"
+  '(("\M-t"    . xtdmacs-code-go-format-region)
+    ("\C-\M-t" . gofmt))
   (if xtdmacs-code-go-mode
       (--xtdmacs-code-go-construct)
     (--xtdmacs-code-go-destroy))

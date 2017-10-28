@@ -2,6 +2,7 @@
 (require 'linum)
 (require 'xtdmacs-compile++)
 (require 'yafolding)
+(require 'align)
 
 (defface xtdmacs-code-face-status-ok
   '((t (:foreground "#005f00")))
@@ -20,7 +21,6 @@
   "status code KEOK."
   :group 'code
   )
-
 (defface xtdmacs-code-face-status-other
   '((t (:foreground "#af5fd7"))) "other status code (KETIMEOUT... etc)."
   :group 'code
@@ -184,17 +184,54 @@
   (interactive)
   (let* ((old-case-fold case-fold-search))
     (setq case-fold-search nil)
-    (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)\\b\\(\\($\\)?[lpmcg][cs]?[cs]?\\([A-Z]\\|_\\).*\\)\\b" 1 1 0)
-    (align-regexp (region-beginning) (region-end) "\\(\\s-*\\):?=" 1 1 0)
-    (setq case-fold-search old-case-fold))
+    (xtdmacs-code-align-regexp (region-beginning) (region-end) "\\(\\s-*\\)\\b\\(\\($\\)?[lpmcg][cs]?[cs]?\\([A-Z]\\|_\\).*\\)\\b" 1 1 0)
+    (xtdmacs-code-align-regexp (region-beginning) (region-end) "\\(\\s-*\\):?=" 1 1 0)
+    (setq case-fold-search old-case-fold)
+    )
   )
 
 ;;;###autoload
 (defun xtdmacs-code-align-args ()
   (interactive)
-  (align-regexp (region-beginning) (region-end) ",\\(\\s-*\\)" 1 1 t)
-  (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)<<" 1 1 t)
-  (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)=>" 1 1 t)
+  (xtdmacs-code-align-regexp (region-beginning) (region-end) ",\\(\\s-*\\)" 1 1 t)
+  (xtdmacs-code-align-regexp (region-beginning) (region-end) "\\(\\s-*\\)<<" 1 1 t)
+  (xtdmacs-code-align-regexp (region-beginning) (region-end) "\\(\\s-*\\)=>" 1 1 t)
+  )
+
+;;;###autoload
+(defun xtdmacs-code-align-regexp (beg end regexp &optional group spacing repeat)
+  (interactive
+   (append
+    (list (region-beginning) (region-end))
+    (if current-prefix-arg
+        (list (read-string "Complex align using regexp: "
+                           "\\(\\s-*\\)")
+              (string-to-number
+               (read-string
+                "Parenthesis group to modify (justify if negative): " "1"))
+              (string-to-number
+               (read-string "Amount of spacing (or column if negative): "
+                            (number-to-string align-default-spacing)))
+              (y-or-n-p "Repeat throughout line? "))
+      (list (concat "\\(\\s-*\\)"
+                    (read-string "Align regexp: "))
+            1 align-default-spacing nil))))
+  (or group (setq group 1))
+  (or spacing (setq spacing align-default-spacing))
+  (let ((tab-mode indent-tabs-mode)
+        (rule (list (list nil (cons 'regexp regexp)
+                          (cons 'group (abs group))
+                          (if (< group 0)
+                              (cons 'justify t)
+                            (cons 'bogus nil))
+                          (if (>= spacing 0)
+                              (cons 'spacing spacing)
+                            (cons 'column (abs spacing)))
+                          (cons 'repeat repeat)))))
+    (setq indent-tabs-mode nil)
+    (align-region beg end 'entire rule nil nil)
+    (setq indent-tabs-mode tab-mode)
+    )
   )
 
 (defun --xtdmacs-code-mode-construct()
@@ -237,6 +274,7 @@
     ([C-f4]       . xtdmacs-code-indent-buffer)
     ([C-f1]       . xtdmacs-code-align-vars)
     ([C-f2]       . xtdmacs-code-align-args)
+    ("\M-d"       . xtdmacs-code-align-regexp)
     )
   (if xtdmacs-code-mode
       (--xtdmacs-code-mode-construct)
