@@ -4,12 +4,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ac-auto-show-menu 0.0)
- '(ac-auto-start 9999)
- '(ac-clang-complete-executable
-   "/home/psyco/.emacs.d/elpa/xtdmacs-0.0.1/bin/clang-complete")
- '(ac-trigger-commands nil)
- '(ac-trigger-key nil)
+ '(ac-auto-show-menu 0.1)
+ '(ac-delay 0.1)
+ '(ac-go-gocode-bin "/home/psyco/dev/cfy-wall/bin/gocode")
+ '(ac-max-width 0.5)
+ '(ac-quick-help-delay 1.5)
  '(add-log-mailing-address nil)
  '(auto-revert-interval 0.5)
  '(auto-save-default nil)
@@ -30,6 +29,9 @@
  '(flyspell-use-meta-tab t)
  '(fringe-mode (quote (nil . 0)) nil (fringe))
  '(global-auto-revert-mode t)
+ '(go-guess-gopath-functions
+   (quote
+    (go-plain-gopath go-godep-gopath go-wgo-gopath go-gb-gopath go-plain-gopath)))
  '(gud-gdb-command-name "/ke/local/toolchain3-x86_64-nptl/tools/bin/gdb -i=mi")
  '(ido-create-new-buffer (quote always))
  '(ido-ignore-buffers (quote ("\\` " "^*")))
@@ -132,7 +134,7 @@
      (("\\.py\\'")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-python-mode xtdmacs-code-line-mode)
      (("\\.h\\'" "\\.c\\'" "\\.cc\\'" "\\.hh\\'" "\\.cpp\\'" "\\.hpp\\'" "\\.hxx\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode xtdmacs-code-doxymacs-mode ac-clang-async-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode xtdmacs-code-doxymacs-mode)
      (("\\.js\\'")
       xtdmacs-code-mode xtdmacs-code-js-mode xtdmacs-code-line-mode xtdmacs-code-spell-prog-mode)
      (("\\.json\\'")
@@ -150,7 +152,9 @@
      (("\\.md\\'")
       xtdmacs-code-mode xtdmacs-code-spell-mode)
      (("\\.rst\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-mode xtdmacs-code-sphinx-mode xtdmacs-code-line-mode)))))
+      xtdmacs-code-mode xtdmacs-code-spell-mode xtdmacs-code-sphinx-mode xtdmacs-code-line-mode)
+     (("\\.go\\'")
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-go-mode)))))
 
 
 ;; ----------------------------------------------------------

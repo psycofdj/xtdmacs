@@ -18,4 +18,8 @@
 ;;;###autoload
 (put 'ac-clang-error-buffer-name 'safe-local-variable 'stringp)
 
+
+
+
+
 (provide 'xtdmacs-vendor)

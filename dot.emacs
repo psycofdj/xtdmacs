@@ -32,3 +32,12 @@
 (require 'xtdmacs-find)
 (require 'xtdmacs-loader)
 
+(require 'go-autocomplete)
+(require 'auto-complete-config)
+
+(defun testload()
+  (interactive)
+  (ac-config-default)
+  (setq ac-sources '(ac-source-go))
+
+  )
