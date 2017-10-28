@@ -1,6 +1,7 @@
 (require 'fill-column-indicator)
 (require 'linum)
 (require 'xtdmacs-compile++)
+(require 'yafolding)
 
 (defface xtdmacs-code-face-status-ok
   '((t (:foreground "#005f00")))
@@ -135,34 +136,94 @@
 
 (defcustom xtdmacs-code-indent-max-lines 2000 "Maximum number of line in buffer to permit auto-indentation." :group 'code :type 'integer)
 
-;; (defadvice linum-update-window (after linum-update-window-after (win) activate)
-;;   "fix linum for scaled text"
-;;   (set-window-margins win
-;;                       (+ 1 (ceiling (* (if (boundp 'text-scale-mode-step)
-;;                                            (expt text-scale-mode-step
-;;                                                  text-scale-mode-amount) 1)
-;;                                        (if (car (window-margins))
-;;                                            (car (window-margins)) 1)
-;;                                        )))))
+;; Remplace les tabulations dans tout le buffer
+;;;###autoload
+(defun xtdmacs-code-untabify-buffer ()
+  (interactive)
+  (untabify 0 (point-max))
+  )
+
+;; Idente le buffer
+;;;###autoload
+(defun xtdmacs-code-indent-buffer ()
+  (interactive)
+  (if (< (count-lines (point-min) (point-max)) xtdmacs-code-indent-max-lines)
+      (indent-region (point-min) (point-max)))
+  )
+
+
+;; Supprime les trailing whitespace et supprime les tabulations
+;;;###autoload
+(defun xtdmacs-code-format-buffer(&optional indent untab)
+  (delete-trailing-whitespace)
+  (if indent
+      (xtdmacs-code-indent-buffer))
+  (if untab
+      (xtdmacs-code-untabify-buffer))
+  )
+
+;; Supprime les trailing whitespace et supprime les tabulations
+;;;###autoload
+(defun xtdmacs-code-format-buffer-without-ident()
+  (interactive)
+  (delete-trailing-whitespace)
+  (xtdmacs-code-untabify-buffer)
+  )
+
+;; Supprime les trailing whitespace, indente et supprime les tabulations
+;;;###autoload
+(defun xtdmacs-code-format-buffer-with-ident()
+  (interactive)
+  (delete-trailing-whitespace)
+  (xtdmacs-code-indent-buffer)
+  (xtdmacs-code-untabify-buffer)
+  )
+
+;;;###autoload
+(defun xtdmacs-code-align-vars ()
+  (interactive)
+  (let* ((old-case-fold case-fold-search))
+    (setq case-fold-search nil)
+    (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)\\b\\(\\($\\)?[lpmcg][cs]?[cs]?\\([A-Z]\\|_\\).*\\)\\b" 1 1 0)
+    (align-regexp (region-beginning) (region-end) "\\(\\s-*\\):?=" 1 1 0)
+    (setq case-fold-search old-case-fold))
+  )
+
+;;;###autoload
+(defun xtdmacs-code-align-args ()
+  (interactive)
+  (align-regexp (region-beginning) (region-end) ",\\(\\s-*\\)" 1 1 t)
+  (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)<<" 1 1 t)
+  (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)=>" 1 1 t)
+  )
 
 (defun --xtdmacs-code-mode-construct()
-  (unless (mode-enabled 'fci-mode)
-    (fci-mode t))
   (unless (mode-enabled 'linum-mode)
     (linum-mode t))
   (unless (mode-enabled 'xtdmacs-compile++-mode)
     (xtdmacs-compile++-mode t))
+  (unless (mode-enabled 'yafolding-mode)
+    (yafolding-mode t)
+    (define-key yafolding-mode-map (kbd "M-f")   'yafolding-toggle-element)
+    (define-key yafolding-mode-map (kbd "C-M-f") 'yafolding-toggle-all)
+    (define-key yafolding-mode-map (kbd "C-e")   'godoc-at-point)
+    (define-key yafolding-mode-map (kbd "M-e")   'godoc)
+    )
+  (unless (mode-enabled 'column-enforce-mode)
+    (column-enforce-mode t))
   (highlight-regexp " +$" 'trailing-whitespace)
   (message "enabled : xtdmacs-code-mode")
   )
 
 (defun --xtdmacs-code-mode-detroy()
-  (when fci-mode
-    (fci-mode nil))
-  (when linum-mode
-    (linum-mode nil))
+  (when column-enforce-mode
+    (column-enforce-mode nil))
+  (when (mode-enabled 'yafolding-mode)
+    (yafolding-mode nil))
   (when xtdmacs-compile++-mode
     (xtdmacs-compile++-mode nil))
+  (when linum-mode
+    (linum-mode nil))
   (message "disabled : xtdmacs-code-mode")
   )
 
@@ -175,7 +236,8 @@
     ([f4]         . indent-region)
     ([C-f4]       . xtdmacs-code-indent-buffer)
     ([C-f1]       . xtdmacs-code-align-vars)
-    ([C-f2]       . xtdmacs-code-align-args))
+    ([C-f2]       . xtdmacs-code-align-args)
+    )
   (if xtdmacs-code-mode
       (--xtdmacs-code-mode-construct)
     (--xtdmacs-code-mode-detroy))

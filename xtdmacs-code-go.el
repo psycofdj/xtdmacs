@@ -6,12 +6,14 @@
 (defcustom xtdmacs-code-go-compile-alist
   '(("compile" .
      (("dir"        . xtdmacs-compile++-get-dir-git)
-      ("bin"        . "go")
+      ("bin"        . xtdmacs-code-go-get-project-name)
+      ("env"        . "")
       ("get-params" . (lambda() (xtdmacs-compile++-default-params  "compile")))
-      ("command"    . (lambda() (xtdmacs-code-go-command "compile")))))
+      ("command"    . (lambda() (xtdmacs-code-go-command           "compile")))))
     ("test" .
      (("dir"        . xtdmacs-compile++-get-dir-git)
-      ("bin"        . "go")
+      ("bin"        . xtdmacs-code-go-get-project-name)
+      ("env"        . "")
       ("get-params" . (lambda() (xtdmacs-compile++-default-params  "test")))
       ("command"    . (lambda() (xtdmacs-code-go-command "test"))))))
   "Xtdmacs-Code-go compilation configuration"
@@ -46,6 +48,11 @@
   )
 
 ;; --------------------------------------------------------------------------- ;
+(defun xtdmacs-code-go-get-project-name ()
+  (file-name-nondirectory
+   (directory-file-name
+    (xtdmacs-compile++-get-dir-git)))
+  )
 
 (defun xtdmacs-code-go-command (mode)
   (let* ((config (cdr (assoc mode xtdmacs-compile++-config-alist)))
@@ -63,18 +70,33 @@
 (defun --xtdmacs-code-go-construct()
   (font-lock-add-keywords nil xtdmacs-code-go-keywords-alist)
 
-  (if xtdmacs-code-go-indent-save-auto
-      (add-hook 'before-save-hook 'xtdmacs-code-format-buffer-with-ident t t))
-  (if xtdmacs-code-go-indent-load-auto
-      (xtdmacs-code-format-buffer-with-ident))
   (ac-config-default)
   (setq ac-sources '(ac-source-go))
+  (go-eldoc-setup)
+  (define-key go-mode-map (kbd "<f12>")   'godef-jump)
+  (define-key go-mode-map (kbd "C-<f12>") 'godef-jump-other-window)
+
+
+  (when (and (boundp 'xtdmacs-compile++-mode) xtdmacs-compile++-mode)
+    (setcdr (assoc "compile" xtdmacs-compile++-config-alist)
+            (cdr (assoc "compile" xtdmacs-code-go-compile-alist)))
+    (setcdr (assoc "test" xtdmacs-compile++-config-alist)
+            (cdr (assoc "test" xtdmacs-code-go-compile-alist)))
+    )
+
+  (if xtdmacs-code-go-indent-save-auto
+      (add-hook 'before-save-hook '(lambda() (xtdmacs-code-format-buffer t nil)) t t))
+  (if xtdmacs-code-go-indent-load-auto
+      (xtdmacs-code-format-buffer-with-ident))
+
   (message "enabled : xtdmacs-code-go-mode")
   )
 
 (defun --xtdmacs-code-go-destroy()
   (if xtdmacs-code-go-indent-save-auto
-      (remove-hook 'before-save-hook 'xtdmacs-code-format-buffer-with-ident))
+      (remove-hook 'before-save-hook '(lambda() (xtdmacs-code-format-buffer t nil))))
+  ;; (when (mode-enabled 'go-mode)
+  ;;   (go-mode nil))
   (font-lock-remove-keywords nil xtdmacs-code-go-keywords-alist)
   (message "disabled : xtdmacs-code-go-mode")
   )
