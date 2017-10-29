@@ -9,18 +9,20 @@
      (("dir"        . xtdmacs-compile++-get-dir-git)
       ("bin"        . xtdmacs-code-go-get-project-name)
       ("env"        . "")
-      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "compile")))
-      ("command"    . (lambda() (xtdmacs-code-go-command           "compile")))))
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-code-go-command)))
     ("test" .
      (("dir"        . xtdmacs-compile++-get-dir-git)
       ("bin"        . xtdmacs-code-go-get-project-name)
       ("env"        . "")
-      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "test")))
-      ("command"    . (lambda() (xtdmacs-code-go-command "test"))))))
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-code-go-command))))
   "Xtdmacs-Code-go compilation configuration"
   :group 'xtdmacs-code-go
   :safe '(lambda(p) t)
-  :type '(alist :key-type string :value-type (alist :key-type string :value-type (choice (string) (function))))
+  :type '(alist :key-type string
+                :value-type (alist :key-type string
+                                   :value-type (choice (string) (function))))
   )
 
 (defcustom xtdmacs-code-go-keywords-alist
@@ -167,11 +169,10 @@ arguments can be set as a list via ‘gofmt-args`."
     (xtdmacs-compile++-get-dir-git)))
   )
 
-(defun xtdmacs-code-go-command (mode)
-  (let* ((config (cdr (assoc mode xtdmacs-compile++-config-alist)))
-         (dir    (cdr (assoc "dir"    config)))
-         (env    (cdr (assoc "env"    config)))
-         (bin    (cdr (assoc "bin"    config))))
+(defun xtdmacs-code-go-command (type &optional mode)
+  (let* ((dir    (--xtdmacs-compile++-get-value mode type "dir"))
+         (env    (--xtdmacs-compile++-get-value mode type "env"))
+         (bin    (--xtdmacs-compile++-get-value mode type "bin")))
     (format "cd %s && %s go build -o %s *.go"
             (funcall-or-value dir)
             (funcall-or-value env)
@@ -182,7 +183,6 @@ arguments can be set as a list via ‘gofmt-args`."
 
 (defun --xtdmacs-code-go-construct()
   (font-lock-add-keywords nil xtdmacs-code-go-keywords-alist)
-
   (ac-config-default)
   (setq ac-sources '(ac-source-go))
   (go-eldoc-setup)
@@ -190,12 +190,8 @@ arguments can be set as a list via ‘gofmt-args`."
   (define-key go-mode-map (kbd "C-<f12>") 'godef-jump-other-window)
 
 
-  (when (and (boundp 'xtdmacs-compile++-mode) xtdmacs-compile++-mode)
-    (setcdr (assoc "compile" xtdmacs-compile++-config-alist)
-            (cdr (assoc "compile" xtdmacs-code-go-compile-alist)))
-    (setcdr (assoc "test" xtdmacs-compile++-config-alist)
-            (cdr (assoc "test" xtdmacs-code-go-compile-alist)))
-    )
+  (when (mode-enabled 'xtdmacs-compile++-mode)
+    (xtdmacs-compile++-register-config "go-mode" xtdmacs-code-go-compile-alist))
 
   (if xtdmacs-code-go-indent-save-auto
       (add-hook 'before-save-hook '(lambda() (xtdmacs-code-format-buffer t nil)) t t))

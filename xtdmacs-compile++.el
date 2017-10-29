@@ -1,4 +1,3 @@
-;;(require 'ansi-color)
 (require 'xterm-color)
 (eval-when-compile (require 'subr-x))
 
@@ -16,7 +15,6 @@
 
 (defcustom xtdmacs-compile++-buffer-height  13     "Command to run to start compilation."                           :group 'xtdmacs-compile++ :type 'integer)
 (defcustom xtdmacs-compile++-scroll-output  t      "Should we scroll compilation buffer while compiling ?"          :group 'xtdmacs-compile++ :type 'boolean)
-(defcustom xtdmacs-compile++-buffer-local   nil    "Set compile/deploy and test paramters buffer local."            :group 'xtdmacs-compile++ :type 'boolean :safe (lambda(val) t))
 
 (defcustom xtdmacs-compile++-iwyu-build-directory-name
   ".release"
@@ -26,36 +24,41 @@
   :safe 'stringp
   )
 
-(defcustom xtdmacs-compile++-config-alist
+(defcustom xtdmacs-compile++-default-config-alist
   '(("compile" .
      (("dir"        . xtdmacs-compile++-guess-directory)
       ("env"        . "")
       ("bin"        . "make -j")
-      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "compile")))
-      ("command"    . (lambda() (xtdmacs-compile++-default-command "compile")))))
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-compile++-default-command)))
     ("test" .
      (("dir"        . xtdmacs-compile++-guess-directory)
       ("env"        . "")
       ("bin"        . "make -j")
-      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "test")))
-      ("command"    . (lambda() (xtdmacs-compile++-default-command "test")))))
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-compile++-default-command)))
     ("deploy" .
      (("dir"        . xtdmacs-compile++-guess-directory)
       ("env"        . "")
       ("bin"        . "make -j")
-      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "deploy")))
-      ("command"    . (lambda() (xtdmacs-compile++-default-command "deploy")))))
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-compile++-default-command)))
     ("syntax" .
      (("dir"        . xtdmacs-compile++-guess-directory)
       ("env"        . "")
       ("bin"        . "make -j")
-      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "syntax")))
-      ("command"    . (lambda() (xtdmacs-compile++-default-command "syntax")))))
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-compile++-default-command)))
     )
   "xtdmacs-compile++ callback configuration"
   :group 'xtdmacs-compile++
   :safe '(lambda(p) t)
   :type '(alist :key 'string :value '(alias :key string :value '(choice (string) (function))))
+  )
+
+
+(defvar xtdmacs-compile++-config-alist
+  `(("debug" . ,xtdmacs-compile++-default-config-alist))
   )
 
 (defcustom xtdmacs-compile++-command-1
@@ -123,6 +126,10 @@
   :safe 'stringp)
 
 
+(defun xtdmacs-compile++-register-config (mode config)
+  (add-to-list 'xtdmacs-compile++-config-alist (cons mode config))
+  )
+
 (defun xtdmacs-compile++-get-current-branch ()
   (let* ((target-dir (file-name-directory (buffer-file-name)))
          (cmd        (format "cd %s && git rev-parse --abbrev-ref HEAD" target-dir))
@@ -130,26 +137,33 @@
          (branch     (string-trim raw-branch)))
     branch))
 
-(defun --xtdmacs-compile++-get-value (type key)
-  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
-         (value  (cdr (assoc key config))))
-    value
-    )
+
+(defun --xtdmacs-compile++-get-config (&optional mode)
+  (let* ((name   (symbol-name (or mode major-mode)))
+         (global (cdr (assoc "default" xtdmacs-compile++-config-alist)))
+         (target (cdr (assoc name      xtdmacs-compile++-config-alist))))
+    (or target global))
   )
 
-(defun --xtdmacs-compile++-set-value (type key value &optional global)
-  (let* ((target (if global
-                     xtdmacs-compile++-config-alist
-                   (copy-tree xtdmacs-compile++-config-alist)))
-         (config (cdr (assoc type target))))
-    (setcdr (assoc key config) value)
-    (unless global
-      (setq xtdmacs-compile++-config-alist target))
-    )
+(defun --xtdmacs-compile++-get-value (mode type key)
+  (let* ((data      (--xtdmacs-compile++-get-config mode))
+         (config    (cdr (assoc type data)))
+         (valueitem (assoc key config))
+         (value     (if valueitem (cdr valueitem) nil)))
+    value)
   )
 
-(defun --xtdmacs-compile++-promt-value (type key label)
-  (let* ((value (--xtdmacs-compile++-get-value type key)))
+(defun --xtdmacs-compile++-set-value (mode type key value)
+  (let* ((data    (--xtdmacs-compile++-get-config mode))
+         (config  (cdr (assoc type data)))
+         (keylist (assoc key config)))
+    (if keylist
+        (setcdr keylist value)
+      (nconc config (list (cons key value)))))
+  )
+
+(defun --xtdmacs-compile++-prompt-value (mode type key label)
+  (let* ((value (--xtdmacs-compile++-get-value mode type key)))
     (read-from-minibuffer (format "%s : " label) (funcall-or-value value))
     )
   )
@@ -241,21 +255,24 @@
 
 ;; --------------------------------------------------------------
 
-
-
-(defun xtdmacs-compile++-run (prompt type)
+(defun xtdmacs-compile++-run (prompt type &optional mode)
   (xtdmacs-compile++-arrange-windows)
 
-  (let* ((config         (cdr (assoc type xtdmacs-compile++-config-alist)))
-         (get-params     (cdr (assoc "get-params" config)))
-         (command        (cdr (assoc "command"    config)))
-         (string-command ""))
+  (let* ((get-params (--xtdmacs-compile++-get-value mode type "get-params"))
+         (command    (--xtdmacs-compile++-get-value mode type "command"))
+         (generated  (--xtdmacs-compile++-get-value mode type "generated")))
 
-    (if prompt
-        (funcall get-params))
+    ;; when interactive requested, prompt params and delete final command
+    (when prompt
+      (funcall get-params type)
+      (setq generated nil))
 
-    (setq string-command (funcall-or-value command))
-    (compile string-command t)
+    (unless generated
+      (setq generated (funcall command type))
+      (--xtdmacs-compile++-set-value mode type "generated" generated))
+
+    ;; run compilation
+    (compile generated t)
 
     ;; we load xtdmacs-compile++ on *compilation* buffer with a configuration that runs
     ;; the current command
@@ -268,55 +285,56 @@
           (message "compile++ alread enabled on *compilation*")
         (progn
           (xtdmacs-compile++-mode t)))
-      (setq-local xtdmacs-compile++-config-alist
-                  `((,type .
-                           (("get-params" . (lambda()))
-                            ("command"    . ,string-command))))))
+      )
     )
   )
 
 
-(defun xtdmacs-compile++-default-params (type)
-  (let* ((dir    (--xtdmacs-compile++-promt-value type "dir" "Directory"))
-         (env    (--xtdmacs-compile++-promt-value type "env" "Environment"))
-         (bin    (--xtdmacs-compile++-promt-value type "bin" "Binary"))
-         (global (y-or-n-p "Default for all buffers ?")))
-    (--xtdmacs-compile++-set-value type "dir" dir global)
-    (--xtdmacs-compile++-set-value type "env" env global)
-    (--xtdmacs-compile++-set-value type "bin" bin global)
-    global)
+
+(defun xtdmacs-compile++-query-local()
+  (if (not (y-or-n-p "Apply to all buffers ? "))
+      (let* ((tmp (copy-tree xtdmacs-compile++-config-alist)))
+        (make-local-variable 'xtdmacs-compile++-config-alist)
+        (setq xtdmacs-compile++-config-alist tmp)
+        ))
   )
 
-(defun xtdmacs-compile++-compose-params (type)
-  (let* ((global  (xtdmacs-compile++-default-params type))
-         (compose (--xtdmacs-compile++-promt-value type "compose-file" "Compose-file"))
-         (service (--xtdmacs-compile++-promt-value type "service"      "Service")))
-    (--xtdmacs-compile++-set-value type "compose-file" compose global)
-    (--xtdmacs-compile++-set-value type "service"      service global)
-    global)
+(defun xtdmacs-compile++-default-params (type &optional mode)
+  (let* ((dir    (--xtdmacs-compile++-prompt-value mode type "dir" "Directory"))
+         (env    (--xtdmacs-compile++-prompt-value mode type "env" "Environment"))
+         (bin    (--xtdmacs-compile++-prompt-value mode type "bin" "Binary")))
+    (xtdmacs-compile++-query-local)
+    (--xtdmacs-compile++-set-value mode type "dir" dir)
+    (--xtdmacs-compile++-set-value mode type "env" env)
+    (--xtdmacs-compile++-set-value mode type "bin" bin))
   )
 
-(defun xtdmacs-compile++-docker-exec-params (type)
-  (let* ((global    (xtdmacs-compile++-default-params type))
-         (container (--xtdmacs-compile++-promt-value type "container" "Container")))
-    (--xtdmacs-compile++-set-value type "container" container global)
-    global)
+(defun xtdmacs-compile++-compose-params (type &optional mode)
+  (xtdmacs-compile++-default-params type mode)
+  (let* ((compose (--xtdmacs-compile++-prompt-value mode type "compose-file" "Compose-file"))
+         (service (--xtdmacs-compile++-prompt-value mode type "service"      "Service")))
+    (--xtdmacs-compile++-set-value mode type "compose-file" compose)
+    (--xtdmacs-compile++-set-value mode type "service"      service))
   )
 
-(defun xtdmacs-compile++-docker-run-params (type)
-  (let* ((global (xtdmacs-compile++-default-params type))
-         (image  (--xtdmacs-compile++-promt-value type "image" "Image")))
-    (--xtdmacs-compile++-set-value type "image" image global)
-    global)
+(defun xtdmacs-compile++-docker-exec-params (type &optional mode)
+  (xtdmacs-compile++-default-params type mode)
+  (let* ((container (--xtdmacs-compile++-prompt-value mode type "container" "Container")))
+    (--xtdmacs-compile++-set-value mode type "container" container))
   )
 
-(defun xtdmacs-compile++-compose-run-command (type)
-  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
-         (dir     (cdr (assoc "dir"     config)))
-         (env     (cdr (assoc "env"     config)))
-         (bin     (cdr (assoc "bin"     config)))
-         (compose (cdr (assoc "compose-file" config)))
-         (service (cdr (assoc "service" config)))
+(defun xtdmacs-compile++-docker-run-params (type &optional mode)
+  (xtdmacs-compile++-default-params type mode)
+  (let* ((image  (--xtdmacs-compile++-prompt-value mode type "image" "Image")))
+    (--xtdmacs-compile++-set-value mode type "image" image))
+  )
+
+(defun xtdmacs-compile++-compose-run-command (type &optional mode)
+  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
+         (env     (--xtdmacs-compile++-get-value mode type "env"))
+         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
+         (compose (--xtdmacs-compile++-get-value mode type "compose-file"))
+         (service (--xtdmacs-compile++-get-value mode type "service"))
          (dockerenv (if (string= env "")
                         env
                       (mapconcat 'identity (mapcar (lambda (el) (concat "-e " el)) (split-string env " ")) " "))))
@@ -329,23 +347,21 @@
             (funcall-or-value bin)))
   )
 
-(defun xtdmacs-compile++-default-command (type)
-  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
-         (dir (cdr (assoc "dir" config)))
-         (env (cdr (assoc "env" config)))
-         (bin (cdr (assoc "bin" config))))
+(defun xtdmacs-compile++-default-command (type &optional mode)
+  (let* ((dir    (--xtdmacs-compile++-get-value mode type "dir"))
+         (env    (--xtdmacs-compile++-get-value mode type "env"))
+         (bin    (--xtdmacs-compile++-get-value mode type "bin")))
     (format "cd %s && %s %s"
             (funcall-or-value dir)
             (funcall-or-value env)
             (funcall-or-value bin)))
   )
 
-(defun xtdmacs-compile++-compose-exec-command (type)
-  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
-         (dir     (cdr (assoc "dir"     config)))
-         (bin     (cdr (assoc "bin"     config)))
-         (compose (cdr (assoc "compose-file" config)))
-         (service (cdr (assoc "service" config))))
+(defun xtdmacs-compile++-compose-exec-command (type &optional mode)
+  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
+         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
+         (compose (--xtdmacs-compile++-get-value mode type "compose-file"))
+         (service (--xtdmacs-compile++-get-value mode type "service")))
     (format "cd %s && SRCDIR=%s docker-compose -f %s exec %s %s"
             (funcall-or-value dir)
             (funcall-or-value dir)
@@ -354,12 +370,11 @@
             (funcall-or-value bin)))
   )
 
-(defun xtdmacs-compile++-docker-exec-command (type)
-  (let* ((config   (cdr (assoc type xtdmacs-compile++-config-alist)))
-         (dir       (cdr (assoc "dir"       config)))
-         (bin       (cdr (assoc "bin"       config)))
-         (env       (cdr (assoc "env"       config)))
-         (container (cdr (assoc "container" config)))
+(defun xtdmacs-compile++-docker-exec-command (type &optional mode)
+  (let* ((dir       (--xtdmacs-compile++-get-value mode type "dir"))
+         (bin       (--xtdmacs-compile++-get-value mode type "bin"))
+         (env       (--xtdmacs-compile++-get-value mode type "env"))
+         (container (--xtdmacs-compile++-get-value mode type "container"))
          )
     (format "docker exec -t %s /bin/bash -c 'cd %s && %s %s'"
             (funcall-or-value container)
@@ -367,12 +382,11 @@
             env
             (funcall-or-value bin)))
   )
-(defun xtdmacs-compile++-docker-run-command (type)
-  (let* ((config (cdr (assoc type xtdmacs-compile++-config-alist)))
-         (dir     (cdr (assoc "dir"     config)))
-         (env     (cdr (assoc "env"     config)))
-         (bin     (cdr (assoc "bin"     config)))
-         (image   (cdr (assoc "image"   config)))
+(defun xtdmacs-compile++-docker-run-command (type &optional mode)
+  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
+         (env     (--xtdmacs-compile++-get-value mode type "env"))
+         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
+         (image   (--xtdmacs-compile++-get-value mode type "image"))
          (dockerenv (if (string= env "")
                         env
                       (mapconcat 'identity (mapcar (lambda (el) (concat "-e " el)) (split-string env " ")) " ")))
@@ -433,13 +447,11 @@
 
 (defun xtdmacs-compile++-mode-construct()
   (add-hook 'compilation-filter-hook 'xtdmacs-compile++-colorize-compilation-buffer)
-  (make-local-variable 'xtdmacs-compile++-config-alist)
   (make-local-variable 'mode-line)
   (make-local-variable 'mode-line-inactive)
   (make-local-variable 'default)
   (message "enabled : xtdmacs-compile++-mode")
   (add-to-list 'compilation-finish-functions 'xtdmacs-compile++-compilation-finished)
-
   ;; comint install
   (progn (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
          (setq comint-output-filter-functions (remove 'ansi-color-process-output comint-output-filter-functions))
@@ -449,14 +461,11 @@
 
 (defun xtdmacs-compile++-mode-destroy()
   (remove-hook 'compilation-filter-hook 'xtdmacs-compile++-colorize-compilation-buffer)
-
-
-
   ;; comint uninstall
-  (progn (remove-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
-         (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
-         (setq font-lock-unfontify-region-function 'font-lock-default-unfontify-region))
-
+  (progn
+    (remove-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
+    (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+    (setq font-lock-unfontify-region-function 'font-lock-default-unfontify-region))
   (message "disabled : xtdmacs-compile++-mode")
   )
 
@@ -491,16 +500,13 @@
 
 ;; --------------------------------------------------------------------------
 
-(make-variable-buffer-local 'xtdmacs-compile++-config-alist)
 
 ;;;###autoload
 (put 'xtdmacs-compile++-buffer-height 'safe-local-variable 'integerp)
 ;;;###autoload
 (put 'xtdmacs-compile++-scroll-output 'safe-local-variable 'booleanp)
 ;;;###autoload
-(put 'xtdmacs-compile++-buffer-local 'safe-local-variable 'booleanp)
-;;;###autoload
-(put 'xtdmacs-compile++-config-alist 'safe-local-variable '(lambda(p) t))
+(put 'xtdmacs-compile++-default-config-alist 'safe-local-variable '(lambda(p) t))
 ;;;###autoload
 (put 'xtdmacs-compile++-iwyu-build-directory-name 'safe-local-variable 'stringp)
 
