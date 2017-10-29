@@ -58,7 +58,7 @@
 
 
 (defvar xtdmacs-compile++-config-alist
-  `(("debug" . ,xtdmacs-compile++-default-config-alist))
+  `(("default" . ,xtdmacs-compile++-default-config-alist))
   )
 
 (defcustom xtdmacs-compile++-command-1

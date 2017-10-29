@@ -4,6 +4,12 @@
 (require 'auto-complete-config)
 (require 'go-mode)
 
+(defface xtdmacs-code-go-face-indent-error
+  '((t (:foreground "color-124" :underline t)))
+  "Indicates spaces instead of tabs for indentation"
+  :group 'xtdmacs-code-go
+  )
+
 (defcustom xtdmacs-code-go-compile-alist
   '(("compile" .
      (("dir"        . xtdmacs-compile++-get-dir-git)
@@ -32,6 +38,7 @@
     ("\\<c_[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-counter)
     ("[&*]"                        . 'font-lock-constant-face)
     ("self"                        . 'font-lock-keyword-face)
+    ("^ +"                         . 'xtdmacs-code-go-face-indent-error)
     )
   "List of additional go font-lock keywords"
   :group 'xtdmacs-code-go

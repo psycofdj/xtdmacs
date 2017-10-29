@@ -216,5 +216,6 @@
  '(xtdmacs-code-doxymacs-keyword-face ((t (:foreground "color-103"))))
  '(xtdmacs-code-doxymacs-parameter-face ((t (:inherit font-lock-string-face :foreground "color-69"))))
  '(xtdmacs-code-doxymacs-variable-face ((t (:inherit xtdmacs-code-face-param))))
+ '(xtdmacs-code-go-face-indent-error ((t (:foreground "color-124" :underline t))))
  '(xtdmacs-compile++-compiling ((t (:background "color-22"))))
  '(xtdmacs-compile++-error-face ((t (:background "color-52")))))
