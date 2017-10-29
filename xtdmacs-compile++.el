@@ -14,6 +14,115 @@
   :group 'xtdmacs-compile++
   )
 
+(defcustom xtdmacs-compile++-buffer-height  13     "Command to run to start compilation."                           :group 'xtdmacs-compile++ :type 'integer)
+(defcustom xtdmacs-compile++-scroll-output  t      "Should we scroll compilation buffer while compiling ?"          :group 'xtdmacs-compile++ :type 'boolean)
+(defcustom xtdmacs-compile++-buffer-local   nil    "Set compile/deploy and test paramters buffer local."            :group 'xtdmacs-compile++ :type 'boolean :safe (lambda(val) t))
+
+(defcustom xtdmacs-compile++-iwyu-build-directory-name
+  ".release"
+  "Standard build directory name"
+  :group 'xtdmacs-compile++
+  :type 'string
+  :safe 'stringp
+  )
+
+(defcustom xtdmacs-compile++-config-alist
+  '(("compile" .
+     (("dir"        . xtdmacs-compile++-guess-directory)
+      ("env"        . "")
+      ("bin"        . "make -j")
+      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "compile")))
+      ("command"    . (lambda() (xtdmacs-compile++-default-command "compile")))))
+    ("test" .
+     (("dir"        . xtdmacs-compile++-guess-directory)
+      ("env"        . "")
+      ("bin"        . "make -j")
+      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "test")))
+      ("command"    . (lambda() (xtdmacs-compile++-default-command "test")))))
+    ("deploy" .
+     (("dir"        . xtdmacs-compile++-guess-directory)
+      ("env"        . "")
+      ("bin"        . "make -j")
+      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "deploy")))
+      ("command"    . (lambda() (xtdmacs-compile++-default-command "deploy")))))
+    ("syntax" .
+     (("dir"        . xtdmacs-compile++-guess-directory)
+      ("env"        . "")
+      ("bin"        . "make -j")
+      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "syntax")))
+      ("command"    . (lambda() (xtdmacs-compile++-default-command "syntax")))))
+    )
+  "xtdmacs-compile++ callback configuration"
+  :group 'xtdmacs-compile++
+  :safe '(lambda(p) t)
+  :type '(alist :key 'string :value '(alias :key string :value '(choice (string) (function))))
+  )
+
+(defcustom xtdmacs-compile++-command-1
+  "compile"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 1"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (const "syntax")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+
+(defcustom xtdmacs-compile++-command-2
+  "test"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 2"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (const "syntax")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+
+(defcustom xtdmacs-compile++-command-3
+  "deploy"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 3"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (const "syntax")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+
+(defcustom xtdmacs-compile++-command-4
+  "deploy"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 4"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (const "syntax")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+
+(defcustom xtdmacs-compile++-command-5
+  "syntax"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 5"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (const "syntax")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+
 (defun xtdmacs-compile++-get-current-branch ()
   (let* ((target-dir (file-name-directory (buffer-file-name)))
          (cmd        (format "cd %s && git rev-parse --abbrev-ref HEAD" target-dir))
@@ -132,9 +241,6 @@
 
 ;; --------------------------------------------------------------
 
-(defcustom xtdmacs-compile++-buffer-height  13     "Command to run to start compilation."                           :group 'xtdmacs-compile++ :type 'integer)
-(defcustom xtdmacs-compile++-scroll-output  t      "Should we scroll compilation buffer while compiling ?"          :group 'xtdmacs-compile++ :type 'boolean)
-(defcustom xtdmacs-compile++-buffer-local   nil    "Set compile/deploy and test paramters buffer local."            :group 'xtdmacs-compile++ :type 'boolean :safe (lambda(val) t))
 
 
 (defun xtdmacs-compile++-run (prompt type)
@@ -171,9 +277,9 @@
 
 
 (defun xtdmacs-compile++-default-params (type)
-  (let* ((dir (--xtdmacs-compile++-promt-value type "dir" "Directory"))
-         (env (--xtdmacs-compile++-promt-value type "env" "Environment"))
-         (bin (--xtdmacs-compile++-promt-value type "bin" "Binary"))
+  (let* ((dir    (--xtdmacs-compile++-promt-value type "dir" "Directory"))
+         (env    (--xtdmacs-compile++-promt-value type "env" "Environment"))
+         (bin    (--xtdmacs-compile++-promt-value type "bin" "Binary"))
          (global (y-or-n-p "Default for all buffers ?")))
     (--xtdmacs-compile++-set-value type "dir" dir global)
     (--xtdmacs-compile++-set-value type "env" env global)
@@ -279,13 +385,6 @@
     )
   )
 
-(defcustom xtdmacs-compile++-iwyu-build-directory-name
-  ".release"
-  "Standard build directory name"
-  :group 'xtdmacs-compile++
-  :type 'string
-  :safe 'stringp
-  )
 
 (defun xtdmacs-compile++-iwyu-find-compile-commands ()
   (let* ((topbuilddir (xtdmacs-compile++-get-nearest-filename xtdmacs-compile++-iwyu-build-directory-name)))
@@ -297,102 +396,6 @@
           (xtdmacs-compile++-iwyu-find-compile-commands)
           (buffer-file-name))
   )
-
-(defcustom xtdmacs-compile++-config-alist
-  '(("compile" .
-     (("dir"        . xtdmacs-compile++-guess-directory)
-      ("env"        . "")
-      ("bin"        . "make -j")
-      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "compile")))
-      ("command"    . (lambda() (xtdmacs-compile++-default-command "compile")))))
-    ("test" .
-     (("dir"        . xtdmacs-compile++-guess-directory)
-      ("env"        . "")
-      ("bin"        . "make -j")
-      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "test")))
-      ("command"    . (lambda() (xtdmacs-compile++-default-command "test")))))
-    ("deploy" .
-     (("dir"        . xtdmacs-compile++-guess-directory)
-      ("env"        . "")
-      ("bin"        . "make -j")
-      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "deploy")))
-      ("command"    . (lambda() (xtdmacs-compile++-default-command "deploy")))))
-    ("iwyu" .
-     (("dir"        . xtdmacs-compile++-guess-directory)
-      ("env"        . "")
-      ("bin"        . xtdmacs-compile++-iwyu-default-cmd)
-      ("get-params" . (lambda() (xtdmacs-compile++-default-params  "iwyu")))
-      ("command"    . (lambda() (xtdmacs-compile++-default-command "iwyu")))))
-    )
-  "xtdmacs-compile++ callback configuration"
-  :group 'xtdmacs-compile++
-  :safe '(lambda(p) t)
-  :type '(alist :key 'string :value '(alias :key string :value '(choice (string) (function))))
-  )
-
-(defcustom xtdmacs-compile++-command-1
-  "compile"
-  "Set the key to use in xtdmacs-compile++-config-alist for command 1"
-  :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "iwyu")
-                 (other :tag "Other" ""))
-  :safe 'stringp)
-
-
-(defcustom xtdmacs-compile++-command-2
-  "test"
-  "Set the key to use in xtdmacs-compile++-config-alist for command 2"
-  :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "iwyu")
-                 (other :tag "Other" ""))
-  :safe 'stringp)
-
-
-(defcustom xtdmacs-compile++-command-3
-  "deploy"
-  "Set the key to use in xtdmacs-compile++-config-alist for command 3"
-  :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "iwyu")
-                 (other :tag "Other" ""))
-  :safe 'stringp)
-
-
-(defcustom xtdmacs-compile++-command-4
-  "deploy"
-  "Set the key to use in xtdmacs-compile++-config-alist for command 4"
-  :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "iwyu")
-                 (other :tag "Other" ""))
-  :safe 'stringp)
-
-
-(defcustom xtdmacs-compile++-command-5
-  "iwyu"
-  "Set the key to use in xtdmacs-compile++-config-alist for command 5"
-  :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "iwyu")
-                 (other :tag "Other" ""))
-  :safe 'stringp)
 
 (defun xtdmacs-compile++-command-1(interactive)
   (xtdmacs-compile++-run interactive xtdmacs-compile++-command-1)

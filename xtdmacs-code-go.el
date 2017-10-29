@@ -2,6 +2,7 @@
 (require 'package)
 (require 'go-autocomplete)
 (require 'auto-complete-config)
+(require 'go-mode)
 
 (defcustom xtdmacs-code-go-compile-alist
   '(("compile" .
@@ -234,10 +235,6 @@ arguments can be set as a list via ‘gofmt-args`."
 (put 'xtdmacs-code-go-indent-load-auto 'safe-local-variable 'booleanp)
 ;;;###autoload
 (put 'xtdmacs-code-go-indent-save-auto 'safe-local-variable 'booleanp)
-;;;###autoload
-(put 'xtdmacs-code-go-pylint-args 'safe-local-variable '(lambda(val) t))
-;;;###autoload
-(put 'xtdmacs-code-go-pylint-bin-path 'safe-local-variable 'file-exists-p)
 ;;;###autoload
 (put 'xtdmacs-code-go-test-args 'safe-local-variable '(lambda(val) t))
 ;;;###autoload

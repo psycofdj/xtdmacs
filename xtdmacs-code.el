@@ -1,8 +1,8 @@
-(require 'fill-column-indicator)
 (require 'linum)
-(require 'xtdmacs-compile++)
 (require 'yafolding)
 (require 'align)
+(require 'xtdmacs-compile++)
+(require 'column-enforce-mode)
 
 (defface xtdmacs-code-face-status-ok
   '((t (:foreground "#005f00")))
