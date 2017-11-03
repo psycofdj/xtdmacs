@@ -32,13 +32,17 @@
   )
 
 (defcustom xtdmacs-code-go-keywords-alist
-  '(("\\<g_[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-global-variable)
-    ("\\<l_[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-local-variable)
-    ("\\<\\(p_[_a-zA-Z0-9]+\\)\\>" . 'xtdmacs-code-face-param)
-    ("\\<c_[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-counter)
-    ("[&*]"                        . 'font-lock-constant-face)
-    ("self"                        . 'font-lock-keyword-face)
-    ("^ +"                         . 'xtdmacs-code-go-face-indent-error)
+  '(("\\<g_[_a-zA-Z0-9]+\\>"           . 'xtdmacs-code-face-global-variable)
+    ("\\<l_[_a-zA-Z0-9]+\\>"           . 'xtdmacs-code-face-local-variable)
+    ("\\<\\(p_[_a-zA-Z0-9]+\\)\\>"     . 'xtdmacs-code-face-param)
+    ("\\<c_[_a-zA-Z0-9]+\\>"           . 'xtdmacs-code-face-counter)
+    ("\\<g[A-Z][_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-global-variable)
+    ("\\<l[A-Z][_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-local-variable)
+    ("\\<\\(p[A-Z][_a-zA-Z0-9]+\\)\\>" . 'xtdmacs-code-face-param)
+    ("\\<c[A-Z][_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-counter)
+    ("[&*]"                            . 'font-lock-constant-face)
+    ("self"                            . 'font-lock-keyword-face)
+    ("^ +"                             . 'xtdmacs-code-go-face-indent-error)
     )
   "List of additional go font-lock keywords"
   :group 'xtdmacs-code-go
