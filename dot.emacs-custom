@@ -5,11 +5,17 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ac-auto-show-menu 0.1)
+ '(ac-auto-start nil)
  '(ac-delay 0.1)
  '(ac-max-width 0.5)
- '(ac-quick-help-delay 1.5)
+ '(ac-menu-height 15)
+ '(ac-quick-help-delay 0.1)
+ '(ac-trigger-commands-on-completing
+   (quote
+    (delete-backward-char backward-delete-char backward-delete-char-untabify autopair-backspace paredit-backward-delete paredit-backward-delete-word self-insert-command)))
  '(ac-trigger-key "M-.")
- '(ac-use-menu-map nil)
+ '(ac-use-comphist nil)
+ '(ac-use-menu-map t)
  '(add-log-mailing-address nil)
  '(auto-revert-interval 0.5)
  '(auto-save-default nil)

@@ -202,6 +202,8 @@ arguments can be set as a list via ‘gofmt-args`."
   (define-key go-mode-map (kbd "<f12>")   'godef-jump)
   (define-key go-mode-map (kbd "C-<f12>") 'godef-jump-other-window)
   (yas-minor-mode)
+  (unless (mode-enabled 'yas-minor-mode)
+    (yas-minor-mode t))
 
   (when (mode-enabled 'xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "go-mode" xtdmacs-code-go-compile-alist))
@@ -219,6 +221,9 @@ arguments can be set as a list via ‘gofmt-args`."
       (remove-hook 'before-save-hook '(lambda() (xtdmacs-code-format-buffer t nil))))
   ;; (when (mode-enabled 'go-mode)
   ;;   (go-mode nil))
+  (when (mode-enabled 'yas-minor-mode)
+    (yas-minor-mode nil))
+
   (font-lock-remove-keywords nil xtdmacs-code-go-keywords-alist)
   (message "disabled : xtdmacs-code-go-mode")
   )
@@ -227,7 +232,8 @@ arguments can be set as a list via ‘gofmt-args`."
 (define-minor-mode xtdmacs-code-go-mode
   "Code for Go" nil "Code"
   '(("\M-t"    . xtdmacs-code-go-format-region)
-    ("\C-\M-t" . gofmt))
+    ("\C-\M-t" . gofmt)
+    ("\M-."    . ac-start))
   (if xtdmacs-code-go-mode
       (--xtdmacs-code-go-construct)
     (--xtdmacs-code-go-destroy))
