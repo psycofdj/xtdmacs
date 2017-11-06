@@ -8,6 +8,8 @@
  '(ac-delay 0.1)
  '(ac-max-width 0.5)
  '(ac-quick-help-delay 1.5)
+ '(ac-trigger-key "M-.")
+ '(ac-use-menu-map nil)
  '(add-log-mailing-address nil)
  '(auto-revert-interval 0.5)
  '(auto-save-default nil)
@@ -28,6 +30,7 @@
  '(flyspell-large-region 2000)
  '(flyspell-use-meta-tab t)
  '(fringe-mode (quote (nil . 0)) nil (fringe))
+ '(global-auto-complete-mode nil)
  '(global-auto-revert-mode t)
  '(go-guess-gopath-functions
    (quote

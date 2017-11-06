@@ -3,6 +3,7 @@
 (require 'go-autocomplete)
 (require 'auto-complete-config)
 (require 'go-mode)
+(require 'yasnippet)
 
 (defface xtdmacs-code-go-face-indent-error
   '((t (:foreground "color-124" :underline t)))
@@ -194,12 +195,13 @@ arguments can be set as a list via ‘gofmt-args`."
 
 (defun --xtdmacs-code-go-construct()
   (font-lock-add-keywords nil xtdmacs-code-go-keywords-alist)
+
   (ac-config-default)
   (setq ac-sources '(ac-source-go))
   (go-eldoc-setup)
   (define-key go-mode-map (kbd "<f12>")   'godef-jump)
   (define-key go-mode-map (kbd "C-<f12>") 'godef-jump-other-window)
-
+  (yas-minor-mode)
 
   (when (mode-enabled 'xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "go-mode" xtdmacs-code-go-compile-alist))
