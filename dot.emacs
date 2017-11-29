@@ -31,9 +31,10 @@
 (require 'flyspell)
 (require 'xtdmacs-find)
 (require 'xtdmacs-loader)
-
 (require 'go-autocomplete)
 (require 'auto-complete-config)
+(require 'yasnippet)
+(add-to-list 'yas-snippet-dirs "~/.emacs.d/elpa/go-snippets-20170831.2302/go-snippets.el")
 
 (defun testload()
   (interactive)

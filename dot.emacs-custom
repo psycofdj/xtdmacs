@@ -48,6 +48,7 @@
  '(ido-create-new-buffer (quote always))
  '(ido-ignore-buffers (quote ("\\` " "^*")))
  '(ido-mode (quote buffer) nil (ido))
+ '(imenu-use-popup-menu t)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(initial-buffer-choice nil)
@@ -168,7 +169,9 @@
      (("\\.rst\\'")
       xtdmacs-code-mode xtdmacs-code-spell-mode xtdmacs-code-sphinx-mode xtdmacs-code-line-mode)
      (("\\.go\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-go-mode flycheck-mode)))))
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-go-mode flycheck-mode)
+     (("\\.tf\\'")
+      xtdmacs-code-mode)))))
 
 
 ;; ----------------------------------------------------------
