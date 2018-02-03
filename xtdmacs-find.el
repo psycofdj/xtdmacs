@@ -27,7 +27,6 @@
           (forward-line (1- line-number))))
       (when column-number
         (with-current-buffer buffer-name
-          (goto-char (point-min))
           (move-to-column column-number)))
       ))
   )
