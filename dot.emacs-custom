@@ -38,6 +38,8 @@
  '(fringe-mode (quote (nil . 0)) nil (fringe))
  '(global-auto-complete-mode nil)
  '(global-auto-revert-mode t)
+ '(global-rudel-header-subscriptions-mode t)
+ '(global-rudel-minor-mode t)
  '(go-guess-gopath-functions
    (quote
     (go-plain-gopath go-godep-gopath go-wgo-gopath go-gb-gopath go-plain-gopath)))
@@ -71,11 +73,17 @@
      " %-")))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
+ '(pop-up-windows t)
  '(python-check-command "pylint")
  '(python-continuation-offset 2)
  '(python-indent 2)
  '(python-indent-guess-indent-offset nil)
  '(python-indent-offset 2)
+ '(rcirc-server-alist
+   (quote
+    (("floobits.com" :nick "psycofdj" :port 6697 :user-name "psycofdj" :password "7q15flet083q9fqp79b4fw945" :channels
+      ("#ArthurHlt/terraform-provider-concourse")
+      :encryption tls))))
  '(require-final-newline t)
  '(rtags-local-references-enabled t)
  '(rtags-tracking t)
@@ -105,6 +113,8 @@
  '(sh-basic-offset 2)
  '(show-trailing-whitespace t)
  '(speedbar-tag-regroup-maximum-length 10000)
+ '(split-height-threshold nil)
+ '(split-width-threshold nil)
  '(swbuff-exclude-buffer-regexps
    (quote
     ("^ " "*Help*" "*scratch*" "*Messages*" "*compilation*" "*shell*" "*Completions*" "*Buffer List*")))
@@ -211,6 +221,7 @@
  '(mode-line-emphasis ((t (:weight bold))))
  '(mode-line-inactive ((((min-colors 256) (background dark)) (:inherit mode-line :background "#1c1c1c")) (((min-colors 256) (background light)) (:inherit mode-line :background "#e5e5e5" :foreground "#333333" :weight normal :box (:line-width -1 :color "#bfbfbf" :style nil)))))
  '(region ((((min-colors 256) (background light)) (:background "#dcdcdc")) (((min-colors 256) (background dark)) (:background "#121212"))))
+ '(rudel-author-overlay-face ((t (:underline t))))
  '(speedbar-directory-face ((((min-colors 256) (background dark)) (:foreground "#ffff00")) (((min-colors 256) (background light)) (:foreground "#00008b"))))
  '(web-mode-block-control-face ((((min-colors 256) (background dark)) (:foreground "#af5fff")) (((min-colors 256) (background light)) (:inherit font-lock-processor-face))))
  '(web-mode-block-delimiter-face ((((min-colors 256) (background dark)) (:foreground "#af5fff")) (((min-colors 256) (background light)) (:inherit font-lock-processor-face))))

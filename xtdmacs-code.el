@@ -134,6 +134,12 @@
   :group 'xtdmacs-code
   )
 
+(defface xtdmacs-code-face-return
+  '((t (:foreground "#d70087")))
+  "return value"
+  :group 'xtdmacs-code
+  )
+
 
 
 (defcustom xtdmacs-code-indent-max-lines 2000 "Maximum number of line in buffer to permit auto-indentation." :group 'xtdmacs-code :type 'integer)

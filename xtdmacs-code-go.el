@@ -41,6 +41,7 @@
     ("\\<l[A-Z][_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-local-variable)
     ("\\<\\(p[A-Z][_a-zA-Z0-9]+\\)\\>" . 'xtdmacs-code-face-param)
     ("\\<c[A-Z][_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-counter)
+    ("\\<r[A-Z][_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-return)
     ("[&*]"                            . 'font-lock-constant-face)
     ("self"                            . 'font-lock-keyword-face)
     ("^ +"                             . 'xtdmacs-code-go-face-indent-error)
