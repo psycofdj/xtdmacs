@@ -13,4 +13,7 @@ xtdmacs-$(VERSION).tar: $(SOURCES)
 
 install: xtdmacs-$(VERSION).tar
 	@rm -rf ~/.emacs.d/elpa/xtdmacs*/
+	@rm -rf ~/.emacs.d/elpa/go-mode*/
 	@emacs --batch --eval "(defconst pkg-to-install \"$(PWD)/xtdmacs-$(VERSION).tar\")" -l vendor/emacs-pkg-install.el
+	@rm -rf ~/.emacs.d/elpa/go-mode*/*.elc
+	@patch ~/.emacs.d/elpa/go-mode*/go-mode.el < patches/go-mode.patch

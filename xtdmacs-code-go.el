@@ -209,8 +209,10 @@ arguments can be set as a list via ‘gofmt-args`."
   (when (mode-enabled 'xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "go-mode" xtdmacs-code-go-compile-alist))
 
+  ;; (if xtdmacs-code-go-indent-save-auto
+  ;;     (add-hook 'before-save-hook '(lambda() (xtdmacs-code-format-buffer t nil)) t t))
   (if xtdmacs-code-go-indent-save-auto
-      (add-hook 'before-save-hook '(lambda() (xtdmacs-code-format-buffer t nil)) t t))
+      (add-hook 'before-save-hook #'gofmt-before-save))
   (if xtdmacs-code-go-indent-load-auto
       (xtdmacs-code-format-buffer t nil))
 
