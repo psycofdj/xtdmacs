@@ -81,7 +81,7 @@
  '(python-indent-offset 2)
  '(rcirc-server-alist
    (quote
-    (("floobits.com" :nick "psycofdj" :port 6697 :user-name "psycofdj" :password "7q15flet083q9fqp79b4fw945" :channels
+    (("floobits.com" :nick "psycofdj" :port 6697 :user-name "psycofdj" :password "" :channels
       ("#ArthurHlt/terraform-provider-concourse")
       :encryption tls))))
  '(require-final-newline t)
