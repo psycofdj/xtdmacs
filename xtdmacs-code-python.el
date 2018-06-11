@@ -6,16 +6,18 @@
      (("dir"        . xtdmacs-code-python-project-root)
       ("bin"        . xtdmacs-code-python-pylint-bin)
       ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-code-python-command)))
+      ("command"    . xtdmacs-compile++-default-command)))
     ("test" .
      (("dir"        . xtdmacs-code-python-project-root)
       ("bin"        . xtdmacs-code-python-test-bin)
       ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-code-python-command))))
+      ("command"    . xtdmacs-compile++-default-command))))
   "Xtdmacs-Code-python compilation configuration"
   :group 'xtdmacs-code-python
   :safe '(lambda(p) t)
-  :type '(alist :key-type string :value-type (alist :key-type string :value-type (choice (string) (function))))
+  :type '(alist :key-type string
+                :value-type (alist :key-type string
+                                   :value-type (choice (string) (function))))
   )
 
 (defcustom xtdmacs-code-python-keywords-alist
@@ -116,12 +118,19 @@
   )
 
 (defun xtdmacs-code-python-pylint-getargs()
-  (let* ((root       (xtdmacs-code-python-project-root))
-         (rcpath     (concat root "/.pylintrc"))
-         (args       (concat "-j4 -f parseable --reports=n")))
+  (let* ((root         (xtdmacs-code-python-project-root))
+         (rcpath       (concat root "/.pylintrc"))
+         (globalrcpath (concat  (getenv "HOME") "/.pylintrc"))
+         (args         (concat "-j4 -f parseable --reports=n")))
+
+    (message "rcfile : %s" rcpath)
+    (message "grcfile : %s" globalrcpath)
+
     (if (file-exists-p rcpath)
         (concat args " --rcfile=" rcpath)
-      args))
+      (if (file-exists-p globalrcpath)
+          (concat args " --rcfile=" globalrcpath)
+        args)))
   )
 
 (defun xtdmacs-code-python-pylint-bin ()
@@ -140,25 +149,33 @@
    (funcall-or-value xtdmacs-code-python-test-args) " ")
   )
 
-(defun xtdmacs-code-python-command (mode &optional mode)
-  (let* ((dir  (--xtdmacs-compile++-get-value mode type "dir"))
-         (bin  (--xtdmacs-compile++-get-value mode type "bin")))
+(defun xtdmacs-code-python-params (type &optional mode)
+  (let* ((locaval (copy-tree xtdmacs-compile++-config-alist))
+         (config (cdr (assoc type locaval)))
+         (dir (cdr (assoc "dir" config)))
+         (bin (cdr (assoc "bin" config)))
+         (new_dir (read-directory-name  "Directory: " (funcall-or-value dir)))
+         (new_bin (read-from-minibuffer "Binary: "    (funcall-or-value bin))))
+    (progn
+      (setcdr (assoc "dir" config) new_dir)
+      (setcdr (assoc "bin" config) new_bin)
+      (setq xtdmacs-compile++-config-alist locaval))
+    )
+  )
+
+(defun xtdmacs-code-python-command (mode)
+  (let* ((config (cdr (assoc mode xtdmacs-compile++-config-alist)))
+         (dir  (cdr (assoc "dir"  config)))
+         (bin  (cdr (assoc "bin"  config))))
     (format "cd %s && %s"
             (funcall-or-value dir)
             (funcall-or-value bin)))
   )
 
-
 ;; --------------------------------------------------------------------------- ;
 
 (defun --xtdmacs-code-python-construct()
   (font-lock-add-keywords nil xtdmacs-code-python-keywords-alist)
-  ;; (when (and (boundp 'xtdmacs-compile++-mode) xtdmacs-compile++-mode)
-  ;;   (setcdr (assoc "compile" xtdmacs-compile++-config-alist)
-  ;;           (cdr (assoc "compile" xtdmacs-code-python-compile-alist)))
-  ;;   (setcdr (assoc "test" xtdmacs-compile++-config-alist)
-  ;;           (cdr (assoc "test" xtdmacs-code-python-compile-alist)))
-  ;;   )
 
   (when (mode-enabled 'xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "python-mode" xtdmacs-code-python-compile-alist))

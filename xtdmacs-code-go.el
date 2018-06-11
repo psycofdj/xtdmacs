@@ -23,7 +23,25 @@
       ("bin"        . xtdmacs-code-go-get-project-name)
       ("env"        . "")
       ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-code-go-command))))
+      ("command"    . xtdmacs-code-go-command)))
+    ("doc" .
+     (("dir"        . xtdmacs-compile++-get-dir-buffer)
+      ("bin"        . "nakedret")
+      ("env"        . "")
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-compile++-default-command)))
+    ("lint" .
+     (("dir"        . xtdmacs-compile++-get-dir-buffer)
+      ("bin"        . "gometalinter.v2 -D gocyclo -D errcheck")
+      ("env"        . "")
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-compile++-default-command)))
+    ("manual" .
+     (("dir"        . xtdmacs-compile++-get-dir-git)
+      ("bin"        . "true")
+      ("env"        . "")
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-compile++-default-command))))
   "Xtdmacs-Code-go compilation configuration"
   :group 'xtdmacs-code-go
   :safe '(lambda(p) t)
@@ -41,6 +59,7 @@
     ("\\<l[A-Z][_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-local-variable)
     ("\\<\\(p[A-Z][_a-zA-Z0-9]+\\)\\>" . 'xtdmacs-code-face-param)
     ("\\<c[A-Z][_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-counter)
+    ("\\<r[A-Z][_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-return)
     ("[&*]"                            . 'font-lock-constant-face)
     ("self"                            . 'font-lock-keyword-face)
     ("^ +"                             . 'xtdmacs-code-go-face-indent-error)
@@ -214,6 +233,13 @@ arguments can be set as a list via ‘gofmt-args`."
       (add-hook 'before-save-hook #'gofmt-before-save))
   (if xtdmacs-code-go-indent-load-auto
       (xtdmacs-code-format-buffer t nil))
+
+
+  (add-to-list 'compilation-error-regexp-alist 'nakedret)
+  (add-to-list
+   'compilation-error-regexp-alist-alist
+   '(nakedret
+     "\\(.+?\\):\\([0-9]+\\).*naked returns on.*" 1 2))
 
   (message "enabled : xtdmacs-code-go-mode")
   )

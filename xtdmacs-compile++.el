@@ -69,10 +69,10 @@
                  (const "test")
                  (const "deploy")
                  (const "doc")
-                 (const "syntax")
+                 (const "lint")
+                 (const "manual")
                  (other :tag "Other" ""))
   :safe 'stringp)
-
 
 (defcustom xtdmacs-compile++-command-2
   "test"
@@ -82,7 +82,8 @@
                  (const "test")
                  (const "deploy")
                  (const "doc")
-                 (const "syntax")
+                 (const "lint")
+                 (const "manual")
                  (other :tag "Other" ""))
   :safe 'stringp)
 
@@ -95,33 +96,48 @@
                  (const "test")
                  (const "deploy")
                  (const "doc")
-                 (const "syntax")
+                 (const "lint")
+                 (const "manual")
                  (other :tag "Other" ""))
   :safe 'stringp)
 
-
 (defcustom xtdmacs-compile++-command-4
-  "deploy"
+  "doc"
   "Set the key to use in xtdmacs-compile++-config-alist for command 4"
   :group 'xtdmacs-compile++
   :type '(choice (const "compile")
                  (const "test")
                  (const "deploy")
                  (const "doc")
-                 (const "syntax")
+                 (const "lint")
+                 (const "manual")
                  (other :tag "Other" ""))
   :safe 'stringp)
 
-
 (defcustom xtdmacs-compile++-command-5
-  "syntax"
+  "lint"
   "Set the key to use in xtdmacs-compile++-config-alist for command 5"
   :group 'xtdmacs-compile++
   :type '(choice (const "compile")
                  (const "test")
                  (const "deploy")
                  (const "doc")
-                 (const "syntax")
+                 (const "lint")
+                 (const "manual")
+                 (other :tag "Other" ""))
+  :safe 'stringp)
+
+
+(defcustom xtdmacs-compile++-command-6
+  "manual"
+  "Set the key to use in xtdmacs-compile++-config-alist for command 6"
+  :group 'xtdmacs-compile++
+  :type '(choice (const "compile")
+                 (const "test")
+                 (const "deploy")
+                 (const "doc")
+                 (const "lint")
+                 (const "manual")
                  (other :tag "Other" ""))
   :safe 'stringp)
 
@@ -237,6 +253,9 @@
 
 (defun xtdmacs-compile++-get-dir-git ()
   (file-name-directory (xtdmacs-compile++-get-nearest-filename ".git")))
+
+(defun xtdmacs-compile++-get-dir-buffer ()
+  (file-name-directory (buffer-file-name)))
 
 (defun xtdmacs-compile++-guess-directory ()
   (let* ((makefile   (xtdmacs-compile++-get-nearest-filename "CMakeLists.txt"))
@@ -431,6 +450,10 @@
   (xtdmacs-compile++-run interactive xtdmacs-compile++-command-5)
   )
 
+(defun xtdmacs-compile++-command-6(interactive)
+  (xtdmacs-compile++-run interactive xtdmacs-compile++-command-6)
+  )
+
 (defun xtdmacs-compile++-compilation-finished(buffer status)
   (with-current-buffer buffer
     (if (not (string-prefix-p "finished" status))
@@ -474,20 +497,27 @@
 (define-minor-mode xtdmacs-compile++-mode
   "Set of function beyond compilation-mode" nil " xtdmacs-compile++"
   '(
-    ([f6]                . (lambda () (interactive) (xtdmacs-compile++-command-1 nil)))
-    ([C-f6]              . (lambda () (interactive) (xtdmacs-compile++-command-1 t)))
+    ([f6]               . (lambda () (interactive) (xtdmacs-compile++-command-1 nil)))
+    ([21 f6]            . (lambda () (interactive) (xtdmacs-compile++-command-1 t)))
+    ([C-f6]             . (lambda () (interactive) (xtdmacs-compile++-command-4 nil)))
+    ([21 C-f6]          . (lambda () (interactive) (xtdmacs-compile++-command-4 t)))
+    ([21 f30]           . (lambda () (interactive) (xtdmacs-compile++-command-4 t)))
 
-    ([M-f6]              . kill-compilation)
-    ([C-S-f6]            . (lambda () (interactive) (xtdmacs-compile++-command-4 t)))
+    ([f7]               . (lambda () (interactive) (xtdmacs-compile++-command-2 nil)))
+    ([21 f7]            . (lambda () (interactive) (xtdmacs-compile++-command-2 t)))
+    ([C-f7]             . (lambda () (interactive) (xtdmacs-compile++-command-5 nil)))
+    ([21 C-f7]          . (lambda () (interactive) (xtdmacs-compile++-command-5 t)))
+    ([21 f31]           . (lambda () (interactive) (xtdmacs-compile++-command-5 t)))
 
-    ([f7]                . (lambda () (interactive) (xtdmacs-compile++-command-2 nil)))
-    ([C-f7]              . (lambda () (interactive) (xtdmacs-compile++-command-2 t)))
-    ([M-f7]              . kill-compilation)
-    ([C-S-f7]            . (lambda () (interactive) (xtdmacs-compile++-command-5 nil)))
+    ([f8]               . (lambda () (interactive) (xtdmacs-compile++-command-3 nil)))
+    ([21 f8]            . (lambda () (interactive) (xtdmacs-compile++-command-3 t)))
+    ([C-f8]             . (lambda () (interactive) (xtdmacs-compile++-command-6 nil)))
+    ([21 C-f8]          . (lambda () (interactive) (xtdmacs-compile++-command-6 t)))
+    ([21 f32]           . (lambda () (interactive) (xtdmacs-compile++-command-6 t)))
 
-    ([f8]                . (lambda () (interactive) (xtdmacs-compile++-command-3 nil)))
-    ([C-f8]              . (lambda () (interactive) (xtdmacs-compile++-command-3 t)))
     ([M-f8]              . kill-compilation)
+    ([M-f7]              . kill-compilation)
+    ([M-f6]              . kill-compilation)
 
     ([f9]                . xtdmacs-compile++-next-error)
     ([C-f9]              . xtdmacs-compile++-next-warning)
