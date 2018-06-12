@@ -25,10 +25,6 @@
         - [Compile API](#compile-api)
         - [Compile Configuration](#compile-configuration)
         - [Compile Bindings](#compile-bindings)
-    - [xtdmacs-code-doxygen-mode](#xtdmacs-code-doxygen-mode)
-        - [Templates](#templates)
-        - [Keyword and faces](#keyword-and-faces)
-        - [Doxymacs Bindings](#doxymacs-bindings)
     - [xtdmacs-code-line-mode](#xtdmacs-code-line-mode)
     - [xtdmacs-code-spell-mode & xtdmacs-code-spell-prog-mode](#xtdmacs-code-spell-mode--xtdmacs-code-spell-prog-mode)
         - [Spell Configuration](#spell-configuration)
@@ -523,48 +519,6 @@ cat ~/.dir-locals.el
 | \<ctrl\>+\<F9>                | goto next compile error or warning                                       |
 
 
-## xtdmacs-code-doxygen-mode
-
-This minor mode provides an enhanced initialization of doxymacs minor mode.
-
-### Templates
-
-It defines two standard documentation templates :
-
-- ```xtdmacs-code-doxymacs-template-doxystyle``` : function documentation layout suitable
-  for doxygen
-
-- ```xtdmacs-code-doxymacs-template-phpdoc`` : function documentation layout suitable
-  for phpdoc
-
-Doxymacs' current template is defined by the variable
-```doxymacs-function-comment-template```, its default value is
- ```xtdmacs-code-doxymacs-template-doxystyle``` .
-
-### Keyword and faces
-
-The defines font lock keywords for doxygen style documentation through the
-customizable variable ```xtdmacs-code-doxymacs-keywords-alist```. The defined
-keywords handle new doxygen markdown compatibility style.
-
-Defined keywords and arguments are fontified with faces defined in the group
-```code-doxymacs``` .
-
-To modify the faces :
-
-```M-x customize-group RET code-doxymacs RET```
-
-Example:
-
-![xtdmacs-code-doxymacs-mode](doc/code-doxymacs.png "xtdmacs-code-doxymacs-mode")
-
-
-### Doxymacs Bindings
-
-| Key                           | Effect                                         |
-|-------------------------------|------------------------------------------------|
-| \<ctrl\>+x d                  | insert function/method comment at point        |
-| \<ctrl\>+x m                  | insert member variable comment at point        |
 
 ## xtdmacs-code-line-mode
 

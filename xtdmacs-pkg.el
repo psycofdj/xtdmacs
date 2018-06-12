@@ -7,7 +7,7 @@
     (go-autocomplete     "20170907"     )
     (go-mode             "20180327.830" )
     (go-eldoc            "20170305.627" )
-    (groovy-mode         "201203310931" )
+    (groovy-mode         "20180601.738" )
     (js2-mode            "20171014.1229")
     (json-mode           "20170719.2205")
     (markdown-mode       "20171022.1736")
