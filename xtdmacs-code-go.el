@@ -261,7 +261,9 @@ arguments can be set as a list via ‘gofmt-args`."
   "Code for Go" nil "Code"
   '(("\M-t"    . xtdmacs-code-go-format-region)
     ("\C-\M-t" . gofmt)
-    ("\M-."    . ac-start))
+    ("\M-."    . ac-start)
+    ("\C-e"    . godoc-at-point)
+    ("\M-e"    . godoc))
   (if xtdmacs-code-go-mode
       (--xtdmacs-code-go-construct)
     (--xtdmacs-code-go-destroy))

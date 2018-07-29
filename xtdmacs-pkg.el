@@ -1,4 +1,4 @@
-(define-package "xtdmacs" "0.2.4" "Set of developping tools."
+(define-package "xtdmacs" "0.3" "Set of developping tools."
   '((auto-complete       "20170124.1845")
     (cmake-mode          "20160928.505" )
     (column-enforce-mode "20170103.1231")
@@ -21,7 +21,8 @@
     (xterm-color         "20170102.1525")
     (yafolding           "20170304.1917")
     (yaml-mode           "20170727.1531")
-    (yasnippet           "20170923.1646"))
+    (yasnippet           "20170923.1646")
+    (yaml-path           "0.1" ))
   ;;(edmacro       "2.1")             vendor deps
   ;;(auto-complete-clang-async "0.1") vendor deps
   :url "https://github.com/psycofdj/xtdmacs"

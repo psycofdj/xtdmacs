@@ -18,5 +18,5 @@ install: xtdmacs-$(VERSION).tar
 	@cp vendor/swbuff* ~/.emacs.d/elpa/swbuff-3.3/
 	@emacs --batch --eval "(defconst pkg-to-install \"$(PWD)/xtdmacs-$(VERSION).tar\")" -l vendor/emacs-pkg-install.el
 	@rm -rf ~/.emacs.d/elpa/go-mode*/*.elc ~/.emacs.d/elpa/go-eldoc*/*.elc
-	@patch ~/.emacs.d/elpa/go-mode*/go-mode.el < patches/go-mode.patch
+	@patch --forward ~/.emacs.d/elpa/go-mode*/go-mode.el < patches/go-mode.patch || true
 	@cp vendor/go-eldoc-pkg.el ~/.emacs.d/elpa/go-eldoc-20170305.627/go-eldoc-pkg.el

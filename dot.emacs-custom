@@ -182,7 +182,9 @@
      (("\\.go\\'")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-go-mode flycheck-mode)
      (("\\.tf\\'")
-      xtdmacs-code-mode)))))
+      xtdmacs-code-mode)
+     (("\\.yml" "\\.yaml")
+      xtdmacs-code-mode xtdmacs-code-line-mode xtdmacs-code-yaml-mode)))))
 
 
 ;; ----------------------------------------------------------
