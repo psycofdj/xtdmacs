@@ -71,7 +71,6 @@
            (buffer-file-name))
         "[not a real file]"))
      " %-")))
- '(package-selected-packages (quote (go-mode)))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
@@ -82,7 +81,7 @@
  '(python-indent-offset 2)
  '(rcirc-server-alist
    (quote
-    (("floobits.com" :nick "psycofdj" :port 6697 :user-name "psycofdj" :password "" :channels
+    (("floobits.com" :nick "psycofdj" :port 6697 :user-name "psycofdj" :password "7q15flet083q9fqp79b4fw945" :channels
       ("#ArthurHlt/terraform-provider-concourse")
       :encryption tls))))
  '(require-final-newline t)
@@ -152,7 +151,7 @@
     ((("Dockerfile")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode)
      (("\\.php\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode)
      (("\\.xml\\.erb\\'" "\\.erb\\'" "Rakefile\\'")
       xtdmacs-code-mode)
      (("\\.html\\'" "\\.tpl\\'" "\\.xml\\'" "\\.xsl\\'")
@@ -160,7 +159,7 @@
      (("\\.py\\'")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-python-mode xtdmacs-code-line-mode)
      (("\\.h\\'" "\\.c\\'" "\\.cc\\'" "\\.hh\\'" "\\.cpp\\'" "\\.hpp\\'" "\\.hxx\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode xtdmacs-code-doxymacs-mode)
      (("\\.js\\'")
       xtdmacs-code-mode xtdmacs-code-js-mode xtdmacs-code-line-mode xtdmacs-code-spell-prog-mode)
      (("\\.json\\'")
@@ -174,7 +173,7 @@
      (("\\.el\\'")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-lisp-mode xtdmacs-code-line-mode)
      (("\\.java\\'" "\\.bsh\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-java-mode xtdmacs-code-line-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-java-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode)
      (("\\.md\\'")
       xtdmacs-code-mode xtdmacs-code-spell-mode)
      (("\\.rst\\'")
@@ -184,7 +183,8 @@
      (("\\.tf\\'")
       xtdmacs-code-mode)
      (("\\.yml" "\\.yaml")
-      xtdmacs-code-mode xtdmacs-code-line-mode xtdmacs-code-yaml-mode)))))
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-yaml-mode))))
+ '(yaml-path-bin "/home/psyco/dev/vos/go/bin/yaml-path"))
 
 
 ;; ----------------------------------------------------------
@@ -202,6 +202,7 @@
  '(default ((t (:inherit nil :stipple nil :background "unspecified-bg" :foreground "unspecified-fg" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1 :width normal :foundry "default" :family "default"))))
  '(column-enforce-face ((t (:background "color-235"))))
  '(custom-variable-tag ((((min-colors 256) (background dark)) (:foreground "#ff00ff" :weight bold)) (((background light)) (:foreground "#blue1" :weight bold))))
+ '(flycheck-error ((t (:foreground "color-196" :weight bold))))
  '(flyspell-duplicate ((((min-colors 256) (background dark)) (:background "#d7af00")) (((min-colors 256) (background light)) (:inherit warning :underline (:color foreground-color :style line)))))
  '(flyspell-incorrect ((t (:underline (:color "red" :style wave)))))
  '(font-lock-builtin-face ((t (:inherit font-lock-keyword-face))))
@@ -235,6 +236,13 @@
  '(which-func ((t (:foreground "color-62"))))
  '(widget-field ((((min-colors 256) (background dark)) (:background "#121212")) (((min-colors 256) (background light)) (:background "#d9d9d9"))))
  '(widget-inactive ((((min-colors 256) (background dark)) (:background "#000000")) (((min-colors 256) (background light)) (:inherit shadow))))
+ '(xtdmacs-code-doxymacs-h1-face ((t (:foreground "brightred" :underline t :weight bold))))
+ '(xtdmacs-code-doxymacs-h2-face ((t (:foreground "color-196" :underline t))))
+ '(xtdmacs-code-doxymacs-h3-face ((t (:foreground "color-24" :underline t :weight bold))))
+ '(xtdmacs-code-doxymacs-h4-face ((t (:foreground "color-24"))))
+ '(xtdmacs-code-doxymacs-keyword-face ((t (:foreground "color-103"))))
+ '(xtdmacs-code-doxymacs-parameter-face ((t (:inherit font-lock-string-face :foreground "color-69"))))
+ '(xtdmacs-code-doxymacs-variable-face ((t (:inherit xtdmacs-code-face-param))))
  '(xtdmacs-code-go-face-indent-error ((t (:foreground "color-124" :underline t))))
  '(xtdmacs-compile++-compiling ((t (:background "color-22"))))
  '(xtdmacs-compile++-error-face ((t (:background "color-52")))))

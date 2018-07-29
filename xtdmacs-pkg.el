@@ -22,7 +22,7 @@
     (yafolding           "20170304.1917")
     (yaml-mode           "20170727.1531")
     (yasnippet           "20170923.1646")
-    (yaml-path           "0.1" ))
+    (yaml-path           "0.2" ))
   ;;(edmacro       "2.1")             vendor deps
   ;;(auto-complete-clang-async "0.1") vendor deps
   :url "https://github.com/psycofdj/xtdmacs"

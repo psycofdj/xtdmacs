@@ -4,9 +4,9 @@
   (setq mode-line-format
         (list
          ;; value of current buffer name
-         "%&%&%& "
+         "%& "
          '(:propertize "%b " face mode-line-buffer-id)
-         "- (%l:%c) - %p - ["
+         "- (%l:%c) - ["
          '(:propertize (:eval (replace-regexp-in-string
                                "%" "%%"
                                (or (gethash (selected-window) which-func-table)
@@ -25,7 +25,8 @@
 
 ;;;###autoload
 (define-minor-mode xtdmacs-code-line-mode
-  "Specialized modeline" nil "Code" nil
+  "Specialized modeline" nil "Code"
+  '(("\C-e" . yaml-path-at-point))
   (if xtdmacs-code-line-mode
       (--xtdmacs-code-line-mode-construct)
     (--xtdmacs-code-line-mode-destroy))
