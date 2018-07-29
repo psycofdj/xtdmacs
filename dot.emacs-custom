@@ -151,7 +151,7 @@
     ((("Dockerfile")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode)
      (("\\.php\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode)
      (("\\.xml\\.erb\\'" "\\.erb\\'" "Rakefile\\'")
       xtdmacs-code-mode)
      (("\\.html\\'" "\\.tpl\\'" "\\.xml\\'" "\\.xsl\\'")
@@ -159,7 +159,7 @@
      (("\\.py\\'")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-python-mode xtdmacs-code-line-mode)
      (("\\.h\\'" "\\.c\\'" "\\.cc\\'" "\\.hh\\'" "\\.cpp\\'" "\\.hpp\\'" "\\.hxx\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode xtdmacs-code-doxymacs-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode)
      (("\\.js\\'")
       xtdmacs-code-mode xtdmacs-code-js-mode xtdmacs-code-line-mode xtdmacs-code-spell-prog-mode)
      (("\\.json\\'")
@@ -173,7 +173,7 @@
      (("\\.el\\'")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-lisp-mode xtdmacs-code-line-mode)
      (("\\.java\\'" "\\.bsh\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-java-mode xtdmacs-code-doxymacs-mode xtdmacs-code-line-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-java-mode xtdmacs-code-line-mode)
      (("\\.md\\'")
       xtdmacs-code-mode xtdmacs-code-spell-mode)
      (("\\.rst\\'")
@@ -183,8 +183,7 @@
      (("\\.tf\\'")
       xtdmacs-code-mode)
      (("\\.yml" "\\.yaml")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-yaml-mode))))
- '(yaml-path-bin "/home/psyco/dev/vos/go/bin/yaml-path"))
+      xtdmacs-code-mode xtdmacs-code-line-mode xtdmacs-code-yaml-mode)))))
 
 
 ;; ----------------------------------------------------------
