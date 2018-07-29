@@ -71,6 +71,7 @@
            (buffer-file-name))
         "[not a real file]"))
      " %-")))
+ '(package-selected-packages (quote (elisp-lint xtdmacs)))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)

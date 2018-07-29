@@ -1,5 +1,4 @@
 #!/usr/bin/python -OO
-# -*- eval:(ispell-change-dictionary "en") -*-
 #===========================================================================#
 """
 """
@@ -30,39 +29,39 @@ def _initOptParser(super):
   usage =  "usage : %prog  : <action> target"
   l_parser = OptionParser(usage=usage)
   l_parser.add_option("-i",
-                    "--install",
-                    dest="install",
-                    action="store_true",
-                    help="install the application")
+                      "--install",
+                      dest="install",
+                      action="store_true",
+                      help="install the application")
 
   l_parser.add_option("-u",
-                    "--uninstall",
-                    dest="uninstall",
-                    action="store_true",
-                    help="remove previouly installed application")
+                      "--uninstall",
+                      dest="uninstall",
+                      action="store_true",
+                      help="remove previouly installed application")
 
   l_parser.add_option("-r",
-                    "--reinstall",
-                    dest="reinstall",
-                    action="store_true",
-                    help="uninstall and reinstall given modules")
+                      "--reinstall",
+                      dest="reinstall",
+                      action="store_true",
+                      help="uninstall and reinstall given modules")
 
   l_parser.add_option("-f",
-                    "--force",
-                    dest="force",
-                    action="store_true",
-                    default=False,
-                    help="Force operations when already installed")
+                      "--force",
+                      dest="force",
+                      action="store_true",
+                      default=False,
+                      help="Force operations when already installed")
 
   l_parser.add_option("--sql-user",
-                    dest="sql_user",
-                    action="store",
-                    help="Mysql admin login")
+                      dest="sql_user",
+                      action="store",
+                      help="Mysql admin login")
 
   l_parser.add_option("--sql-passwd",
-                    dest="sql_passwd",
-                    action="store",
-                    help="Mysql admin password")
+                      dest="sql_passwd",
+                      action="store",
+                      help="Mysql admin password")
   return l_parser
 
 
@@ -115,11 +114,11 @@ def checkCircularReference(tested, modules, module, tmp):
 #===========================================================================#
 
 def execute(modules, arg, method, force):
-  if (method == "install"):
+  if method == "install":
     for dep in modules[arg].installer.dependencies:
       execute(modules, dep, method, force)
 
-    if (method == "uninstall"):
+    if method == "uninstall":
       for dep in modules[arg].installer.getReverseDeps():
         execute(modules, dep, method, force)
 
@@ -203,3 +202,7 @@ def main():
 
 if __name__ == "__main__":
   main()
+
+# Local Variables:
+# ispell-local-dictionary: "american"
+# End:

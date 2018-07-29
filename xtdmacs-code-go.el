@@ -247,8 +247,6 @@ arguments can be set as a list via ‘gofmt-args`."
 (defun --xtdmacs-code-go-destroy()
   (if xtdmacs-code-go-indent-save-auto
       (remove-hook 'before-save-hook '(lambda() (xtdmacs-code-format-buffer t nil))))
-  ;; (when (mode-enabled 'go-mode)
-  ;;   (go-mode nil))
   (when (mode-enabled 'yas-minor-mode)
     (yas-minor-mode nil))
 

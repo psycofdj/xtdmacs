@@ -251,8 +251,6 @@
     (yafolding-mode t)
     (define-key yafolding-mode-map (kbd "M-f")   'yafolding-toggle-element)
     (define-key yafolding-mode-map (kbd "C-M-f") 'yafolding-toggle-all)
-    ;; (define-key yafolding-mode-map (kbd "C-e")   'godoc-at-point)
-    ;; (define-key yafolding-mode-map (kbd "M-e")   'godoc)
     )
   (unless (mode-enabled 'column-enforce-mode)
     (column-enforce-mode t))

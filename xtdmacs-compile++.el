@@ -180,8 +180,13 @@
 
 (defun --xtdmacs-compile++-prompt-value (mode type key label)
   (let* ((value (--xtdmacs-compile++-get-value mode type key)))
-    (read-from-minibuffer (format "%s : " label) (funcall-or-value value))
-    )
+    (cond
+     ((string= key "dir")
+      (read-directory-name (format "%s : " label) (funcall-or-value value)))
+     ((string= key "file")
+      (read-file-name (format "%s : " label) (funcall-or-value value)))
+     (t
+      (read-from-minibuffer (format "%s : " label) (funcall-or-value value)))))
   )
 
 (defun xtdmacs-compile++-colorize-compilation-buffer ()
@@ -316,6 +321,21 @@
         (make-local-variable 'xtdmacs-compile++-config-alist)
         (setq xtdmacs-compile++-config-alist tmp)
         ))
+  )
+
+
+(defun xtdmacs-compile++-current-file-params (type &optional mode)
+  (let* ((bin (--xtdmacs-compile++-prompt-value mode type "bin" "Binary")))
+    (xtdmacs-compile++-query-local)
+    (--xtdmacs-compile++-set-value mode type "bin" bin))
+  )
+
+(defun xtdmacs-compile++-simple-file-command (type &optional mode)
+  (let* ((file   (--xtdmacs-compile++-get-value mode type "file"))
+         (bin    (--xtdmacs-compile++-get-value mode type "bin")))
+    (format "%s %s"
+            (funcall-or-value bin)
+            (funcall-or-value file)))
   )
 
 (defun xtdmacs-compile++-default-params (type &optional mode)

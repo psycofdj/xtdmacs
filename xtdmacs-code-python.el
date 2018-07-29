@@ -5,11 +5,13 @@
   '(("compile" .
      (("dir"        . xtdmacs-code-python-project-root)
       ("bin"        . xtdmacs-code-python-pylint-bin)
+      ("env"        . "")
       ("get-params" . xtdmacs-compile++-default-params)
       ("command"    . xtdmacs-compile++-default-command)))
     ("test" .
      (("dir"        . xtdmacs-code-python-project-root)
       ("bin"        . xtdmacs-code-python-test-bin)
+      ("env"        . "")
       ("get-params" . xtdmacs-compile++-default-params)
       ("command"    . xtdmacs-compile++-default-command))))
   "Xtdmacs-Code-python compilation configuration"
@@ -121,16 +123,14 @@
   (let* ((root         (xtdmacs-code-python-project-root))
          (rcpath       (concat root "/.pylintrc"))
          (globalrcpath (concat  (getenv "HOME") "/.pylintrc"))
+         (distrcpath   (concat  (xtdmacs-get-install-dir)  "/vendor/pylintrc"))
          (args         (concat "-j4 -f parseable --reports=n")))
 
-    (message "rcfile : %s" rcpath)
-    (message "grcfile : %s" globalrcpath)
-
-    (if (file-exists-p rcpath)
-        (concat args " --rcfile=" rcpath)
-      (if (file-exists-p globalrcpath)
-          (concat args " --rcfile=" globalrcpath)
-        args)))
+    (cond
+     ((file-exists-p rcpath)       (concat args " --rcfile=" rcpath))
+     ((file-exists-p globalrcpath) (concat args " --rcfile=" globalrcpath))
+     ((file-exists-p distrcpath)   (concat args " --rcfile=" distrcpath))
+     (t args)))
   )
 
 (defun xtdmacs-code-python-pylint-bin ()
