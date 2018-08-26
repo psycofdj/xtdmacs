@@ -19,4 +19,4 @@ install: xtdmacs-$(VERSION).tar
 	@emacs --batch --eval "(defconst pkg-to-install \"$(PWD)/xtdmacs-$(VERSION).tar\")" -l vendor/emacs-pkg-install.el
 	@rm -rf ~/.emacs.d/elpa/go-mode*/*.elc ~/.emacs.d/elpa/go-eldoc*/*.elc
 	@patch --forward ~/.emacs.d/elpa/go-mode*/go-mode.el < patches/go-mode.patch || true
-	@cp vendor/go-eldoc-pkg.el ~/.emacs.d/elpa/go-eldoc-20170305.627/go-eldoc-pkg.el
+	@cp vendor/go-eldoc-pkg.el ~/.emacs.d/elpa/go-eldoc-*/go-eldoc-pkg.el
