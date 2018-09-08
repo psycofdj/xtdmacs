@@ -1,8 +1,12 @@
+#include <string>
+#include <iostream>
+
 int main(int p_argc, char** p_argv)
 {
   std::string l_tmp = "";
-  if (echo::KEOK != echo::KEERROR)
-    return 0;
+  l_tmp
+    if (echo::KEOK != echo::KEERROR)
+      return 0;
   return 0;
 
   std::cout << "var1" << l_tmp << " is about to fail because of " << l_reason << std::endl;

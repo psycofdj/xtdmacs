@@ -43,7 +43,19 @@
       ("bin"        . "make -j")
       ("get-params" . xtdmacs-compile++-default-params)
       ("command"    . xtdmacs-compile++-default-command)))
-    ("syntax" .
+    ("doc" .
+     (("dir"        . xtdmacs-compile++-guess-directory)
+      ("env"        . "")
+      ("bin"        . "make -j")
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-compile++-default-command)))
+    ("lint" .
+     (("dir"        . xtdmacs-compile++-guess-directory)
+      ("env"        . "")
+      ("bin"        . "make -j")
+      ("get-params" . xtdmacs-compile++-default-params)
+      ("command"    . xtdmacs-compile++-default-command)))
+    ("manual" .
      (("dir"        . xtdmacs-compile++-guess-directory)
       ("env"        . "")
       ("bin"        . "make -j")
@@ -146,13 +158,6 @@
   (add-to-list 'xtdmacs-compile++-config-alist (cons mode config))
   )
 
-(defun xtdmacs-compile++-get-current-branch ()
-  (let* ((target-dir (file-name-directory (buffer-file-name)))
-         (cmd        (format "cd %s && git rev-parse --abbrev-ref HEAD" target-dir))
-         (raw-branch (shell-command-to-string cmd))
-         (branch     (string-trim raw-branch)))
-    branch))
-
 
 (defun --xtdmacs-compile++-get-config (&optional mode)
   (let* ((name   (symbol-name (or mode major-mode)))
@@ -212,19 +217,6 @@
     )
   )
 
-(defun xtdmacs-compile++-get-nearest-filename (filename)
-  (let* ((origin (buffer-file-name))
-         (dir (file-name-directory origin))
-         (dirs (split-string dir "/"))
-         (result nil))
-    (while (and (> (length dirs) 1) (equal nil result))
-      (if (file-exists-p (concat (mapconcat 'identity dirs "/") "/" filename))
-          (setq result (concat (mapconcat 'identity dirs "/") "/" filename))
-        (nbutlast dirs 1))
-      )
-    result)
-  )
-
 (defun xtdmacs-compile++-previous-error ()
   (interactive)
   (setcar (nthcdr 5 (assoc 'gcc-include compilation-error-regexp-alist-alist)) 0)
@@ -253,29 +245,8 @@
   (next-error)
   )
 
-(defun xtdmacs-compile++-get-dir-locals-directory ()
-  (car (dir-locals-find-file (buffer-file-name))))
 
-(defun xtdmacs-compile++-get-dir-git ()
-  (file-name-directory (xtdmacs-compile++-get-nearest-filename ".git")))
 
-(defun xtdmacs-compile++-get-dir-buffer ()
-  (file-name-directory (buffer-file-name)))
-
-(defun xtdmacs-compile++-guess-directory ()
-  (let* ((makefile   (xtdmacs-compile++-get-nearest-filename "CMakeLists.txt"))
-         (builddir   (xtdmacs-compile++-get-nearest-filename ".release")))
-    (if (or (equal makefile nil) (equal builddir nil))
-        (if buffer-file-name
-            (file-name-directory (file-truename buffer-file-name))
-          default-directory)
-      (let*
-          ((moduledir  (file-name-directory makefile))
-           (rootdir    (file-name-directory builddir))
-           (subtarget  (substring moduledir (length rootdir)))
-           (compiledir (concat builddir "/" subtarget)))
-        (file-truename compiledir))))
-  )
 
 ;; --------------------------------------------------------------
 
@@ -323,11 +294,79 @@
         ))
   )
 
+(defun xtdmacs-compile++-iwyu-find-compile-commands ()
+  (let* ((topbuilddir (xtdmacs-compile++-get-nearest-filename xtdmacs-compile++-iwyu-build-directory-name)))
+    (concat topbuilddir "/compile_commands.json"))
+  )
 
-(defun xtdmacs-compile++-current-file-params (type &optional mode)
-  (let* ((bin (--xtdmacs-compile++-prompt-value mode type "bin" "Binary")))
-    (xtdmacs-compile++-query-local)
-    (--xtdmacs-compile++-set-value mode type "bin" bin))
+;;;;;;;;;;;
+;; Utils ;;
+;;;;;;;;;;;
+
+
+(defun xtdmacs-compile++-get-nearest-filename (filename)
+  (let* ((origin (buffer-file-name))
+         (dir (file-name-directory origin))
+         (dirs (split-string dir "/"))
+         (result nil))
+    (while (and (> (length dirs) 1) (equal nil result))
+      (if (file-exists-p (concat (mapconcat 'identity dirs "/") "/" filename))
+          (setq result (concat (mapconcat 'identity dirs "/") "/" filename))
+        (nbutlast dirs 1))
+      )
+    result)
+  )
+
+(defun xtdmacs-compile++-get-dir-locals-directory ()
+  (car (dir-locals-find-file (buffer-file-name))))
+
+(defun xtdmacs-compile++-get-dir-git ()
+  (file-name-directory (xtdmacs-compile++-get-nearest-filename ".git")))
+
+(defun xtdmacs-compile++-get-dir-buffer ()
+  (file-name-directory (buffer-file-name)))
+
+(defun xtdmacs-compile++-guess-directory ()
+  (let* ((makefile   (xtdmacs-compile++-get-nearest-filename "CMakeLists.txt"))
+         (builddir   (xtdmacs-compile++-get-nearest-filename ".release")))
+    (if (or (equal makefile nil) (equal builddir nil))
+        (if buffer-file-name
+            (file-name-directory (file-truename buffer-file-name))
+          default-directory)
+      (let*
+          ((moduledir  (file-name-directory makefile))
+           (rootdir    (file-name-directory builddir))
+           (subtarget  (substring moduledir (length rootdir)))
+           (compiledir (concat builddir "/" subtarget)))
+        (file-truename compiledir))))
+  )
+
+(defun xtdmacs-compile++-get-current-branch ()
+  (let* ((target-dir (file-name-directory (buffer-file-name)))
+         (cmd        (format "cd %s && git rev-parse --abbrev-ref HEAD" target-dir))
+         (raw-branch (shell-command-to-string cmd))
+         (branch     (string-trim raw-branch)))
+    branch))
+
+(defun xtdmacs-compile++-iwyu-default-cmd()
+  (format "iwyu-wrapper.py -c %s %s"
+          (xtdmacs-compile++-iwyu-find-compile-commands)
+          (buffer-file-name))
+  )
+
+;;;;;;;;;;;;;;
+;; Commands ;;
+;;;;;;;;;;;;;;
+
+
+(defun xtdmacs-compile++-default-command (type &optional mode)
+  (let* ((dir    (--xtdmacs-compile++-get-value mode type "dir"))
+         (env    (--xtdmacs-compile++-get-value mode type "env"))
+         (bin    (--xtdmacs-compile++-get-value mode type "bin")))
+    (format "cd %s && %s %s"
+            (funcall-or-value dir)
+            (funcall-or-value env)
+            (funcall-or-value bin)))
   )
 
 (defun xtdmacs-compile++-simple-file-command (type &optional mode)
@@ -338,6 +377,72 @@
             (funcall-or-value file)))
   )
 
+(defun xtdmacs-compile++-compose-run-command (type &optional mode)
+  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
+         (env     (--xtdmacs-compile++-get-value mode type "env"))
+         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
+         (compose (--xtdmacs-compile++-get-value mode type "compose-file"))
+         (service (--xtdmacs-compile++-get-value mode type "service"))
+         (dockerenv (if (string= env "")
+                        env
+                      (mapconcat 'identity (mapcar (lambda (el) (concat "-e " el)) (split-string env " ")) " "))))
+    (format "cd %s && SRCDIR=%s docker-compose -f %s run --rm %s %s %s"
+            (funcall-or-value dir)
+            (funcall-or-value dir)
+            (funcall-or-value compose)
+            dockerenv
+            (funcall-or-value service)
+            (funcall-or-value bin)))
+  )
+
+(defun xtdmacs-compile++-compose-exec-command (type &optional mode)
+  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
+         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
+         (compose (--xtdmacs-compile++-get-value mode type "compose-file"))
+         (service (--xtdmacs-compile++-get-value mode type "service")))
+    (format "cd %s && SRCDIR=%s docker-compose -f %s exec %s %s"
+            (funcall-or-value dir)
+            (funcall-or-value dir)
+            (funcall-or-value compose)
+            (funcall-or-value service)
+            (funcall-or-value bin)))
+  )
+
+
+(defun xtdmacs-compile++-docker-run-command (type &optional mode)
+  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
+         (env     (--xtdmacs-compile++-get-value mode type "env"))
+         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
+         (image   (--xtdmacs-compile++-get-value mode type "image"))
+         (dockerenv (if (string= env "")
+                        env
+                      (mapconcat 'identity (mapcar (lambda (el) (concat "-e " el)) (split-string env " ")) " ")))
+         )
+    (format "docker run --rm=true %s %s /bin/bash -c 'cd %s && %s'"
+            dockerenv
+            image
+            (funcall-or-value dir)
+            (funcall-or-value bin))
+    )
+  )
+
+(defun xtdmacs-compile++-docker-exec-command (type &optional mode)
+  (let* ((dir       (--xtdmacs-compile++-get-value mode type "dir"))
+         (bin       (--xtdmacs-compile++-get-value mode type "bin"))
+         (env       (--xtdmacs-compile++-get-value mode type "env"))
+         (container (--xtdmacs-compile++-get-value mode type "container"))
+         )
+    (format "docker exec -t %s /bin/bash -c 'cd %s && %s %s'"
+            (funcall-or-value container)
+            (funcall-or-value dir)
+            env
+            (funcall-or-value bin)))
+  )
+
+;;;;;;;;;;;;
+;; Params ;;
+;;;;;;;;;;;;
+
 (defun xtdmacs-compile++-default-params (type &optional mode)
   (let* ((dir    (--xtdmacs-compile++-prompt-value mode type "dir" "Directory"))
          (env    (--xtdmacs-compile++-prompt-value mode type "env" "Environment"))
@@ -346,6 +451,14 @@
     (--xtdmacs-compile++-set-value mode type "dir" dir)
     (--xtdmacs-compile++-set-value mode type "env" env)
     (--xtdmacs-compile++-set-value mode type "bin" bin))
+  )
+
+(defun xtdmacs-compile++-current-file-params (type &optional mode)
+  (let* ((bin  (--xtdmacs-compile++-prompt-value mode type "bin"  "Binary"))
+         (file (--xtdmacs-compile++-prompt-value mode type "file" "File")))
+    (xtdmacs-compile++-query-local)
+    (--xtdmacs-compile++-set-value mode type "bin"  bin)
+    (--xtdmacs-compile++-set-value mode type "file" file))
   )
 
 (defun xtdmacs-compile++-compose-params (type &optional mode)
@@ -368,87 +481,11 @@
     (--xtdmacs-compile++-set-value mode type "image" image))
   )
 
-(defun xtdmacs-compile++-compose-run-command (type &optional mode)
-  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
-         (env     (--xtdmacs-compile++-get-value mode type "env"))
-         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
-         (compose (--xtdmacs-compile++-get-value mode type "compose-file"))
-         (service (--xtdmacs-compile++-get-value mode type "service"))
-         (dockerenv (if (string= env "")
-                        env
-                      (mapconcat 'identity (mapcar (lambda (el) (concat "-e " el)) (split-string env " ")) " "))))
-    (format "cd %s && SRCDIR=%s docker-compose -f %s run --rm %s %s %s"
-            (funcall-or-value dir)
-            (funcall-or-value dir)
-            (funcall-or-value compose)
-            dockerenv
-            (funcall-or-value service)
-            (funcall-or-value bin)))
-  )
 
-(defun xtdmacs-compile++-default-command (type &optional mode)
-  (let* ((dir    (--xtdmacs-compile++-get-value mode type "dir"))
-         (env    (--xtdmacs-compile++-get-value mode type "env"))
-         (bin    (--xtdmacs-compile++-get-value mode type "bin")))
-    (format "cd %s && %s %s"
-            (funcall-or-value dir)
-            (funcall-or-value env)
-            (funcall-or-value bin)))
-  )
+;;;;;;;;;
+;; End ;;
+;;;;;;;;;
 
-(defun xtdmacs-compile++-compose-exec-command (type &optional mode)
-  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
-         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
-         (compose (--xtdmacs-compile++-get-value mode type "compose-file"))
-         (service (--xtdmacs-compile++-get-value mode type "service")))
-    (format "cd %s && SRCDIR=%s docker-compose -f %s exec %s %s"
-            (funcall-or-value dir)
-            (funcall-or-value dir)
-            (funcall-or-value compose)
-            (funcall-or-value service)
-            (funcall-or-value bin)))
-  )
-
-(defun xtdmacs-compile++-docker-exec-command (type &optional mode)
-  (let* ((dir       (--xtdmacs-compile++-get-value mode type "dir"))
-         (bin       (--xtdmacs-compile++-get-value mode type "bin"))
-         (env       (--xtdmacs-compile++-get-value mode type "env"))
-         (container (--xtdmacs-compile++-get-value mode type "container"))
-         )
-    (format "docker exec -t %s /bin/bash -c 'cd %s && %s %s'"
-            (funcall-or-value container)
-            (funcall-or-value dir)
-            env
-            (funcall-or-value bin)))
-  )
-(defun xtdmacs-compile++-docker-run-command (type &optional mode)
-  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
-         (env     (--xtdmacs-compile++-get-value mode type "env"))
-         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
-         (image   (--xtdmacs-compile++-get-value mode type "image"))
-         (dockerenv (if (string= env "")
-                        env
-                      (mapconcat 'identity (mapcar (lambda (el) (concat "-e " el)) (split-string env " ")) " ")))
-         )
-    (format "docker run --rm=true %s %s /bin/bash -c 'cd %s && %s'"
-            dockerenv
-            image
-            (funcall-or-value dir)
-            (funcall-or-value bin))
-    )
-  )
-
-
-(defun xtdmacs-compile++-iwyu-find-compile-commands ()
-  (let* ((topbuilddir (xtdmacs-compile++-get-nearest-filename xtdmacs-compile++-iwyu-build-directory-name)))
-    (concat topbuilddir "/compile_commands.json"))
-  )
-
-(defun xtdmacs-compile++-iwyu-default-cmd()
-  (format "iwyu-wrapper.py -c %s %s"
-          (xtdmacs-compile++-iwyu-find-compile-commands)
-          (buffer-file-name))
-  )
 
 (defun xtdmacs-compile++-command-1(interactive)
   (xtdmacs-compile++-run interactive xtdmacs-compile++-command-1)
