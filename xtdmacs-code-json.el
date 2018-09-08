@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (require 'js)
 
 (eval-when-compile

@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (require 'yaml-path)
 
 (eval-when-compile

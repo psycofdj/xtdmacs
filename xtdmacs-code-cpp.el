@@ -1,6 +1,9 @@
+;; -*- lexical-binding: t -*-
+
 (require 'cc-align)
 (require 'irony-completion)
 (require 'auto-complete)
+(require 'xtdmacs-compile++)
 
 (defvar xtdmacs-code-cpp-last-rename-prefix nil)
 
@@ -139,7 +142,7 @@ See xtdmacs-code-cpp-header-cycle"
       (goto-char pos)
       (up-list -1)
       (backward-sexp 1)
-      (looking-back "enum[ \t]+class[ \t]+[^}]*"))))
+      (looking-back "enum[ \t]+class[ \t]+[^}]*" nil))))
 
 (defun align-enum-class (langelem)
   (if (inside-class-enum-p (c-langelem-pos langelem))
@@ -193,7 +196,7 @@ See xtdmacs-code-cpp-header-cycle"
     (action     . xtdmacs-code-cpp-ac-irony-yas-expand)
     (candidates . xtdmacs-code-cpp-ac-irony-candidates)))
 
-(defun xtdmacs-code-cpp-complete-irony (candidates)
+(defun xtdmacs-code-cpp-complete-irony (_candidates)
   (interactive)
   (face-remap-add-relative 'mode-line-buffer-id 'nil)
   (auto-complete '(ac-source-irony)))
@@ -249,8 +252,11 @@ See xtdmacs-code-cpp-header-cycle"
     (irony-mode t)
     (irony-cdb-autosetup-compile-options)
     (add-to-list 'ac-sources 'ac-source-irony)
-    (ac-linum-workaround)
-    (ac-flyspell-workaround)
+    (when (mode-enabled 'linum-mode)
+      (ac-linum-workaround))
+    (when (or (mode-enabled 'flyspell-mode)
+              (mode-enabled 'flyspell-prod-mode))
+      (ac-flyspell-workaround))
     (setq popup-use-optimized-column-computation nil)
     )
   (message "enabled : xtdmacs-code-cpp-mode")

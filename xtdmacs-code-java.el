@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (defcustom xtdmacs-code-java-keywords-alist
   '(("\\<gcs_[_a-zA-Z0-9]+\\>" .     'xtdmacs-code-face-global-variable-const-static)
     ("\\<gs_[_a-zA-Z0-9]+\\>" .      'xtdmacs-code-face-global-variable-static)

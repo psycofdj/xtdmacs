@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (defcustom xtdmacs-code-sphinx-compile-alist
   '(("compile" .
      (("dir"        . xtdmacs-code-sphinx-project-root)

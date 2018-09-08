@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 ;;;###autoload
 (defun xtdmacs-get-install-dir()
   (package-desc-dir (or

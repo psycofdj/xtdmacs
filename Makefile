@@ -1,5 +1,5 @@
 SOURCES = $(wildcard *.el bin/* vendor/* | grep -v autoloader)
-VERSION = $(shell cat xtdmacs-pkg.el | head -n1 | awk '{print $$3}' | sed 's/"//g')
+VERSION = $(shell cat xtdmacs-pkg.el | grep define-package | awk '{print $$3}' | sed 's/"//g')
 
 all: install
 

@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (require 'web-mode)
 
 (defun --xtdmacs-code-web-mode-construct()

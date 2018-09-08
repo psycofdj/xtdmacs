@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (require 'linum)
 (require 'yafolding)
 (require 'align)

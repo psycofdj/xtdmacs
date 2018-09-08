@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (defun --xtdmacs-code-line-mode-construct()
   (unless (mode-enabled 'which-function-mode)
     (which-function-mode t))

@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 
 (defcustom xtdmacs-code-php-indent-load-auto
   t

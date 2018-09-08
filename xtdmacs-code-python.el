@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (require 'xtdmacs-compile++)
 (require 'package)
 
@@ -149,7 +151,7 @@
    (funcall-or-value xtdmacs-code-python-test-args) " ")
   )
 
-(defun xtdmacs-code-python-params (type &optional mode)
+(defun xtdmacs-code-python-params (type &optional _mode)
   (let* ((locaval (copy-tree xtdmacs-compile++-config-alist))
          (config (cdr (assoc type locaval)))
          (dir (cdr (assoc "dir" config)))

@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 ;; Open files and goto lines like we see from g++ etc. i.e. file:line#
 (defadvice find-file-noselect
     (around find-file-noselect-at-line

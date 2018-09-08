@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (defun --xtdmacs-code-makefile-mode-construct()
   (highlight-regexp "\t" 'hi-yellow)
   (delete-trailing-whitespace)

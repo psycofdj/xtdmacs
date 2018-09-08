@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (defcustom xtdmacs-code-lisp-indent-load-auto t
   "Enables code auto-indentation on load."
   :group 'xtdmacs-code-lisp

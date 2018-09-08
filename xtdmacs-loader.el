@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 ;;;###autoload
 (defcustom xtdmacs-loader-auto-minor-mode-alist
   '((("Dockerfile") xtdmacs-code-mode)

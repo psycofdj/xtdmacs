@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (require 'xtdmacs-compile++)
 (require 'package)
 (require 'go-autocomplete)

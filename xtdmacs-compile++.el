@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (require 'xterm-color)
 (eval-when-compile (require 'subr-x))
 

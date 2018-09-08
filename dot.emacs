@@ -1,4 +1,5 @@
 ;; -*- mode: emacs-lisp; -*-
+;; -*- lexical-binding: t -*-
 
 ;; configure repositories
 (when (>= emacs-major-version 24)
@@ -29,13 +30,8 @@
     (setq frame-background-mode 'light)
   (setq frame-background-mode 'dark))
 
-(require 'flyspell)
 (require 'xtdmacs-find)
 (require 'xtdmacs-loader)
 (require 'go-autocomplete)
 (require 'auto-complete-config)
 (require 'yasnippet)
-
-
-
-

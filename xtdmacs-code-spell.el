@@ -1,7 +1,6 @@
-(require 'flyspell)
+;; -*- lexical-binding: t -*-
 
-(eval-when-compile
-  (defvar xtdmacs-code-spell-mode-map))
+(require 'flyspell)
 
 (defcustom xtdmacs-code-spell-max-lines
   9999999
@@ -61,7 +60,7 @@
       )
     found))
 
-(defun xtdmacs-code-spell-ignore-patterns (begin end type)
+(defun xtdmacs-code-spell-ignore-patterns (begin end _type)
   (save-excursion
     (goto-char begin)
     (let* ((start   (line-beginning-position))

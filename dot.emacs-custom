@@ -28,9 +28,6 @@
  '(compilation-scroll-output t)
  '(confirm-kill-emacs nil)
  '(create-lockfiles nil)
- '(fci-rule-character 9482)
- '(fci-rule-character-color nil)
- '(fci-rule-color "#333333")
  '(fill-column 84)
  '(flyspell-duplicate-distance 0)
  '(flyspell-issue-message-flag nil)
@@ -80,7 +77,7 @@
      ("melpa-stable" . "https://stable.melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (go-snippets irony terraform-mode elisp-lint xtdmacs)))
+    (flycheck-package go-snippets irony terraform-mode elisp-lint xtdmacs)))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
