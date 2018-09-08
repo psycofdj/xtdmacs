@@ -221,6 +221,7 @@ arguments can be set as a list via ‘gofmt-args`."
   (define-key go-mode-map (kbd "<f12>")   'godef-jump)
   (define-key go-mode-map (kbd "C-<f12>") 'godef-jump-other-window)
   (yas-minor-mode)
+  (go-snippets-initialize)
   (unless (mode-enabled 'yas-minor-mode)
     (yas-minor-mode t))
 
@@ -249,7 +250,6 @@ arguments can be set as a list via ‘gofmt-args`."
       (remove-hook 'before-save-hook '(lambda() (xtdmacs-code-format-buffer t nil))))
   (when (mode-enabled 'yas-minor-mode)
     (yas-minor-mode nil))
-
   (font-lock-remove-keywords nil xtdmacs-code-go-keywords-alist)
   (message "disabled : xtdmacs-code-go-mode")
   )
@@ -278,10 +278,6 @@ arguments can be set as a list via ‘gofmt-args`."
 (put 'xtdmacs-code-go-indent-load-auto 'safe-local-variable 'booleanp)
 ;;;###autoload
 (put 'xtdmacs-code-go-indent-save-auto 'safe-local-variable 'booleanp)
-;;;###autoload
-(put 'xtdmacs-code-go-test-args 'safe-local-variable '(lambda(val) t))
-;;;###autoload
-(put 'xtdmacs-code-go-test-bin-path 'safe-local-variable 'file-exists-p)
 
 (provide 'xtdmacs-code-go)
 

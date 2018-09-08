@@ -1,4 +1,6 @@
 (require 'cc-align)
+(require 'irony-completion)
+(require 'auto-complete)
 
 (defvar xtdmacs-code-cpp-last-rename-prefix nil)
 
@@ -22,6 +24,16 @@
   :group 'xtdmacs-code-cpp
   :type '(string :tag "Extension (no period)" "")
   :safe 'stringp
+  )
+
+(defcustom xtdmacs-code-cpp-compile-alist
+  xtdmacs-compile++-default-config-alist
+  "Xtdmacs-Code-Cpp compilation configuration"
+  :group 'xtdmacs-code-cpp
+  :safe '(lambda(p) t)
+  :type '(alist :key-type string
+                :value-type (alist :key-type string
+                                   :value-type (choice (string) (function))))
   )
 
 (defcustom xtdmacs-code-cpp-keywords-alist
@@ -76,6 +88,13 @@
   "List of additional font-lock rules"
   :group 'xtdmacs-code-cpp
   :safe '(lambda(val) t)
+  )
+
+
+(defface xtdmacs-code-cpp-ac-irony-working-face
+  '((t (:background "green")))
+  "Overriding face of buffer when completion is working"
+  :group 'xtdmacs-code-cpp
   )
 
 (defun --xtdmacs-code-cpp-header-next-filename (curfile &optional create)
@@ -148,7 +167,6 @@ See xtdmacs-code-cpp-header-cycle"
       (xtdmacs-code-format-buffer-with-ident)
     ))
 
-
 (defun xtdmacs-code-cpp-rename-variable()
   (interactive)
   (forward-word)
@@ -167,17 +185,83 @@ See xtdmacs-code-cpp-header-cycle"
       (setq xtdmacs-code-cpp-last-rename-prefix prefix)))
   )
 
+(defvar ac-source-irony
+  '((cache)
+    (requires   . -1)
+    (limit      . nil)
+    (prefix     . xtdmacs-code-cpp-ac-irony-prefix)
+    (action     . xtdmacs-code-cpp-ac-irony-yas-expand)
+    (candidates . xtdmacs-code-cpp-ac-irony-candidates)))
+
+(defun xtdmacs-code-cpp-complete-irony (candidates)
+  (interactive)
+  (face-remap-add-relative 'mode-line-buffer-id 'nil)
+  (auto-complete '(ac-source-irony)))
+
+(defun xtdmacs-code-cpp-complete-irony-async ()
+  (interactive)
+  (face-remap-add-relative 'mode-line-buffer-id 'xtdmacs-code-cpp-ac-irony-working-face)
+  (irony-completion-candidates-async 'xtdmacs-code-cpp-complete-irony))
+
+(defun xtdmacs-code-cpp-ac-irony-prefix ()
+  (irony-completion-beginning-of-symbol)
+  )
+
+(defun xtdmacs-code-cpp-ac-irony-yas-expand ()
+  (let* ((item    (cdr ac-last-completion))
+         (value   (popup-item-property item 'current))
+         (str     (irony-completion-post-comp-str value))
+         (placeholders (irony-completion-post-comp-placeholders value)))
+    (if (and placeholders (irony-snippet-available-p))
+        (irony-snippet-expand
+         (irony-completion--post-complete-yas-snippet str placeholders))))
+  )
+
+(defun xtdmacs-code-cpp-ac-irony--make-candidate (candidate)
+  (popup-item-propertize
+   (car candidate)
+   'summary (nth 2 candidate)
+   'document (concat
+              (irony--awhen (nth 2 candidate) ;result-type?
+                            (concat it " "))
+              (concat (nth 4 candidate) "\n") ;prototype
+              (irony--awhen (nth 3 candidate) ;brief doc
+                            (concat "\n" it "\n")))
+   'current candidate
+   )
+  )
+
+(defun xtdmacs-code-cpp-ac-irony-candidates ()
+  (mapcar #'xtdmacs-code-cpp-ac-irony--make-candidate (irony-completion-candidates)))
+
 (defun --xtdmacs-code-cpp-mode-construct()
   (font-lock-add-keywords nil xtdmacs-code-cpp-keywords-alist)
   (add-hook 'before-save-hook '--xtdmacs-code-cpp-save-indent t t)
   (add-hook 'hack-local-variables-hook '--xtdmacs-code-cpp-load-indent t t)
   (fix-enum-class)
-  (define-key global-map (kbd "C-e")  'xtdmacs-code-cpp-rename-variable)
-  (define-key global-map (kbd "M-e")  'xtdmacs-code-cpp-rename-variable)
+
+  (when (mode-enabled 'xtdmacs-compile++-mode)
+    (xtdmacs-compile++-register-config "c++-mode" xtdmacs-code-cpp-compile-alist))
+
+  (unless (mode-enabled 'auto-complete-mode)
+    (yas-minor-mode t)
+    (auto-complete-mode t)
+    (irony-mode t)
+    (irony-cdb-autosetup-compile-options)
+    (add-to-list 'ac-sources 'ac-source-irony)
+    (ac-linum-workaround)
+    (ac-flyspell-workaround)
+    (setq popup-use-optimized-column-computation nil)
+    )
   (message "enabled : xtdmacs-code-cpp-mode")
   )
 
 (defun --xtdmacs-code-cpp-mode-destroy()
+  (when (mode-enabled 'auto-complete-mode)
+    (irony-mode nil)
+    (auto-complete-mode nil)
+    (yas-minor-mode nil)
+    )
   (remove-hook 'before-save-hook '--xtdmacs-code-cpp-save-indent t)
   (remove-hook 'hack-local-variables-hook '--xtdmacs-code-cpp-load-indent t)
   (remove-hook 'c++-mode-hook 'fix-enum-class t)
@@ -187,9 +271,12 @@ See xtdmacs-code-cpp-header-cycle"
 
 ;;;###autoload
 (define-minor-mode xtdmacs-code-cpp-mode "Code for C/C++" nil "Code"
-  '(([f12]   . xtdmacs-code-cpp-header-cycle)
-    ([C-f12] . xtdmacs-code-cpp-header-cycle-create))
-
+  '(([f12]      . xtdmacs-code-cpp-header-cycle)
+    ([C-f12]    . xtdmacs-code-cpp-header-cycle-create)
+    ("\C-e"     . irony-get-type)
+    ("\M-."     . xtdmacs-code-cpp-complete-irony-async)
+    ("\C-c\C-e" . xtdmacs-code-cpp-rename-variable)
+    )
   (if xtdmacs-code-cpp-mode
       (--xtdmacs-code-cpp-mode-construct)
     (--xtdmacs-code-cpp-mode-destroy))

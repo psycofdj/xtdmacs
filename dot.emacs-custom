@@ -10,6 +10,8 @@
  '(ac-max-width 0.5)
  '(ac-menu-height 15)
  '(ac-quick-help-delay 0.1)
+ '(ac-quick-help-height 10)
+ '(ac-quick-help-prefer-pos-tip nil)
  '(ac-trigger-commands-on-completing
    (quote
     (delete-backward-char backward-delete-char backward-delete-char-untabify autopair-backspace paredit-backward-delete paredit-backward-delete-word self-insert-command)))
@@ -71,7 +73,14 @@
            (buffer-file-name))
         "[not a real file]"))
      " %-")))
- '(package-selected-packages (quote (elisp-lint xtdmacs)))
+ '(package-archives
+   (quote
+    (("marmalade" . "https://ojab.ru/marmalade/")
+     ("melpa" . "https://melpa.org/packages/")
+     ("melpa-stable" . "https://stable.melpa.org/packages/"))))
+ '(package-selected-packages
+   (quote
+    (go-snippets irony terraform-mode elisp-lint xtdmacs)))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)

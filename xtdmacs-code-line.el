@@ -26,7 +26,7 @@
 ;;;###autoload
 (define-minor-mode xtdmacs-code-line-mode
   "Specialized modeline" nil "Code"
-  '(("\C-e" . yaml-path-at-point))
+  '()
   (if xtdmacs-code-line-mode
       (--xtdmacs-code-line-mode-construct)
     (--xtdmacs-code-line-mode-destroy))
