@@ -4,10 +4,6 @@
 - [Introduction](#introduction)
 - [Install](#install)
 - [Loading modes](#loading-modes)
-    - [Manually](#manually)
-    - [From ~/.emacs:](#from-emacs)
-    - [Using emacs customization](#using-emacs-customization)
-    - [Using xtdmacs-loader](#using-xtdmacs-loader)
 - [General purpose modes](#general-purpose-modes)
     - [Bindings](#bindings)
         - [Ido](#ido)
@@ -100,41 +96,43 @@ all its dependencies in your elpa directory, usually `~/.emacs.d/elpa`.
 
 # Loading modes
 
-Each mode provided by xtdmacs can be loaded like every other minor mode. However
-we recommend to use the xtdmacs-loader described below.
+Each mode provided by xtdmacs can be loaded like every other minor mode. However we recommend
+to use the **`xtdmacs-loader`** described below.
 
-## Manually
+* **Manually**
 
-`M-x xtdmacs-bindings-mode RET`
+  Example:
+  `M-x xtdmacs-bindings-mode RET`
 
-## From ~/.emacs:
+* **From ~/.emacs**
 
-`(xtdmacs-bindings-mode)`
+  Example:
+  `(xtdmacs-bindings-mode)`
 
-## Using emacs customization
+* **Using customization**
 
-`M-x customize-variable RET xtdmacs-bindings-mode RET`
+  `M-x customize-variable RET xtdmacs-bindings-mode RET`
 
-## Using xtdmacs-loader
+* **Using xtdmacs's loader**
 
-Xtdmacs' package provides is own minor-mode loading system. It is very similar
-to default `minor-mode-alist` but allows to define the same mode list
-to several file extensions.
+  **`xtdmacs-loader`** package provides its own minor-mode loading system. It is very similar
+  to default `minor-mode-alist` but allows to define the same mode list to several file extensions.
 
-This package helps customizing which minors modes should be loaded for each
-file extensions.
+  This package helps customizing which minors modes should be loaded for each
+  file extensions.
 
-In order modify associations between file extensions are minor modes, the simpler
-is to customize the *xtdmacs-loader-auto-minor-mode-alist* variable.
+  In order modify associations between file extensions are minor modes, the easiest is to
+  run the following command:
+  * `M-x customize-variable RET xtdmacs-loader-auto-minor-mode-alist RET`
 
-![alt text](doc/xtdmacs-loader.png "Logo Title Text 1")
+  ![alt text](doc/xtdmacs-loader.png "Logo Title Text 1")
 
 
-To enable Xtdmacs' loader, you need to load package at start up :
-```elisp
-;; in your ~/.emacs
-(require 'xtdmacs-loader)
-```
+  To enable `xtdmacs-loader`, you need to load package at start up :
+  ```elisp
+  ;; in your ~/.emacs
+  (require 'xtdmacs-loader)
+  ```
 
 
 
@@ -142,38 +140,34 @@ To enable Xtdmacs' loader, you need to load package at start up :
 
 ## Bindings
 
-`xtdmacs-bindings` setup keyboard bindings for the most commonly used features.
+**`xtdmacs-bindings`** setup keyboard bindings for the most commonly used features.
 
-### Ido
-
-The ido (Interactively do things) mode provides an efficient way to navigate among
-opened buffers. Ido display available buffer names in mini-buffer and filters the
+The [ido](https://www.emacswiki.org/emacs/InteractivelyDoThings) mode provides an efficient way
+to navigate among opened buffers. Ido display available buffer names in mini-buffer and filters the
 list as you type characters.
 
-swbuff defines functions to directly cycle among existing buffers. It also
+It defines functions to directly cycle among existing buffers. It also
 provides a way to ignore a list of buffer names in this cycle. Typically,
-users will ignore systems buffers like `*Help*` or `*Message*`.
+users will ignore systems buffers like `*Help*` or `*Message*`. 
 
-To customize list of ignore buffers :
+Ignored buffers but will be suggested if typed characters matches nothing but
+filtered buffer names.
 
-`M-x customize-variable RET swbuff-exclude-buffer-regexps`
-
-ido completion will also ignore patterns defined in
-`swbuff-exclude-buffer-regexps` but will suggest them if typed characters
-matches nothing but filtered buffer names.
-
+To customize list of ignored buffers :
+`M-x customize-variable RET ido-ignore-buffers RET`
 
 Example:
 ![IDO mode](doc/ido-mode.png "IDO mode")
 
+
 | Key                           | Effect                                |
 |-------------------------------|---------------------------------------|
 | \<ctrl\>+x \<ctrl\>+\<down\>  | Run ido interactive buffer selection  |
-| \<left\>                      | (in ido) next buffer suggestion       |
+| \<right\>                     | (in ido) next buffer suggestion       |
 | \<left\>                      | (in ido) previous buffer suggestion   |
 | RET                           | (in ido) display selected buffer      |
-| \<ctrl\>+x \<ctrl\>+\<right\> | display next buffer                   |
-| \<ctrl\>+x \<ctrl\>+\<left\>  | display previous buffer               |
+| \<ctrl\>+x \<ctrl\>+\<right\> | display next buffer (iflipb)          |
+| \<ctrl\>+x \<ctrl\>+\<left\>  | display previous buffer (iflipb)      |
 
 
 ### Cursor Bindings
@@ -196,10 +190,10 @@ Example:
 
 | Key                           | Effect                                |
 |-------------------------------|---------------------------------------|
-| \<ctrl\>+x \<ctrl\>+f         | open file                             |
+| \<ctrl\>+x \<ctrl\>+f         | open file with xtdmacs's file opener  |
 | \<alt\>+\<plus\>              | enlarge current window's height       |
 | \<alt\>+\<minus\>             | shrink current window's height        |
-| \<alt\>+\<delete\>            | delete previous word                  |
+| \<alt\>+\<delete\>            | delete previous word (no kill-ring)   |
 | \<alt\>+s                     | display speed-bar                     |
 | \<alt\>+/                     | auto-complete current word            |
 | \<ctrl\>+d                    | search and replace                    |

@@ -1,6 +1,5 @@
 ;; -*- lexical-binding: t -*-
-
-(require 'swbuff)
+(require 'iflipb)
 
 (eval-when-compile
   (defvar shell-last-visited-buffer))
@@ -8,6 +7,12 @@
 (defun xtdmacs-insert-date ()
   (interactive)
   (insert (format-time-string "%e-%m-%Y"))
+  )
+
+(defun xtdmacs-backward-delete-word ()
+  (interactive)
+  (backward-kill-word 1)
+  (setq kill-ring (cdr kill-ring))
   )
 
 (defun xtdmacs-shell-toggle ()
@@ -46,7 +51,7 @@
 ;;;###autoload
 (define-minor-mode xtdmacs-bindings-mode
   "Emacs custom bindings" nil "Emacs custom bindings"
-  '(([home]       . beginning-of-line)
+  `(([home]       . beginning-of-line)
     ([select]     . end-of-line)
     ([M-up]       . beginning-of-buffer)
     ([A-up]       . beginning-of-buffer)
@@ -61,8 +66,8 @@
     ([24 right]   . windmove-right)
     ([24 left]    . windmove-left)
     ([24 up]      . windmove-up)
-    ([24 C-right] . swbuff-switch-to-next-buffer)
-    ([24 C-left]  . swbuff-switch-to-previous-buffer)
+    ([24 C-right] . iflipb-next-buffer)
+    ([24 C-left]  . iflipb-previous-buffer)
     ([24 C-down]  . ido-switch-buffer)
     ("\C-xk"      . kill-buffer)
     ("\C-x\C-f"   . find-file)
@@ -75,6 +80,7 @@
     ("\C-xl"      . xtdmacs-insert-date)
     ("\M-q"       . comment-region)
     ("\M-a"       . uncomment-region)
+    (,(kbd "M-<DEL>") . xtdmacs-backward-delete-word)
     ([f5]         . delete-trailing-whitespace)
     ([C-f5]       . font-lock-fontify-buffer)
     ([C-f11]      . xtdmacs-shell-toggle)

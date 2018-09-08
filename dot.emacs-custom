@@ -77,7 +77,7 @@
      ("melpa-stable" . "https://stable.melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (flycheck-package go-snippets irony terraform-mode elisp-lint xtdmacs)))
+    (iflipb flycheck-package go-snippets irony terraform-mode elisp-lint xtdmacs)))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
