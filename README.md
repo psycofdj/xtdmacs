@@ -210,7 +210,7 @@ Example:
 
 ## File Opener
 
-`xtdmacs-find` package provides an overload of standard emacs' `find-file`
+**`xtdmacs-find`** package provides an overload of standard emacs' `find-file`
 function. This overload allows to open existing files to specified line and
 column number.
 
@@ -239,7 +239,7 @@ To enable Xtdmacs' find overload, you need to load package at start up :
 
 ## Generic code
 
-`xtdmacs-code-mode` enables multi-language tools that help editing code.
+**`xtdmacs-code-mode`** enables multi-language tools that help editing code.
 
 ### Column enforce
 
@@ -360,7 +360,7 @@ Note: `c` and `s` optional modifiers stands respectively for const and static
 
 ## Compile
 
-`xtdmacs-compile++-mode` wraps the default compilation mode in order to provide a set of
+**`xtdmacs-compile++-mode`** wraps the default compilation mode in order to provide a set of
 predefined compilation commands. It also allows to use function instead of
 plain string as default compile commands.
 
@@ -608,7 +608,7 @@ The following example set the `compile` command for the mode `yaml-mode`
 
 ## Line mode
 
-`xtdmacs-code-line-mode` tweaks the `mode-line` format in order to display :
+**`xtdmacs-code-line-mode`** tweaks the `mode-line` format in order to display :
 - **`buffer name`**:  with the customizable face `mode-line-buffer-id`
 - **`line`** and **`column`** of current point position
 - **`percentage`** of the current buffer scroll
@@ -627,8 +627,8 @@ Example:
 
 ## Spelling
 
-`xtdmacs-code-spell-mode` and `xtdmacs-code-spell-prog-mode` are wrapping of **`flyspell-mode`**
-and **`flyspell-prog-mode`**. They both detected spelling error in current buffer.
+**`xtdmacs-code-spell-mode`** and **`xtdmacs-code-spell-prog-mode`** are wrapping of `flyspell-mode`
+and `flyspell-prog-mode`. They both detected spelling error in current buffer.
 The first analyzes all available text and the second only analyzes strings and comment.
 
 ### Spell Configuration
@@ -687,7 +687,7 @@ Useful functions :
 
 ## C++
 
-`xtdmacs-code-cpp-mode` provides the following features :
+**`xtdmacs-code-cpp-mode`** provides the following features :
 
 - **Fix -std=c++11 enum class** : Aging c++-mode doesn't handle new enum
   class syntax available in c++11 and leads to a broken indentation. This minor
@@ -797,7 +797,7 @@ By default `xtdmacs-code-cpp-compile-alist` takes the value of
 
 ## Go
 
-`xtdmacs-code-minor-mode` provides the following features:
+**`xtdmacs-code-go-mode`** provides the following features:
 
 * **Keywords**: define font-lock rules to color particular naming patterns, allowing to easily
   distinguish local variables, parameter... etc.
@@ -851,7 +851,7 @@ By default `xtdmacs-code-cpp-compile-alist` takes the value of
 
 ## Python
 
-`xtdmacs-code-python-mode` provides the following features :
+**`xtdmacs-code-python-mode`** provides the following features :
 
 - Automatic indentation on load and/or save
 
@@ -958,7 +958,7 @@ Full definition
 
 ## Php
 
-`xtdmacs-code-php-mode`  provides de following features :
+**`xtdmacs-code-php-mode`**  provides de following features :
 - Fix anonymous function indentation introduced in PHP 5.3.0
 
 - Sets default doxymacs comment template `doxymacs-function-comment-template`
@@ -990,7 +990,7 @@ In addition to faces defined in `xtdmacs-code-mode`. (See
 
 ## Lisp
 
-`xtdmacs-code-lisp-mode` provides automatic indentation on load and save.
+**`xtdmacs-code-lisp-mode`** provides automatic indentation on load and save.
 
 ### Configuration
 
@@ -1002,7 +1002,7 @@ In addition to faces defined in `xtdmacs-code-mode`. (See
 
 ## Json
 
-`xtdmacs-code-json-mode` loads `json-mode`, sets defaults `js-indent-level` to 2 and defines default compilation
+**`xtdmacs-code-json-mode`** loads `json-mode`, sets defaults `js-indent-level` to 2 and defines default compilation
 command.
 
 ### Json Bindings
@@ -1032,7 +1032,7 @@ Full definition:
 
 ## Yaml
 
-`xtdmacs-code-yaml-mode` integrates [yaml-path](https://github.com/psycofdj/yaml-path) to
+**`xtdmacs-code-yaml-mode`** integrates [yaml-path](https://github.com/psycofdj/yaml-path) to
 `which-function-mode` and define default compilation settings.
 
 ### Yaml Bindings
@@ -1064,30 +1064,29 @@ Full definition:
 
 ## Web
 
-`xtdmacs-code-web-mode` overrides default `comment-start` and `comment-end` that are
+**`xtdmacs-code-web-mode`** overrides default `comment-start` and `comment-end` that are
 poorly set by `web-mode`.
 
 ## Makefile
 
-`xtdmacs-code-makefile-mode` highlights tabs with `hi-yellow` face.
+**`xtdmacs-code-makefile-mode`** highlights tabs with `hi-yellow` face.
 
 ## Java
 
-`xtdmacs-code-java-mode` adds font-lock keywords :
+**`xtdmacs-code-java-mode`** adds font-lock keywords :
 `M-x customize-variable RET xtdmacs-code-java-keywords-alist RET`
 
 ## Javascript
 
-`xtdmacs-code-js-mode` adds font-lock keywords :
+**`xtdmacs-code-js-mode`** adds font-lock keywords :
 `M-x customize-variable RET xtdmacs-code-js-keywords-alist RET`
 
 ## Sphinx
 
-`xtdmacs-code-sphinx-mode` set compilation settings for `rst-mode`.  It also turns
+**`xtdmacs-code-sphinx-mode`** set compilation settings for `rst-mode`.  It also turns
 off `electric-indent-mode` which appear to not work very properly with reStructuredText.
 
 ### Sphinx Compilation
-
 
 Commands are set by `xtdmacs-code-sphinx-compile-alist` which can be customized by running:
 * `M-x customize-variable RET xtdmacs-code-sphinx-compile-alist RET`
