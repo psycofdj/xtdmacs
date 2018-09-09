@@ -27,12 +27,12 @@
   )
 
 (defcustom xtdmacs-compile++-default-config-alist
-  '(("compile" .
-     (("dir"        . xtdmacs-compile++-guess-directory)
-      ("env"        . "")
-      ("bin"        . "make -j")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command)))
+  '((:compile .
+              (("dir"        . xtdmacs-compile++-guess-directory)
+               ("env"        . "")
+               ("bin"        . "make -j")
+               ("get-params" . xtdmacs-compile++-default-params)
+               ("command"    . xtdmacs-compile++-default-command)))
     ("test" .
      (("dir"        . xtdmacs-compile++-guess-directory)
       ("env"        . "")
@@ -76,10 +76,10 @@
   )
 
 (defcustom xtdmacs-compile++-command-1
-  "compile"
+  :compile
   "Set the key to use in xtdmacs-compile++-config-alist for command 1"
   :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
+  :type '(choice (const :compile)
                  (const "test")
                  (const "deploy")
                  (const "doc")
@@ -92,7 +92,7 @@
   "test"
   "Set the key to use in xtdmacs-compile++-config-alist for command 2"
   :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
+  :type '(choice (const :compile)
                  (const "test")
                  (const "deploy")
                  (const "doc")
@@ -106,7 +106,7 @@
   "deploy"
   "Set the key to use in xtdmacs-compile++-config-alist for command 3"
   :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
+  :type '(choice (const :compile)
                  (const "test")
                  (const "deploy")
                  (const "doc")
@@ -119,7 +119,7 @@
   "doc"
   "Set the key to use in xtdmacs-compile++-config-alist for command 4"
   :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
+  :type '(choice (const :compile)
                  (const "test")
                  (const "deploy")
                  (const "doc")
@@ -132,7 +132,7 @@
   "lint"
   "Set the key to use in xtdmacs-compile++-config-alist for command 5"
   :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
+  :type '(choice (const :compile)
                  (const "test")
                  (const "deploy")
                  (const "doc")
@@ -146,7 +146,7 @@
   "manual"
   "Set the key to use in xtdmacs-compile++-config-alist for command 6"
   :group 'xtdmacs-compile++
-  :type '(choice (const "compile")
+  :type '(choice (const :compile)
                  (const "test")
                  (const "deploy")
                  (const "doc")
@@ -257,16 +257,21 @@
 
   (let* ((get-params (--xtdmacs-compile++-get-value mode type "get-params"))
          (command    (--xtdmacs-compile++-get-value mode type "command"))
-         (generated  (--xtdmacs-compile++-get-value mode type "generated")))
+         (generated  (--xtdmacs-compile++-get-value mode type :generated))
+         (cache      (--xtdmacs-compile++-get-value mode type :cache))
+         )
 
     ;; when interactive requested, prompt params and delete final command
     (when prompt
       (funcall get-params type)
+      (setq cache t)
       (setq generated nil))
 
     (unless generated
       (setq generated (funcall command type))
-      (--xtdmacs-compile++-set-value mode type "generated" generated))
+      (when cache
+        (--xtdmacs-compile++-set-value mode type :cache     t)
+        (--xtdmacs-compile++-set-value mode type :generated generated)))
 
     ;; run compilation
     (compile generated t)
@@ -288,7 +293,7 @@
 
 
 
-(defun xtdmacs-compile++-query-local()
+(defun xtdmacs-compile++-query-local(type &optional mode)
   (if (not (y-or-n-p "Apply to all buffers ? "))
       (let* ((tmp (copy-tree xtdmacs-compile++-config-alist)))
         (make-local-variable 'xtdmacs-compile++-config-alist)
@@ -449,7 +454,7 @@
   (let* ((dir    (--xtdmacs-compile++-prompt-value mode type "dir" "Directory"))
          (env    (--xtdmacs-compile++-prompt-value mode type "env" "Environment"))
          (bin    (--xtdmacs-compile++-prompt-value mode type "bin" "Binary")))
-    (xtdmacs-compile++-query-local)
+    (xtdmacs-compile++-query-local type mode)
     (--xtdmacs-compile++-set-value mode type "dir" dir)
     (--xtdmacs-compile++-set-value mode type "env" env)
     (--xtdmacs-compile++-set-value mode type "bin" bin))
@@ -458,7 +463,7 @@
 (defun xtdmacs-compile++-current-file-params (type &optional mode)
   (let* ((bin  (--xtdmacs-compile++-prompt-value mode type "bin"  "Binary"))
          (file (--xtdmacs-compile++-prompt-value mode type "file" "File")))
-    (xtdmacs-compile++-query-local)
+    (xtdmacs-compile++-query-local type mode)
     (--xtdmacs-compile++-set-value mode type "bin"  bin)
     (--xtdmacs-compile++-set-value mode type "file" file))
   )

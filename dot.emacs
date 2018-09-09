@@ -30,6 +30,9 @@
     (setq frame-background-mode 'light)
   (setq frame-background-mode 'dark))
 
+(add-hook 'sh-mode-hook 'xtdmacs-code-shell-mode)
+(add-hook 'sh-mode-hook 'xtdmacs-code-mode)
+
 (require 'xtdmacs-find)
 (require 'xtdmacs-loader)
 (require 'go-autocomplete)
