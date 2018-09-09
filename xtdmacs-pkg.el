@@ -1,6 +1,6 @@
 ;; -*- lexical-binding: t -*-
 
-(define-package "xtdmacs" "0.4" "Set of developping tools."
+(define-package "xtdmacs" "0.5" "Set of developping tools."
   '((auto-complete             "20170124.1845")
     (cmake-mode                "20160928.505" )
     (column-enforce-mode       "20170103.1231")
