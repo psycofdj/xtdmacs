@@ -29,6 +29,7 @@
  '(confirm-kill-emacs nil)
  '(create-lockfiles nil)
  '(fill-column 84)
+ '(flycheck-shellcheck-excluded-warnings (quote ("SC2086" "SC2155")))
  '(flyspell-duplicate-distance 0)
  '(flyspell-issue-message-flag nil)
  '(flyspell-issue-welcome-flag nil)
