@@ -4,7 +4,7 @@
 (require 'auto-complete)
 
 (defcustom xtdmacs-code-shell-compile-alist
-  '((:compile . ((:file       . xtdmacs-code-shell-shellcheck-file)
+  '((:compile . ((:file       . buffer-file-name)
                  (:bin        . xtdmacs-code-shell-shellcheck-bin)
                  (:get-params . xtdmacs-compile++-current-file-params)
                  (:command    . xtdmacs-compile++-simple-file-command)

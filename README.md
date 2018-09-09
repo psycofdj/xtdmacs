@@ -6,7 +6,6 @@
 - [Loading modes](#loading-modes)
 - [General purpose modes](#general-purpose-modes)
     - [Bindings](#bindings)
-        - [Ido](#ido)
         - [Cursor Bindings](#cursor-bindings)
         - [Other bindings](#other-bindings)
     - [File Opener](#file-opener)
@@ -56,6 +55,8 @@
         - [Php Configuration](#php-configuration)
     - [Lisp](#lisp)
         - [Configuration](#configuration)
+    - [Shell](#shell)
+        - [Shell Compilation](#shell-compilation)
     - [Json](#json)
         - [Json Bindings](#json-bindings)
         - [Json Compilation](#json-compilation)
@@ -410,7 +411,7 @@ The **`<command>`** is one of the pre-defined command **:compile**, **:test**, *
 **:lint** and **:manual**.
 
 The **`:get-params`** function is called interactively to prompt for specific parameters
-of the command. Ex. for c++ "compile" command, we prompt for working directory,
+of the command. Ex. for c++ :compile command, we prompt for working directory,
 optional environment variables and specific script to run.
 
 The **`:command`** item build the final command send to default compilation-mode. Ex. for
@@ -947,18 +948,18 @@ Commands are set by `xtdmacs-code-python-compile-alist` which can be customized 
 
 Full definition
 ```lisp
-'(("compile" .
-     (("dir"        . xtdmacs-code-python-project-root)
-      ("bin"        . xtdmacs-code-python-pylint-bin)
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command)))
-    ("test" .
-     (("dir"        . xtdmacs-code-python-project-root)
-      ("bin"        . xtdmacs-code-python-test-bin)
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command))))
+'((:compile .
+     ((:dir        . xtdmacs-code-python-project-root)
+      (:bin        . xtdmacs-code-python-pylint-bin)
+      (:env        . "")
+      (:get-params . xtdmacs-compile++-default-params)
+      (:command    . xtdmacs-compile++-default-command)))
+    (:test .
+     ((:dir        . xtdmacs-code-python-project-root)
+      (:bin        . xtdmacs-code-python-test-bin)
+      (:env        . "")
+      (:get-params . xtdmacs-compile++-default-params)
+      (:command    . xtdmacs-compile++-default-command))))
 ```
 
 
@@ -1006,6 +1007,39 @@ In addition to faces defined in `xtdmacs-code-mode`. (See
 - `M-x customize-variable RET xtdmacs-code-lisp-indent-save-auto RET` : Enables
   code auto-indentation on buffer save.
 
+## Shell
+
+**`xtdmacs-code-shell-mode`**  defines additional fontlock keywords and a default compilation
+command that runs [shellcheck](https://github.com/koalaman/shellcheck) linter.
+
+### Shell Configuration
+
+Define path to `shellcheck` binary
+* `M-x customize-variable RET xtdmacs-code-shell-shellcheck-bin-path RET`
+
+Define additional fontlock keywords
+* `M-x customize-variable RET xtdmacs-code-shell-keywords-alist RET`
+
+Define compilation configuration
+* `M-x customize-variable RET xtdmacs-code-shell-compile-alist RET`
+
+### Shell Compilation
+
+Commands are set by `xtdmacs-code-shell-compile-alist` which can be customized by running:
+* `M-x customize-variable RET xtdmacs-code-shell-compile-alist RET`
+
+* **`compile`** : runs `shellcheck` on current buffer
+
+Full definition:
+
+```lisp
+  '((:compile .
+     ((:file      . buffer-file-name)
+     (:bin        . xtdmacs-code-shell-shellcheck-bin)
+     (:get-params . xtdmacs-compile++-current-file-params)
+     (:command    . xtdmacs-compile++-simple-file-command))))
+```
+
 ## Json
 
 **`xtdmacs-code-json-mode`** loads `json-mode`, sets defaults `js-indent-level` to 2 and defines default compilation
@@ -1028,11 +1062,11 @@ Commands are set by `xtdmacs-code-json-compile-alist` which can be customized by
 Full definition:
 
 ```lisp
-  '(("compile" .
-     (("file"       . buffer-file-name)
-      ("bin"        . "jsonlint-php -q")
-      ("get-params" . xtdmacs-compile++-current-file-params)
-      ("command"    . xtdmacs-compile++-simple-file-command)))
+  '((:compile .
+     ((:file       . buffer-file-name)
+      (:bin        . "jsonlint-php -q")
+      (:get-params . xtdmacs-compile++-current-file-params)
+      (:command    . xtdmacs-compile++-simple-file-command)))
     )
 ```
 
@@ -1058,11 +1092,11 @@ Commands are set by `xtdmacs-code-yaml-compile-alist` which can be customized by
 Full definition:
 
 ```lisp
-  '(("compile" .
-     (("file"       . buffer-file-name)
-      ("bin"        . "yamllint -f parsable -d '{extends: relaxed, rules: {indentation: {spaces: consistent}, line-length: {max: 300}}}'")
-      ("get-params" . xtdmacs-compile++-current-file-params)
-      ("command"    . xtdmacs-compile++-simple-file-command)))
+  '((:compile .
+     ((:file       . buffer-file-name)
+      (:bin        . "yamllint -f parsable -d '{extends: relaxed, rules: {indentation: {spaces: consistent}, line-length: {max: 300}}}'")
+      (:get-params . xtdmacs-compile++-current-file-params)
+      (:command    . xtdmacs-compile++-simple-file-command)))
     )
 ```
 
@@ -1105,12 +1139,12 @@ Commands are set by `xtdmacs-code-sphinx-compile-alist` which can be customized 
 
 Full definition:
 ```lisp
-  '(("compile" .
-     (("dir"        . xtdmacs-code-sphinx-project-root)
-      ("bin"        . xtdmacs-code-sphinx-bin)
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command))))
+  '((:compile .
+     ((:dir        . xtdmacs-code-sphinx-project-root)
+      (:bin        . xtdmacs-code-sphinx-bin)
+      (:env        . "")
+      (:get-params . xtdmacs-compile++-default-params)
+      (:command    . xtdmacs-compile++-default-command))))
 ```
 
 
