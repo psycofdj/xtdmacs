@@ -27,42 +27,36 @@
   )
 
 (defcustom xtdmacs-compile++-default-config-alist
-  '((:compile .
-              (("dir"        . xtdmacs-compile++-guess-directory)
-               ("env"        . "")
-               ("bin"        . "make -j")
-               ("get-params" . xtdmacs-compile++-default-params)
-               ("command"    . xtdmacs-compile++-default-command)))
-    ("test" .
-     (("dir"        . xtdmacs-compile++-guess-directory)
-      ("env"        . "")
-      ("bin"        . "make -j")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command)))
-    ("deploy" .
-     (("dir"        . xtdmacs-compile++-guess-directory)
-      ("env"        . "")
-      ("bin"        . "make -j")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command)))
-    ("doc" .
-     (("dir"        . xtdmacs-compile++-guess-directory)
-      ("env"        . "")
-      ("bin"        . "make -j")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command)))
-    ("lint" .
-     (("dir"        . xtdmacs-compile++-guess-directory)
-      ("env"        . "")
-      ("bin"        . "make -j")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command)))
-    ("manual" .
-     (("dir"        . xtdmacs-compile++-guess-directory)
-      ("env"        . "")
-      ("bin"        . "make -j")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command)))
+  '((:compile . ((:dir        . xtdmacs-compile++-guess-directory)
+                 (:env        . "")
+                 (:bin        . "make -j")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-compile++-default-command)))
+    (:test .    ((:dir        . xtdmacs-compile++-guess-directory)
+                 (:env        . "")
+                 (:bin        . "make -j")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-compile++-default-command)))
+    (:deploy .  ((:dir        . xtdmacs-compile++-guess-directory)
+                 (:env        . "")
+                 (:bin        . "make -j")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-compile++-default-command)))
+    (:doc .     ((:dir        . xtdmacs-compile++-guess-directory)
+                 (:env        . "")
+                 (:bin        . "make -j")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-compile++-default-command)))
+    (:lint .    ((:dir        . xtdmacs-compile++-guess-directory)
+                 (:env        . "")
+                 (:bin        . "make -j")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-compile++-default-command)))
+    (:manual . ((:dir        . xtdmacs-compile++-guess-directory)
+                (:env        . "")
+                (:bin        . "make -j")
+                (:get-params . xtdmacs-compile++-default-params)
+                (:command    . xtdmacs-compile++-default-command)))
     )
   "xtdmacs-compile++ callback configuration"
   :group 'xtdmacs-compile++
@@ -80,78 +74,78 @@
   "Set the key to use in xtdmacs-compile++-config-alist for command 1"
   :group 'xtdmacs-compile++
   :type '(choice (const :compile)
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "lint")
-                 (const "manual")
+                 (const :test)
+                 (const :deploy)
+                 (const :doc)
+                 (const :lint)
+                 (const :manual)
                  (other :tag "Other" ""))
   :safe 'stringp)
 
 (defcustom xtdmacs-compile++-command-2
-  "test"
+  :test
   "Set the key to use in xtdmacs-compile++-config-alist for command 2"
   :group 'xtdmacs-compile++
   :type '(choice (const :compile)
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "lint")
-                 (const "manual")
+                 (const :test)
+                 (const :deploy)
+                 (const :doc)
+                 (const :lint)
+                 (const :manual)
                  (other :tag "Other" ""))
   :safe 'stringp)
 
 
 (defcustom xtdmacs-compile++-command-3
-  "deploy"
+  :deploy
   "Set the key to use in xtdmacs-compile++-config-alist for command 3"
   :group 'xtdmacs-compile++
   :type '(choice (const :compile)
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "lint")
-                 (const "manual")
+                 (const :test)
+                 (const :deploy)
+                 (const :doc)
+                 (const :lint)
+                 (const :manual)
                  (other :tag "Other" ""))
   :safe 'stringp)
 
 (defcustom xtdmacs-compile++-command-4
-  "doc"
+  :doc
   "Set the key to use in xtdmacs-compile++-config-alist for command 4"
   :group 'xtdmacs-compile++
   :type '(choice (const :compile)
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "lint")
-                 (const "manual")
+                 (const :test)
+                 (const :deploy)
+                 (const :doc)
+                 (const :lint)
+                 (const :manual)
                  (other :tag "Other" ""))
   :safe 'stringp)
 
 (defcustom xtdmacs-compile++-command-5
-  "lint"
+  :lint
   "Set the key to use in xtdmacs-compile++-config-alist for command 5"
   :group 'xtdmacs-compile++
   :type '(choice (const :compile)
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "lint")
-                 (const "manual")
+                 (const :test)
+                 (const :deploy)
+                 (const :doc)
+                 (const :lint)
+                 (const :manual)
                  (other :tag "Other" ""))
   :safe 'stringp)
 
 
 (defcustom xtdmacs-compile++-command-6
-  "manual"
+  :manual
   "Set the key to use in xtdmacs-compile++-config-alist for command 6"
   :group 'xtdmacs-compile++
   :type '(choice (const :compile)
-                 (const "test")
-                 (const "deploy")
-                 (const "doc")
-                 (const "lint")
-                 (const "manual")
+                 (const :test)
+                 (const :deploy)
+                 (const :doc)
+                 (const :lint)
+                 (const :manual)
                  (other :tag "Other" ""))
   :safe 'stringp)
 
@@ -188,9 +182,9 @@
 (defun --xtdmacs-compile++-prompt-value (mode type key label)
   (let* ((value (--xtdmacs-compile++-get-value mode type key)))
     (cond
-     ((string= key "dir")
+     ((string= key :dir)
       (read-directory-name (format "%s : " label) (funcall-or-value value)))
-     ((string= key "file")
+     ((string= key :file)
       (read-file-name (format "%s : " label) (funcall-or-value value)))
      (t
       (read-from-minibuffer (format "%s : " label) (funcall-or-value value)))))
@@ -255,8 +249,8 @@
 (defun xtdmacs-compile++-run (prompt type &optional mode)
   (xtdmacs-compile++-arrange-windows)
 
-  (let* ((get-params (--xtdmacs-compile++-get-value mode type "get-params"))
-         (command    (--xtdmacs-compile++-get-value mode type "command"))
+  (let* ((get-params (--xtdmacs-compile++-get-value mode type :get-params))
+         (command    (--xtdmacs-compile++-get-value mode type :command))
          (generated  (--xtdmacs-compile++-get-value mode type :generated))
          (cache      (--xtdmacs-compile++-get-value mode type :cache))
          )
@@ -293,7 +287,7 @@
 
 
 
-(defun xtdmacs-compile++-query-local(type &optional mode)
+(defun xtdmacs-compile++-query-local()
   (if (not (y-or-n-p "Apply to all buffers ? "))
       (let* ((tmp (copy-tree xtdmacs-compile++-config-alist)))
         (make-local-variable 'xtdmacs-compile++-config-alist)
@@ -367,9 +361,9 @@
 
 
 (defun xtdmacs-compile++-default-command (type &optional mode)
-  (let* ((dir    (--xtdmacs-compile++-get-value mode type "dir"))
-         (env    (--xtdmacs-compile++-get-value mode type "env"))
-         (bin    (--xtdmacs-compile++-get-value mode type "bin")))
+  (let* ((dir    (--xtdmacs-compile++-get-value mode type :dir))
+         (env    (--xtdmacs-compile++-get-value mode type :env))
+         (bin    (--xtdmacs-compile++-get-value mode type :bin)))
     (format "cd %s && %s %s"
             (funcall-or-value dir)
             (funcall-or-value env)
@@ -377,19 +371,19 @@
   )
 
 (defun xtdmacs-compile++-simple-file-command (type &optional mode)
-  (let* ((file   (--xtdmacs-compile++-get-value mode type "file"))
-         (bin    (--xtdmacs-compile++-get-value mode type "bin")))
+  (let* ((file   (--xtdmacs-compile++-get-value mode type :file))
+         (bin    (--xtdmacs-compile++-get-value mode type :bin)))
     (format "%s %s"
             (funcall-or-value bin)
             (funcall-or-value file)))
   )
 
 (defun xtdmacs-compile++-compose-run-command (type &optional mode)
-  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
-         (env     (--xtdmacs-compile++-get-value mode type "env"))
-         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
-         (compose (--xtdmacs-compile++-get-value mode type "compose-file"))
-         (service (--xtdmacs-compile++-get-value mode type "service"))
+  (let* ((dir     (--xtdmacs-compile++-get-value mode type :dir))
+         (env     (--xtdmacs-compile++-get-value mode type :env))
+         (bin     (--xtdmacs-compile++-get-value mode type :bin))
+         (compose (--xtdmacs-compile++-get-value mode type :compose-file))
+         (service (--xtdmacs-compile++-get-value mode type :service))
          (dockerenv (if (string= env "")
                         env
                       (mapconcat 'identity (mapcar (lambda (el) (concat "-e " el)) (split-string env " ")) " "))))
@@ -403,10 +397,10 @@
   )
 
 (defun xtdmacs-compile++-compose-exec-command (type &optional mode)
-  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
-         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
-         (compose (--xtdmacs-compile++-get-value mode type "compose-file"))
-         (service (--xtdmacs-compile++-get-value mode type "service")))
+  (let* ((dir     (--xtdmacs-compile++-get-value mode type :dir))
+         (bin     (--xtdmacs-compile++-get-value mode type :bin))
+         (compose (--xtdmacs-compile++-get-value mode type :compose-file))
+         (service (--xtdmacs-compile++-get-value mode type :service)))
     (format "cd %s && SRCDIR=%s docker-compose -f %s exec %s %s"
             (funcall-or-value dir)
             (funcall-or-value dir)
@@ -417,10 +411,10 @@
 
 
 (defun xtdmacs-compile++-docker-run-command (type &optional mode)
-  (let* ((dir     (--xtdmacs-compile++-get-value mode type "dir"))
-         (env     (--xtdmacs-compile++-get-value mode type "env"))
-         (bin     (--xtdmacs-compile++-get-value mode type "bin"))
-         (image   (--xtdmacs-compile++-get-value mode type "image"))
+  (let* ((dir     (--xtdmacs-compile++-get-value mode type :dir))
+         (env     (--xtdmacs-compile++-get-value mode type :env))
+         (bin     (--xtdmacs-compile++-get-value mode type :bin))
+         (image   (--xtdmacs-compile++-get-value mode type :image))
          (dockerenv (if (string= env "")
                         env
                       (mapconcat 'identity (mapcar (lambda (el) (concat "-e " el)) (split-string env " ")) " ")))
@@ -434,9 +428,9 @@
   )
 
 (defun xtdmacs-compile++-docker-exec-command (type &optional mode)
-  (let* ((dir       (--xtdmacs-compile++-get-value mode type "dir"))
-         (bin       (--xtdmacs-compile++-get-value mode type "bin"))
-         (env       (--xtdmacs-compile++-get-value mode type "env"))
+  (let* ((dir       (--xtdmacs-compile++-get-value mode type :dir))
+         (bin       (--xtdmacs-compile++-get-value mode type :bin))
+         (env       (--xtdmacs-compile++-get-value mode type :env))
          (container (--xtdmacs-compile++-get-value mode type "container"))
          )
     (format "docker exec -t %s /bin/bash -c 'cd %s && %s %s'"
@@ -451,29 +445,29 @@
 ;;;;;;;;;;;;
 
 (defun xtdmacs-compile++-default-params (type &optional mode)
-  (let* ((dir    (--xtdmacs-compile++-prompt-value mode type "dir" "Directory"))
-         (env    (--xtdmacs-compile++-prompt-value mode type "env" "Environment"))
-         (bin    (--xtdmacs-compile++-prompt-value mode type "bin" "Binary")))
-    (xtdmacs-compile++-query-local type mode)
-    (--xtdmacs-compile++-set-value mode type "dir" dir)
-    (--xtdmacs-compile++-set-value mode type "env" env)
-    (--xtdmacs-compile++-set-value mode type "bin" bin))
+  (let* ((dir    (--xtdmacs-compile++-prompt-value mode type :dir "Directory"))
+         (env    (--xtdmacs-compile++-prompt-value mode type :env "Environment"))
+         (bin    (--xtdmacs-compile++-prompt-value mode type :bin "Binary")))
+    (xtdmacs-compile++-query-local)
+    (--xtdmacs-compile++-set-value mode type :dir dir)
+    (--xtdmacs-compile++-set-value mode type :env env)
+    (--xtdmacs-compile++-set-value mode type :bin bin))
   )
 
 (defun xtdmacs-compile++-current-file-params (type &optional mode)
-  (let* ((bin  (--xtdmacs-compile++-prompt-value mode type "bin"  "Binary"))
-         (file (--xtdmacs-compile++-prompt-value mode type "file" "File")))
-    (xtdmacs-compile++-query-local type mode)
-    (--xtdmacs-compile++-set-value mode type "bin"  bin)
-    (--xtdmacs-compile++-set-value mode type "file" file))
+  (let* ((bin  (--xtdmacs-compile++-prompt-value mode type :bin  "Binary"))
+         (file (--xtdmacs-compile++-prompt-value mode type :file "File")))
+    (xtdmacs-compile++-query-local)
+    (--xtdmacs-compile++-set-value mode type :bin  bin)
+    (--xtdmacs-compile++-set-value mode type :file file))
   )
 
 (defun xtdmacs-compile++-compose-params (type &optional mode)
   (xtdmacs-compile++-default-params type mode)
-  (let* ((compose (--xtdmacs-compile++-prompt-value mode type "compose-file" "Compose-file"))
-         (service (--xtdmacs-compile++-prompt-value mode type "service"      "Service")))
-    (--xtdmacs-compile++-set-value mode type "compose-file" compose)
-    (--xtdmacs-compile++-set-value mode type "service"      service))
+  (let* ((compose (--xtdmacs-compile++-prompt-value mode type :compose-file "Compose-file"))
+         (service (--xtdmacs-compile++-prompt-value mode type :service      "Service")))
+    (--xtdmacs-compile++-set-value mode type :compose-file compose)
+    (--xtdmacs-compile++-set-value mode type :service      service))
   )
 
 (defun xtdmacs-compile++-docker-exec-params (type &optional mode)
@@ -484,8 +478,8 @@
 
 (defun xtdmacs-compile++-docker-run-params (type &optional mode)
   (xtdmacs-compile++-default-params type mode)
-  (let* ((image  (--xtdmacs-compile++-prompt-value mode type "image" "Image")))
-    (--xtdmacs-compile++-set-value mode type "image" image))
+  (let* ((image  (--xtdmacs-compile++-prompt-value mode type :image "Image")))
+    (--xtdmacs-compile++-set-value mode type :image image))
   )
 
 

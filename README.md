@@ -148,7 +148,7 @@ list as you type characters.
 
 It defines functions to directly cycle among existing buffers. It also
 provides a way to ignore a list of buffer names in this cycle. Typically,
-users will ignore systems buffers like `*Help*` or `*Message*`. 
+users will ignore systems buffers like `*Help*` or `*Message*`.
 
 Ignored buffers but will be suggested if typed characters matches nothing but
 filtered buffer names.
@@ -364,9 +364,15 @@ Note: `c` and `s` optional modifiers stands respectively for const and static
 predefined compilation commands. It also allows to use function instead of
 plain string as default compile commands.
 
-There is 6 predefined commands : **compile**, **test**, **deploy**, **doc**, **lint** and **manual**
-where each commands are meant to be overridden in each specific language modes.
+There is 6 predefined commands :
+ - **:compile**
+ - **:test**
+ - **:deploy**
+ - **:doc**
+ - **:lint**
+ - **:manual**
 
+Where each commands are meant to be overridden in each specific language modes.
 By default, the all run `make -j` in the current directory.
 
 ### Window management
@@ -384,14 +390,14 @@ The predefined commands are defined in the `xtdmacs-compile++-config-alist` vari
 Where `xtdmacs-compile++-config-alist` is an alist of the form
 ```lisp
 (("<mode-name>" .
-    (("<command1>" . config-alist)
-     ("<command2>" . config-alist))))
+    ((:<command1> . config-alist)
+     (:<command2> . config-alist))))
 ```
 
 and where each *config-alist* is an alist of the form
 ```lisp
-(("get-params" . function)
- ("command"    . string-or-function))
+((:get-params . function)
+ (:command    . string-or-function))
 ```
 
 
@@ -400,31 +406,31 @@ When current major mode is not found, it falls back to the **default** key which
 by `xtdmacs-compile++-default-config-alist`.
 
 
-The **`<command>`** is one of the pre-defined command **compile**, **test**, **deploy**, **doc**
-**lint** and **manual**.
+The **`<command>`** is one of the pre-defined command **:compile**, **:test**, **:deploy**, **:doc**
+**:lint** and **:manual**.
 
-The **`get-params`** function is called interactively to prompt for specific parameters
+The **`:get-params`** function is called interactively to prompt for specific parameters
 of the command. Ex. for c++ "compile" command, we prompt for working directory,
 optional environment variables and specific script to run.
 
-The **`command`** item build the final command send to default compilation-mode. Ex. for
+The **`:command`** item build the final command send to default compilation-mode. Ex. for
 c++ it will construct something like `cd dir && key=value make -j` from values
-prompted by `get-params`.
+prompted by `:get-params`.
 
-Usually, **`get-params`** uses `xtdmacs-compile++-config-alist` itself to store values given by
+Usually, **`:get-params`** uses `xtdmacs-compile++-config-alist` itself to store values given by
 user. It also read defaults values from this variable when ran non interactively.
 ```lisp
-(("compile" .
-   (("dir"        . "~/build")
-    ("env"        . "VE=1")
-    ("bin"        . "make -j 12")
-    ("get-params" . xtdmacs-compile++-default-params)
-    ("command"    . xtdmacs-compile++-default-command))))
+((:compile .
+   ((:dir        . "~/build")
+    (:env        . "VE=1")
+    (:bin        . "make -j 12")
+    (:get-params . xtdmacs-compile++-default-params)
+    (:command    . xtdmacs-compile++-default-command))))
 ```
 
 ### Compile API
 
-This mode provides utility functions that helps building your own `get-params`, `command`
+This mode provides utility functions that helps building your own `:get-params`, `:command`
 and default functions value.
 
 #### Helper functions
@@ -452,9 +458,9 @@ and default functions value.
   interactively for a **Directoy**, some **Environement** variables and for
   a **Binary** for the current `type`.
   Defaults values are respectively given by:
-  * `"dir"` function/value
-  * `"env"` function/value
-  * `"bin"` function/value
+  * `:dir` function/value
+  * `:env` function/value
+  * `:bin` function/value
 
   In addition, use will be ask if given setting should be store to local buffer or
   across all buffers.
@@ -462,44 +468,44 @@ and default functions value.
 * **`xtdmacs-compile++-current-file-params(type &optional mode)`** : Only
   prompts for a **Binary** and a **File**
   Defaults values are respectively given by:
-  * `"bin"` function/value.
-  * `"file"` function/value. Note: `buffer-file-name` is often given has
+  * `:bin` function/value.
+  * `:file` function/value. Note: `buffer-file-name` is often given has
     default value.
 
 * **`xtdmacs-compile++-compose-params(type &optional mode)`** :
   like `xtdmacs-compile++-default-params` but also prompts for :
-  * a docker-compose service name, default given by `"service"` function/value
-  * a docker-compose file path, default given by `"compose-file"` function/value
+  * a docker-compose service name, default given by `:service` function/value
+  * a docker-compose file path, default given by `:compose-file` function/value
 
 * **`xtdmacs-compile++-docker-exec-params(type &optional mode)`** :
   like `xtdmacs-compile++-default-params` but also prompts for :
-  * a container name, default given by `"container"` function/value
+  * a container name, default given by `:container` function/value
 
 
 * **`xtdmacs-compile++-docker-run-params(type &optional mode)`** :
   like `xtdmacs-compile++-default-params` but also prompts for :
-  * a docker image name, default given by `"image"` function/value
+  * a docker image name, default given by `:image` function/value
 
 
 #### Command functions
 
 * **`xtdmacs-compile++-default-command(type &optional mode)`** : build the command as:
-  * `cd <bin> && <env> <bin>`
+  * `cd :bin && :env> :bin`
 
 * **`xtdmacs-compile++-simple-file-command(type &optional mode)`** : build the command as:
-  * `<bin> <file>`
+  * `:bin :file`
 
 * **`xtdmacs-compile++-compose-run-command(type &optional mode)`** : build the command as:
-  * `cd <dir> && SRCDIR=<dir> docker-compose -f <compose-file> run --rm [-e <env:key>=<env:val>]* <service> <bin>`
+  * `cd :dir && SRCDIR=:dir docker-compose -f :compose-file run --rm [-e :env:key=:env:val]* :service :bin`
 
 * **`xtdmacs-compile++-compose-exec-command(type &optional mode)`** : build the command as:
-  * `cd <dir> && SRCDIR=<dir> docker-compose -f <compose-file> exec <service> <bin>`
+  * `cd :dir && SRCDIR=:dir docker-compose -f :compose-file exec :service :bin`
 
 * **`xtdmacs-compile++-docker-run-command(type &optional mode)`** : build the command as
-  * `docker run --rm=true <image> [-e <env:key>=<env:val>]* /bin/bash -c 'cd <dir> && <bin>'`
+  * `docker run --rm=true :image [-e :env:key=:env:val]* /bin/bash -c 'cd :dir && :bin'`
 
 * **`xtdmacs-compile++-docker-exec-command(type &optional mode)`** : build the command as
-  * `docker exec -t <container> /bin/bash -c 'cd <dir> && <env> <bin>'`
+  * `docker exec -t :container /bin/bash -c 'cd :dir && :env :bin'`
 
 
 ### Compile Configuration
@@ -517,12 +523,12 @@ Set commands configuration interactively :
 
 The following variables targets one of the `xtdmacs-compile++-config-alist` keys.
 Each command is bound to a specific keyboard key.
-- `M-x customize-variable RET xtdmacs-compile++-command-1 RET` : default `compile`
-- `M-x customize-variable RET xtdmacs-compile++-command-2 RET` : default `test`
-- `M-x customize-variable RET xtdmacs-compile++-command-3 RET` : default `deploy`
-- `M-x customize-variable RET xtdmacs-compile++-command-4 RET` : default `doc`
-- `M-x customize-variable RET xtdmacs-compile++-command-5 RET` : default `lint`
-- `M-x customize-variable RET xtdmacs-compile++-command-6 RET` : default `manual`
+- `M-x customize-variable RET xtdmacs-compile++-command-1 RET` : default `:compile`
+- `M-x customize-variable RET xtdmacs-compile++-command-2 RET` : default `:test`
+- `M-x customize-variable RET xtdmacs-compile++-command-3 RET` : default `:deploy`
+- `M-x customize-variable RET xtdmacs-compile++-command-4 RET` : default `:doc`
+- `M-x customize-variable RET xtdmacs-compile++-command-5 RET` : default `:lint`
+- `M-x customize-variable RET xtdmacs-compile++-command-6 RET` : default `:manual`
 
 Customize mode-line face when compile process is running :
 * `M-x customize-face RET xtdmacs-compile++-compiling-face RET`
@@ -538,28 +544,28 @@ cat ~/.dir-locals.el
 ("dev/myproject/"
   . ((nil
     . ((xtdmacs-compile++-config-alist
-       . (("default
-          . (("compile"
-             . (("dir"        . xtdmacs-compile++-get-dir-git)
-                ("get-params" . xtdmacs-compile++-docker-params)
-                ("command"    . xtdmacs-compile++-docker-run-command)
-                ("env"        . "")
-                ("bin"        . "make -j 12")
-                ("service"    . "ws-compile")))
-             ("test"
-             . (("dir"        . xtdmacs-compile++-get-dir-git)
-                ("get-params" . xtdmacs-compile++-docker-params)
-                ("command"    . xtdmacs-compile++-docker-run-command)
-                ("env"        . "")
-                ("bin"        . "make test")
-                ("service"    . "ws-rt"))
-             ("deploy"
-             . (("dir"        . xtdmacs-compile++-get-dir-git)
-                ("get-params" . xtdmacs-compile++-docker-params)
-                ("command"    . xtdmacs-compile++-docker-run-command)
-                ("env"        . "")
-                ("bin"        . "sudo -E make install_all")
-                ("service"    . "ws-rt"))))))))))))
+       . (("default"
+          . ((:compile
+             . ((:dir        . xtdmacs-compile++-get-dir-git)
+                (:get-params . xtdmacs-compile++-docker-params)
+                (:command    . xtdmacs-compile++-docker-run-command)
+                (:env        . "")
+                (:bin        . "make -j 12")
+                (:service    . "ws-compile")))
+             (:test
+             . ((:dir        . xtdmacs-compile++-get-dir-git)
+                (:get-params . xtdmacs-compile++-docker-params)
+                (:command    . xtdmacs-compile++-docker-run-command)
+                (:env        . "")
+                (:bin        . "make test")
+                (:service    . "ws-rt"))
+             (:deploy
+             . ((:dir        . xtdmacs-compile++-get-dir-git)
+                (:get-params . xtdmacs-compile++-docker-params)
+                (:command    . xtdmacs-compile++-docker-run-command)
+                (:env        . "")
+                (:bin        . "sudo -E make install_all")
+                (:service    . "ws-rt"))))))))))))
 ```
 
 #### Per mode commands
@@ -568,11 +574,11 @@ The following example set the `compile` command for the mode `yaml-mode`
 
 ```
 (defvar my-alist
-  '(("compile" .
-     (("file"       . buffer-file-name)
-      ("bin"        . "yamllint -f parsable -d '{extends: relaxed, rules: {indentation: {spaces: consistent}, line-length: {max: 300}}}'")
-      ("get-params" . xtdmacs-compile++-current-file-params)
-      ("command"    . xtdmacs-compile++-simple-file-command))))
+  '((:compile .
+     ((:file       . buffer-file-name)
+      (:bin        . "yamllint -f parsable -d '{extends: relaxed, rules: {indentation: {spaces: consistent}, line-length: {max: 300}}}'")
+      (:get-params . xtdmacs-compile++-current-file-params)
+      (:command    . xtdmacs-compile++-simple-file-command))))
   )
 
 

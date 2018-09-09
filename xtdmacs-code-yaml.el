@@ -6,11 +6,10 @@
   (defvar xtdmacs-code-yaml-mode-map))
 
 (defcustom xtdmacs-code-yaml-compile-alist
-  '(("compile" .
-     (("file"       . buffer-file-name)
-      ("bin"        . "yamllint -f parsable -d '{extends: relaxed, rules: {indentation: {spaces: consistent}, line-length: {max: 300}}}'")
-      ("get-params" . xtdmacs-compile++-current-file-params)
-      ("command"    . xtdmacs-compile++-simple-file-command)))
+  '((:compile . ((:file       . buffer-file-name)
+                 (:bin        . "yamllint -f parsable -d '{extends: relaxed, rules: {indentation: {spaces: consistent}, line-length: {max: 300}}}'")
+                 (:get-params . xtdmacs-compile++-current-file-params)
+                 (:command    . xtdmacs-compile++-simple-file-command)))
     )
   "xtdmacs yaml compilation configuration"
   :group 'xtdmacs-code-yaml

@@ -9,7 +9,8 @@
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa" .        "https://melpa.org/packages/")        t)
 (package-initialize)
-(package-refresh-contents)
+(when pkg-refresh
+  (package-refresh-contents))
 
 ;; Fix HTTP1/1.1 problems
 (setq url-http-attempt-keepalives nil)

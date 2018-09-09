@@ -7,12 +7,11 @@
 
 
 (defcustom xtdmacs-code-json-compile-alist
-  '((:compile .
-              (("file"       . buffer-file-name)
-               ("bin"        . "jsonlint-php -q")
-               ("get-params" . xtdmacs-compile++-current-file-params)
-               ("command"    . xtdmacs-compile++-simple-file-command)
-               )))
+  '((:compile . ((:file       . buffer-file-name)
+                 (:bin        . "jsonlint-php -q")
+                 (:get-params . xtdmacs-compile++-current-file-params)
+                 (:command    . xtdmacs-compile++-simple-file-command)
+                 )))
   "xtdmacs json compilation configuration"
   :group 'xtdmacs-code-json
   :safe '(lambda(p) t)

@@ -14,36 +14,35 @@
   )
 
 (defcustom xtdmacs-code-go-compile-alist
-  '(("compile" .
-     (("dir"        . xtdmacs-compile++-get-dir-git)
-      ("bin"        . xtdmacs-code-go-get-project-name)
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-code-go-command)))
-    ("test" .
-     (("dir"        . xtdmacs-compile++-get-dir-git)
-      ("bin"        . xtdmacs-code-go-get-project-name)
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-code-go-command)))
-    ("doc" .
-     (("dir"        . xtdmacs-compile++-get-dir-buffer)
-      ("bin"        . "nakedret")
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command)))
-    ("lint" .
-     (("dir"        . xtdmacs-compile++-get-dir-buffer)
-      ("bin"        . "gometalinter.v2 -D gocyclo -D errcheck")
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command)))
-    ("manual" .
-     (("dir"        . xtdmacs-compile++-get-dir-git)
-      ("bin"        . "true")
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command))))
+  '((:compile . ((:dir        . xtdmacs-compile++-get-dir-git)
+                 (:bin        . xtdmacs-code-go-get-project-name)
+                 (:env        . "")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-code-go-command)))
+
+    (:test .    ((:dir        . xtdmacs-compile++-get-dir-git)
+                 (:bin        . xtdmacs-code-go-get-project-name)
+                 (:env        . "")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-code-go-command)))
+
+    (:doc .     ((:dir        . xtdmacs-compile++-get-dir-buffer)
+                 (:bin        . "nakedret")
+                 (:env        . "")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-compile++-default-command)))
+
+    (:lint .    ((:dir        . xtdmacs-compile++-get-dir-buffer)
+                 (:bin        . "gometalinter.v2 -D gocyclo -D errcheck")
+                 (:env        . "")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-compile++-default-command)))
+
+    (:manual .  ((:dir        . xtdmacs-compile++-get-dir-git)
+                 (:bin        . "true")
+                 (:env        . "")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-compile++-default-command))))
   "Xtdmacs-Code-go compilation configuration"
   :group 'xtdmacs-code-go
   :safe '(lambda(p) t)
@@ -203,9 +202,9 @@ arguments can be set as a list via ‘gofmt-args`."
   )
 
 (defun xtdmacs-code-go-command (type &optional mode)
-  (let* ((dir    (--xtdmacs-compile++-get-value mode type "dir"))
-         (env    (--xtdmacs-compile++-get-value mode type "env"))
-         (bin    (--xtdmacs-compile++-get-value mode type "bin")))
+  (let* ((dir    (--xtdmacs-compile++-get-value mode type :dir))
+         (env    (--xtdmacs-compile++-get-value mode type :env))
+         (bin    (--xtdmacs-compile++-get-value mode type :bin)))
     (format "cd %s && %s go build -o %s *.go"
             (funcall-or-value dir)
             (funcall-or-value env)

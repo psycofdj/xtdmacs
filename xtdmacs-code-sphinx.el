@@ -1,12 +1,11 @@
 ;; -*- lexical-binding: t -*-
 
 (defcustom xtdmacs-code-sphinx-compile-alist
-  '(("compile" .
-     (("dir"        . xtdmacs-code-sphinx-project-root)
-      ("bin"        . xtdmacs-code-sphinx-bin)
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command))))
+  '((:compile . ((:dir        . xtdmacs-code-sphinx-project-root)
+                 (:bin        . xtdmacs-code-sphinx-bin)
+                 (:env        . "")
+                 (:get-params . xtdmacs-compile++-default-params)
+                 (:command    . xtdmacs-compile++-default-command))))
   "Xtdmacs-Code-sphinx  compilation configuration"
   :group 'xtdmacs-code-sphinx
   :safe '(lambda(p) t)
@@ -25,10 +24,8 @@
       nil))
   )
 
-
 (defun xtdmacs-code-sphinx-bin ()
-  (let* ((config        (cdr (assoc "compile" xtdmacs-compile++-config-alist)))
-         (dir           (cdr (assoc "dir"     config)))
+  (let* ((dir           (--xtdmacs-compile++-get-value nil :compile :dir))
          (makefile-path (concat (funcall-or-value dir) "/Makefile")))
     (if (file-exists-p makefile-path)
         "make html"

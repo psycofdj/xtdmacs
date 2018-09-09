@@ -4,18 +4,18 @@
 (require 'package)
 
 (defcustom xtdmacs-code-python-compile-alist
-  '(("compile" .
-     (("dir"        . xtdmacs-code-python-project-root)
-      ("bin"        . xtdmacs-code-python-pylint-bin)
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command)))
-    ("test" .
-     (("dir"        . xtdmacs-code-python-project-root)
-      ("bin"        . xtdmacs-code-python-test-bin)
-      ("env"        . "")
-      ("get-params" . xtdmacs-compile++-default-params)
-      ("command"    . xtdmacs-compile++-default-command))))
+  '((:compile .
+              ((:dir        . xtdmacs-code-python-project-root)
+               (:bin        . xtdmacs-code-python-pylint-bin)
+               (:env        . "")
+               (:get-params . xtdmacs-compile++-default-params)
+               (:command    . xtdmacs-compile++-default-command)))
+    (:test .
+           ((:dir        . xtdmacs-code-python-project-root)
+            (:bin        . xtdmacs-code-python-test-bin)
+            (:env        . "")
+            (:get-params . xtdmacs-compile++-default-params)
+            (:command    . xtdmacs-compile++-default-command))))
   "Xtdmacs-Code-python compilation configuration"
   :group 'xtdmacs-code-python
   :safe '(lambda(p) t)
@@ -151,24 +151,17 @@
    (funcall-or-value xtdmacs-code-python-test-args) " ")
   )
 
-(defun xtdmacs-code-python-params (type &optional _mode)
-  (let* ((locaval (copy-tree xtdmacs-compile++-config-alist))
-         (config (cdr (assoc type locaval)))
-         (dir (cdr (assoc "dir" config)))
-         (bin (cdr (assoc "bin" config)))
-         (new_dir (read-directory-name  "Directory: " (funcall-or-value dir)))
-         (new_bin (read-from-minibuffer "Binary: "    (funcall-or-value bin))))
-    (progn
-      (setcdr (assoc "dir" config) new_dir)
-      (setcdr (assoc "bin" config) new_bin)
-      (setq xtdmacs-compile++-config-alist locaval))
-    )
+(defun xtdmacs-code-python-params (type &optional mode)
+  (let* ((dir    (--xtdmacs-compile++-prompt-value mode type :dir "Directory"))
+         (bin    (--xtdmacs-compile++-prompt-value mode type :bin "Binary")))
+    (xtdmacs-compile++-query-local)
+    (--xtdmacs-compile++-set-value mode type :dir dir)
+    (--xtdmacs-compile++-set-value mode type :bin bin))
   )
 
-(defun xtdmacs-code-python-command (mode)
-  (let* ((config (cdr (assoc mode xtdmacs-compile++-config-alist)))
-         (dir  (cdr (assoc "dir"  config)))
-         (bin  (cdr (assoc "bin"  config))))
+(defun xtdmacs-code-python-command(type &optional mode)
+  (let* ((dir    (--xtdmacs-compile++-get-value mode type :dir))
+         (bin    (--xtdmacs-compile++-get-value mode type :bin)))
     (format "cd %s && %s"
             (funcall-or-value dir)
             (funcall-or-value bin)))
