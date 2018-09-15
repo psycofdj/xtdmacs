@@ -2,6 +2,8 @@
 
 (require 'xtdmacs-compile++)
 (require 'package)
+(require 'auto-complete)
+(require 'jedi)
 
 (defcustom xtdmacs-code-python-compile-alist
   '((:compile .
@@ -167,6 +169,11 @@
             (funcall-or-value bin)))
   )
 
+(defun xtdmacs-code-python-goto-definition-other-window()
+  (interactive)
+  (jedi:goto-definition t)
+  )
+
 ;; --------------------------------------------------------------------------- ;
 
 (defun --xtdmacs-code-python-construct()
@@ -174,6 +181,13 @@
 
   (when (mode-enabled 'xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "python-mode" xtdmacs-code-python-compile-alist))
+
+  (jedi:setup)
+  (unless (mode-enabled 'auto-complete-mode)
+    (auto-complete-mode t))
+  (jedi:ac-setup)
+  (unless (mode-enabled 'flycheck-mode)
+    (flycheck-mode t))
 
   (if xtdmacs-code-python-indent-save-auto
       (add-hook 'before-save-hook 'xtdmacs-code-format-buffer-with-ident t t))
@@ -183,6 +197,10 @@
   )
 
 (defun --xtdmacs-code-python-destroy()
+  (when (mode-enabled 'flycheck-mode)
+    (flycheck-mode nil))
+  (when (mode-enabled 'auto-complete-mode)
+    (auto-complete-mode nil))
   (if xtdmacs-code-python-indent-save-auto
       (remove-hook 'before-save-hook 'xtdmacs-code-format-buffer-with-ident))
   (font-lock-remove-keywords nil xtdmacs-code-python-keywords-alist)
@@ -191,7 +209,18 @@
 
 ;;;###autoload
 (define-minor-mode xtdmacs-code-python-mode
-  "Code for Python" nil "Code" nil
+  "Code for Python" nil "Code"
+  `(("\M-."             . jedi:complete)
+    (,(kbd "<f12>")     . jedi:goto-definition)
+    (,(kbd "M-<f12>")   . jedi:goto-definition-next)
+    (,(kbd "C-<f12>")   . xtdmacs-code-python-goto-definition-other-window)
+    (,(kbd "C-x <f12>") . jedi:goto-definition-pop-marker)
+    ("\C-e"             . jedi:show-doc)
+    ("\M-e"             . jedi:get-in-function-call))
+
+  ;; jedi:helm-jedi-related-names
+  ;; jedi:anything-jedi-related-names
+
   (if xtdmacs-code-python-mode
       (--xtdmacs-code-python-construct)
     (--xtdmacs-code-python-destroy))
