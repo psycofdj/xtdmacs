@@ -32,6 +32,8 @@
 
 (add-hook 'sh-mode-hook 'xtdmacs-code-shell-mode)
 (add-hook 'sh-mode-hook 'xtdmacs-code-mode)
+(add-hook 'python-mode-hook 'xtdmacs-code-python-mode)
+(add-hook 'python-mode-hook 'xtdmacs-code-mode)
 
 (require 'xtdmacs-find)
 (require 'xtdmacs-loader)
