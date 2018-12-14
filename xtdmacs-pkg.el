@@ -26,7 +26,6 @@
     (xterm-color               "20170102.1525")
     (yafolding                 "20170304.1917")
     (yaml-mode                 "20170727.1531")
-    (yaml-path                 "0.3" )
     (yasnippet                 "20170923.1646"))
   :url "https://github.com/psycofdj/xtdmacs"
   )
