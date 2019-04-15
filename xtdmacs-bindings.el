@@ -15,6 +15,11 @@
   (setq kill-ring (cdr kill-ring))
   )
 
+(defun xtdmacs-buffer-predicate(buffer)
+  (if (string-match-p "^ *[*]" (buffer-name buffer))
+      nil
+    t))
+
 (defun xtdmacs-shell-toggle ()
   (interactive)
   (if (eq nil (get-buffer "*shell*"))
@@ -34,7 +39,7 @@
 (defun --xtdmacs-bindings-mode-construct()
   (setq comint-prompt-read-only t)
   (add-hook 'shell-mode-hook (lambda () (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)))
-
+  (set-frame-parameter nil 'buffer-predicate 'xtdmacs-buffer-predicate)
   (if (equal (getenv "PUTTY") "1")
       (progn
         (message "Putty detected, hacking key codes")
@@ -69,7 +74,7 @@
     ([24 C-right] . iflipb-next-buffer)
     ([24 C-left]  . iflipb-previous-buffer)
     ([24 C-down]  . ido-switch-buffer)
-    ("\C-xk"      . kill-buffer)
+    ("\C-xk"      . ido-kill-buffer)
     ("\C-x\C-f"   . find-file)
     ("\M-+"       . enlarge-window)
     ("\M--"       . shrink-window)
