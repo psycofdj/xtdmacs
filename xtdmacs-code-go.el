@@ -1,8 +1,8 @@
 ;; -*- lexical-binding: t -*-
 
 (require 'xtdmacs-compile++)
+(require 'xtdmacs-go-autocomplete)
 (require 'package)
-(require 'go-autocomplete)
 (require 'auto-complete-config)
 (require 'go-mode)
 (require 'yasnippet)

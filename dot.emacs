@@ -37,6 +37,6 @@
 
 (require 'xtdmacs-find)
 (require 'xtdmacs-loader)
-(require 'go-autocomplete)
+(require 'xtdmacs-go-autocomplete)
 (require 'auto-complete-config)
 (require 'yasnippet)
