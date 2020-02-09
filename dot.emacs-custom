@@ -60,7 +60,6 @@
  '(initial-buffer-choice nil)
  '(initial-major-mode (quote fundamental-mode))
  '(jedi:environment-root nil)
- '(jedi:environment-virtualenv (quote (list "virtualenv3" "--system-site-packages")))
  '(jedi:install-python-jedi-dev-command
    (quote
     ("pip3" "install" "--upgrade" "git+https://github.com/davidhalter/jedi.git@master#egg=jedi")))
@@ -91,7 +90,7 @@
      ("melpa-stable" . "https://stable.melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (markdown-mode+ jedi iflipb flycheck-package go-snippets irony terraform-mode elisp-lint xtdmacs)))
+    (jedi-core markdown-mode+ jedi iflipb flycheck-package go-snippets irony terraform-mode elisp-lint xtdmacs)))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
@@ -100,6 +99,7 @@
  '(python-indent 2)
  '(python-indent-guess-indent-offset nil)
  '(python-indent-offset 2)
+ '(python-shell-interpreter "python3")
  '(rcirc-server-alist
    (quote
     (("floobits.com" :nick "psycofdj" :port 6697 :user-name "psycofdj" :password "7q15flet083q9fqp79b4fw945" :channels

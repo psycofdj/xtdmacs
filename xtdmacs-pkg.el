@@ -6,7 +6,6 @@
     (column-enforce-mode       "20170103.1231")
     (dockerfile-mode           "20170418.1024")
     (flycheck                  "20171026.610" )
-    (go-autocomplete           "20170907"     )
     (go-eldoc                  "20170305.627" )
     (go-mode                   "20180327.830" )
     (go-snippets               "20180113.611" )
