@@ -47,6 +47,7 @@
   (c-set-offset   'arglist-cont-nonempty 'c-lineup-arglist)
   (c-set-offset   'arglist-close         'c-lineup-arglist-close-under-paren)
   (c-set-offset   'arglist-intro         'c-lineup-arglist-intro-after-paren)
+  (setq c-basic-offset 2)
   (modify-syntax-entry ?_ "w")
   (when xtdmacs-code-php-indent-save-auto
     (add-hook 'before-save-hook 'xtdmacs-code-format-buffer-with-ident t t))

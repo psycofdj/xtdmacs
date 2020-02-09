@@ -21,7 +21,7 @@
  '(add-log-mailing-address nil)
  '(auto-revert-interval 0.5)
  '(auto-save-default nil)
- '(c-offsets-alist (quote ((substatement-open . 0) (innamespace . 0))))
+ '(c-basic-offset 2)
  '(column-enforce-column 100)
  '(compilation-auto-jump-to-first-error nil)
  '(compilation-context-lines 0)
@@ -59,7 +59,6 @@
  '(inhibit-startup-screen t)
  '(initial-buffer-choice nil)
  '(initial-major-mode (quote fundamental-mode))
- '(js-indent-level 2)
  '(jedi:environment-root nil)
  '(jedi:environment-virtualenv (quote (list "virtualenv3" "--system-site-packages")))
  '(jedi:install-python-jedi-dev-command
@@ -68,6 +67,7 @@
  '(jedi:server-command
    (quote
     ("python3" "/home/psyco/.emacs.d/.python-environments/default/bin/jediepcserver")))
+ '(js-indent-level 2)
  '(js2-basic-offset 2)
  '(js2-highlight-level 1)
  '(linum-format (quote dynamic))
@@ -203,7 +203,7 @@
     ((("Dockerfile")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode)
      (("\\.php\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-php-mode)
      (("\\.xml\\.erb\\'" "\\.erb\\'" "Rakefile\\'")
       xtdmacs-code-mode)
      (("\\.html\\'" "\\.tpl\\'" "\\.xml\\'" "\\.xsl\\'")
