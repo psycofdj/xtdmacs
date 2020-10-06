@@ -29,6 +29,9 @@
  '(confirm-kill-emacs nil)
  '(create-lockfiles nil)
  '(fill-column 84)
+ '(flycheck-checkers
+   (quote
+    (ada-gnat asciidoctor asciidoc c/c++-clang c/c++-gcc c/c++-cppcheck cfengine chef-foodcritic coffee coffee-coffeelint coq css-csslint css-stylelint cuda-nvcc cwl d-dmd dockerfile-hadolint emacs-lisp emacs-lisp-checkdoc erlang-rebar3 erlang eruby-erubis fortran-gfortran groovy haml handlebars haskell-stack-ghc haskell-ghc haskell-hlint html-tidy javascript-eslint javascript-jshint javascript-standard json-jsonlint json-python-json json-jq jsonnet less less-stylelint llvm-llc lua-luacheck lua markdown-markdownlint-cli markdown-mdl nix nix-linter opam perl perl-perlcritic php php-phpmd php-phpcs processing proselint protobuf-protoc protobuf-prototool pug puppet-parser puppet-lint python-flake8 python-pylint python-pycompile python-mypy r-lintr racket rpm-rpmlint rst-sphinx rst ruby-rubocop ruby-reek ruby-rubylint ruby ruby-jruby rust-cargo rust rust-clippy scala scala-scalastyle scheme-chicken scss-lint scss-stylelint sass/scss-sass-lint sass scss sh-bash sh-posix-dash sh-posix-bash sh-zsh sh-shellcheck slim slim-lint sql-sqlint systemd-analyze tcl-nagelfar terraform terraform-tflint tex-chktex tex-lacheck texinfo textlint typescript-tslint verilog-verilator vhdl-ghdl xml-xmlstarlet xml-xmllint yaml-jsyaml yaml-ruby)))
  '(flycheck-python-pycompile-executable "python3")
  '(flycheck-python-pylint-executable "python3")
  '(flycheck-shellcheck-excluded-warnings (quote ("SC2086" "SC2155")))
@@ -42,12 +45,6 @@
  '(global-auto-revert-mode t)
  '(global-rudel-header-subscriptions-mode t)
  '(global-rudel-minor-mode t)
- '(go-guess-gopath-functions
-   (quote
-    (go-plain-gopath go-godep-gopath go-wgo-gopath go-gb-gopath go-plain-gopath)))
- '(godoc-and-godef-command "godoc")
- '(gofmt-args nil)
- '(gofmt-show-errors (quote buffer))
  '(gud-gdb-command-name "/ke/local/toolchain3-x86_64-nptl/tools/bin/gdb -i=mi")
  '(ido-create-new-buffer (quote always))
  '(ido-default-buffer-method (quote selected-window))
@@ -70,6 +67,14 @@
  '(js2-basic-offset 2)
  '(js2-highlight-level 1)
  '(linum-format (quote dynamic))
+ '(lsp-enable-symbol-highlighting nil)
+ '(lsp-file-watch-ignored
+   (quote
+    ("[/\\\\]\\.git$" "[/\\\\]\\.hg$" "[/\\\\]\\.bzr$" "[/\\\\]_darcs$" "[/\\\\]\\.svn$" "[/\\\\]_FOSSIL_$" "[/\\\\]\\.idea$" "[/\\\\]\\.ensime_cache$" "[/\\\\]\\.eunit$" "[/\\\\]node_modules$" "[/\\\\]\\.fslckout$" "[/\\\\]\\.tox$" "[/\\\\]\\.stack-work$" "[/\\\\]\\.bloop$" "[/\\\\]\\.metals$" "[/\\\\]target$" "[/\\\\]\\.ccls-cache$" "[/\\\\]\\.deps$" "[/\\\\]build-aux$" "[/\\\\]autom4te.cache$" "[/\\\\]\\.reference$" ".*/vendor/.*")))
+ '(lsp-ui-doc-delay 0)
+ '(lsp-ui-doc-enable nil)
+ '(lsp-ui-doc-header t)
+ '(lsp-ui-imenu-kind-position (quote left))
  '(message-log-max t)
  '(mode-line-format
    (quote
@@ -83,14 +88,9 @@
            (buffer-file-name))
         "[not a real file]"))
      " %-")))
- '(package-archives
-   (quote
-    (("marmalade" . "https://ojab.ru/marmalade/")
-     ("melpa" . "https://melpa.org/packages/")
-     ("melpa-stable" . "https://stable.melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (jedi-core markdown-mode+ jedi iflipb flycheck-package go-snippets irony terraform-mode elisp-lint xtdmacs)))
+    (flycheck lsp-ui use-package company lsp-mode yaml-path xtdmacs terraform-mode paas-manifest-helper)))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
@@ -105,7 +105,7 @@
     (("floobits.com" :nick "psycofdj" :port 6697 :user-name "psycofdj" :password "7q15flet083q9fqp79b4fw945" :channels
       ("#ArthurHlt/terraform-provider-concourse")
       :encryption tls))))
- '(require-final-newline t)
+ '(require-final-newline (quote ask))
  '(rtags-local-references-enabled t)
  '(rtags-tracking t)
  '(safe-local-variable-values
@@ -231,7 +231,7 @@
      (("\\.rst\\'")
       xtdmacs-code-mode xtdmacs-code-spell-mode xtdmacs-code-sphinx-mode xtdmacs-code-line-mode)
      (("\\.go\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-go-mode flycheck-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-go-mode)
      (("\\.tf\\'")
       xtdmacs-code-mode)
      (("\\.yml" "\\.yaml" "\\.ytpl" "spec")
@@ -252,7 +252,26 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :background "unspecified-bg" :foreground "unspecified-fg" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1 :width normal :foundry "default" :family "default"))))
  '(column-enforce-face ((t (:background "color-235"))))
+ '(company-scrollbar-bg ((t (:background "color-241"))))
+ '(company-scrollbar-fg ((t (:background "color-237"))))
+ '(company-tooltip ((t (:background "color-235"))))
+ '(company-tooltip-annotation ((t (:foreground "color-105"))))
+ '(company-tooltip-common ((t (:foreground "color-105" :underline t))))
+ '(company-tooltip-selection ((t (:background "color-233"))))
  '(custom-variable-tag ((((min-colors 256) (background dark)) (:foreground "#ff00ff" :weight bold)) (((background light)) (:foreground "#blue1" :weight bold))))
+ '(ediff-current-diff-A ((t (:background "color-52"))))
+ '(ediff-current-diff-B ((t (:background "color-52"))))
+ '(ediff-current-diff-C ((t (:background "color-52"))))
+ '(ediff-even-diff-A ((t (:background "color-234"))))
+ '(ediff-even-diff-Ancestor ((t (:background "color-60"))))
+ '(ediff-even-diff-B ((t (:background "color-234"))))
+ '(ediff-even-diff-C ((t (:background "color-239"))))
+ '(ediff-fine-diff-A ((t (:background "color-93"))))
+ '(ediff-fine-diff-B ((t (:background "color-93"))))
+ '(ediff-odd-diff-A ((t (:background "color-234"))))
+ '(ediff-odd-diff-Ancestor ((t (:background "color-58"))))
+ '(ediff-odd-diff-B ((t (:background "color-234"))))
+ '(ediff-odd-diff-C ((t (:background "color-234"))))
  '(flycheck-error ((t (:foreground "color-196" :weight bold))))
  '(flyspell-duplicate ((((min-colors 256) (background dark)) (:background "#d7af00")) (((min-colors 256) (background light)) (:inherit warning :underline (:color foreground-color :style line)))))
  '(flyspell-incorrect ((t (:underline (:color "red" :style wave)))))

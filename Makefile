@@ -14,13 +14,7 @@ xtdmacs-$(VERSION).tar: $(SOURCES)
 install: xtdmacs-$(VERSION).tar
 	@rm -rf ~/.emacs.d/elpa/xtdmacs*/
 	@emacs --batch --eval "(defconst pkg-to-install \"$(PWD)/xtdmacs-$(VERSION).tar\")" --eval "(defconst pkg-refresh t)" -l vendor/emacs-pkg-install.el
-	@rm -rf ~/.emacs.d/elpa/go-mode*/*.elc ~/.emacs.d/elpa/go-eldoc*/*.elc
-	@patch --forward ~/.emacs.d/elpa/go-mode*/go-mode.el < patches/go-mode.patch || true
-	@cp vendor/go-eldoc-pkg.el ~/.emacs.d/elpa/go-eldoc-*/go-eldoc-pkg.el
 
 install-quick: xtdmacs-$(VERSION).tar
 	@rm -rf ~/.emacs.d/elpa/xtdmacs*/
 	@emacs --batch --eval "(defconst pkg-to-install \"$(PWD)/xtdmacs-$(VERSION).tar\")" --eval "(defconst pkg-refresh nil)" -l vendor/emacs-pkg-install.el
-	@rm -rf ~/.emacs.d/elpa/go-mode*/*.elc ~/.emacs.d/elpa/go-eldoc*/*.elc
-	@patch --forward ~/.emacs.d/elpa/go-mode*/go-mode.el < patches/go-mode.patch || true
-	@cp vendor/go-eldoc-pkg.el ~/.emacs.d/elpa/go-eldoc-*/go-eldoc-pkg.el

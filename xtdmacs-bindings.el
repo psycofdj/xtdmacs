@@ -88,8 +88,9 @@
     (,(kbd "M-<DEL>") . xtdmacs-backward-delete-word)
     ([f5]         . delete-trailing-whitespace)
     ([C-f5]       . font-lock-fontify-buffer)
-    ([C-f11]      . xtdmacs-shell-toggle)
-    ([f11]        . tmm-menubar))
+    ;; ([C-f11]      . xtdmacs-shell-toggle)
+    ;; ([f11]        . tmm-menubar)
+    )
   :global t
 
   (if xtdmacs-bindings-mode

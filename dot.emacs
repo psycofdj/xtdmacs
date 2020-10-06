@@ -4,9 +4,14 @@
 ;; configure repositories
 (when (>= emacs-major-version 24)
   (require 'package)
-  (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-  (add-to-list 'package-archives '("melpa"        . "https://melpa.org/packages/"))
-  (add-to-list 'package-archives '("marmalade"    . "https://ojab.ru/marmalade/"))
+  (setq package-archives
+        '(("GNU ELPA" . "https://elpa.gnu.org/packages/")
+          ("MELPA Stable" . "https://stable.melpa.org/packages/")
+          ("MELPA" . "https://melpa.org/packages/"))
+        package-archive-priorities
+        '(("MELPA Stable" . 10)
+          ("MELPA" . 5)
+          ("GNU ELPA" . 0)))
   (package-initialize))
 
 (fset 'xterm-color-unfontify-region 'font-lock-default-unfontify-region)
@@ -37,6 +42,5 @@
 
 (require 'xtdmacs-find)
 (require 'xtdmacs-loader)
-(require 'xtdmacs-go-autocomplete)
 (require 'auto-complete-config)
 (require 'yasnippet)
