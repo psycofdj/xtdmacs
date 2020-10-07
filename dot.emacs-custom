@@ -257,7 +257,7 @@
  '(company-tooltip ((t (:background "color-235"))))
  '(company-tooltip-annotation ((t (:foreground "color-105"))))
  '(company-tooltip-common ((t (:foreground "color-105" :underline t))))
- '(company-tooltip-selection ((t (:background "color-233"))))
+ '(company-tooltip-selection ((t (:background "color-239"))))
  '(custom-variable-tag ((((min-colors 256) (background dark)) (:foreground "#ff00ff" :weight bold)) (((background light)) (:foreground "#blue1" :weight bold))))
  '(ediff-current-diff-A ((t (:background "color-52"))))
  '(ediff-current-diff-B ((t (:background "color-52"))))

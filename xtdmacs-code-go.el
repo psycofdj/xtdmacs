@@ -139,6 +139,7 @@
 ;; --------------------------------------------------------------------------- ;
 
 (defun --xtdmacs-code-go-construct()
+  (yas-minor-mode t)
   (lsp)
   (font-lock-add-keywords nil xtdmacs-code-go-keywords-alist)
   (define-key go-mode-map (kbd "<f12>")   'lsp-find-definition)
