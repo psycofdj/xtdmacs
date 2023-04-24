@@ -56,13 +56,6 @@
  '(inhibit-startup-screen t)
  '(initial-buffer-choice nil)
  '(initial-major-mode (quote fundamental-mode))
- '(jedi:environment-root nil)
- '(jedi:install-python-jedi-dev-command
-   (quote
-    ("pip3" "install" "--upgrade" "git+https://github.com/davidhalter/jedi.git@master#egg=jedi")))
- '(jedi:server-command
-   (quote
-    ("python3" "/home/psyco/.emacs.d/.python-environments/default/bin/jediepcserver")))
  '(js-indent-level 2)
  '(js2-basic-offset 2)
  '(js2-highlight-level 1)
@@ -71,6 +64,18 @@
  '(lsp-file-watch-ignored
    (quote
     ("[/\\\\]\\.git$" "[/\\\\]\\.hg$" "[/\\\\]\\.bzr$" "[/\\\\]_darcs$" "[/\\\\]\\.svn$" "[/\\\\]_FOSSIL_$" "[/\\\\]\\.idea$" "[/\\\\]\\.ensime_cache$" "[/\\\\]\\.eunit$" "[/\\\\]node_modules$" "[/\\\\]\\.fslckout$" "[/\\\\]\\.tox$" "[/\\\\]\\.stack-work$" "[/\\\\]\\.bloop$" "[/\\\\]\\.metals$" "[/\\\\]target$" "[/\\\\]\\.ccls-cache$" "[/\\\\]\\.deps$" "[/\\\\]build-aux$" "[/\\\\]autom4te.cache$" "[/\\\\]\\.reference$" ".*/vendor/.*")))
+ '(lsp-file-watch-ignored-directories
+   (quote
+    ("[/\\\\]\\.git$" "[/\\\\]\\.hg$" "[/\\\\]\\.bzr$" "[/\\\\]_darcs$" "[/\\\\]\\.svn$" "[/\\\\]_FOSSIL_$" "[/\\\\]\\.idea$" "[/\\\\]\\.ensime_cache$" "[/\\\\]\\.eunit$" "[/\\\\]node_modules$" "[/\\\\]\\.fslckout$" "[/\\\\]\\.tox$" "[/\\\\]\\.stack-work$" "[/\\\\]\\.bloop$" "[/\\\\]\\.metals$" "[/\\\\]target$" "[/\\\\]\\.ccls-cache$" "[/\\\\]\\.deps$" "[/\\\\]build-aux$" "[/\\\\]autom4te.cache$" "[/\\\\]\\.reference$" ".*/vendor/.*")))
+ '(lsp-pyls-plugins-autopep8-enabled nil)
+ '(lsp-pyls-plugins-flake8-enabled t)
+ '(lsp-pyls-plugins-flake8-exclude (quote ("")))
+ '(lsp-pyls-plugins-flake8-ignore (quote ("E501" "E121" "E111")))
+ '(lsp-pyls-plugins-flake8-max-line-length 100)
+ '(lsp-pyls-plugins-pycodestyle-enabled nil)
+ '(lsp-pyls-plugins-pycodestyle-max-line-length 100)
+ '(lsp-pyls-plugins-pyflakes-enabled nil)
+ '(lsp-pyls-plugins-yapf-enabled nil)
  '(lsp-ui-doc-delay 0)
  '(lsp-ui-doc-enable nil)
  '(lsp-ui-doc-header t)
@@ -90,7 +95,7 @@
      " %-")))
  '(package-selected-packages
    (quote
-    (flycheck lsp-ui use-package company lsp-mode yaml-path xtdmacs terraform-mode paas-manifest-helper)))
+    (robot-mode dash-functional flycheck lsp-ui use-package company lsp-mode yaml-path xtdmacs terraform-mode paas-manifest-helper)))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
@@ -98,7 +103,7 @@
  '(python-continuation-offset 2)
  '(python-indent 2)
  '(python-indent-guess-indent-offset nil)
- '(python-indent-offset 2)
+ '(python-indent-offset 4)
  '(python-shell-interpreter "python3")
  '(rcirc-server-alist
    (quote
@@ -159,8 +164,40 @@
  '(web-mode-enable-whitespaces nil)
  '(web-mode-markup-indent-offset 2)
  '(xtdmacs-bindings-mode t)
- '(xtdmacs-code-go-indent-load-auto t)
- '(xtdmacs-code-go-indent-save-auto t)
+ '(xtdmacs-code-go-compile-alist
+   (quote
+    ((:compile
+      (:dir . xtdmacs-compile++-get-dir-git)
+      (:bin . "go build ./...")
+      (:env . "")
+      (:get-params . xtdmacs-compile++-default-params)
+      (:command . xtdmacs-compile++-default-command))
+     (:test
+      (:dir . xtdmacs-compile++-get-dir-git)
+      (:bin . "go test ./...")
+      (:env . "")
+      (:get-params . xtdmacs-compile++-default-params)
+      (:command . xtdmacs-compile++-default-command))
+     (:doc
+      (:dir . xtdmacs-compile++-get-dir-buffer)
+      (:bin . "nakedret")
+      (:env . "")
+      (:get-params . xtdmacs-compile++-default-params)
+      (:command . xtdmacs-compile++-default-command))
+     (:lint
+      (:dir . xtdmacs-compile++-get-dir-buffer)
+      (:bin . "gometalinter.v2 -D gocyclo -D errcheck")
+      (:env . "")
+      (:get-params . xtdmacs-compile++-default-params)
+      (:command . xtdmacs-compile++-default-command))
+     (:manual
+      (:dir . xtdmacs-compile++-get-dir-git)
+      (:bin . "true")
+      (:env . "")
+      (:get-params . xtdmacs-compile++-default-params)
+      (:command . xtdmacs-compile++-default-command)))))
+ '(xtdmacs-code-go-indent-load-auto nil)
+ '(xtdmacs-code-go-indent-save-auto nil)
  '(xtdmacs-code-python-default-compile-env "")
  '(xtdmacs-code-python-default-deploy-bin (lambda nil "make doc"))
  '(xtdmacs-code-python-pylint-args (quote xtdmacs-code-python-pylint-getargs))
@@ -209,7 +246,7 @@
      (("\\.html\\'" "\\.tpl\\'" "\\.xml\\'" "\\.xsl\\'")
       xtdmacs-code-mode xtdmacs-code-web-mode)
      (("\\.py\\'")
-      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-python-mode xtdmacs-code-line-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode)
      (("\\.h\\'" "\\.c\\'" "\\.cc\\'" "\\.hh\\'" "\\.cpp\\'" "\\.hpp\\'" "\\.hxx\\'")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode)
      (("\\.js\\'")

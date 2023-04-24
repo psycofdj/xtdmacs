@@ -10,8 +10,8 @@
           ("MELPA" . "https://melpa.org/packages/"))
         package-archive-priorities
         '(("MELPA Stable" . 10)
-          ("MELPA" . 5)
-          ("GNU ELPA" . 0)))
+          ("MELPA" . 0)
+          ("GNU ELPA" . 20)))
   (package-initialize))
 
 (fset 'xterm-color-unfontify-region 'font-lock-default-unfontify-region)
@@ -19,6 +19,8 @@
 ;; custom file definition
 (setq custom-file "~/.emacs-custom")
 (load custom-file)
+(load "~/.emacs.d/dash.el")
+(load "~/.emacs.d/dash-functional.el")
 
 ;; set utf-8 encoding
 (set-terminal-coding-system 'utf-8)
