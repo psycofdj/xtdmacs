@@ -4,6 +4,7 @@
 (require 'package)
 (require 'go-mode)
 (require 'yasnippet)
+(require 'dap-dlv-go)
 
 (use-package flycheck
   :ensure t

@@ -257,6 +257,13 @@
   (unless (mode-enabled 'column-enforce-mode)
     (column-enforce-mode t))
   (highlight-regexp " +$" 'trailing-whitespace)
+  (define-key go-mode-map (kbd "C-e <f12>") 'dap-debug)
+  (define-key go-mode-map (kbd "C-e s") 'dap-step-in)
+  (define-key go-mode-map (kbd "C-e o") 'dap-step-out)
+  (define-key go-mode-map (kbd "C-e n") 'dap-next)
+  (define-key go-mode-map (kbd "C-e c") 'dap-continue)
+  (define-key go-mode-map (kbd "C-e r") 'dap-debug-restart)
+  (define-key go-mode-map (kbd "C-e b") 'dap-breakpoint-toggle)
   (message "enabled : xtdmacs-code-mode")
   )
 

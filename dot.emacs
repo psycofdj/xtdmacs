@@ -19,8 +19,8 @@
 ;; custom file definition
 (setq custom-file "~/.emacs-custom")
 (load custom-file)
-(load "~/.emacs.d/dash.el")
-(load "~/.emacs.d/dash-functional.el")
+;(load "~/.emacs.d/dash.el")
+;(load "~/.emacs.d/dash-functional.el")
 
 ;; set utf-8 encoding
 (set-terminal-coding-system 'utf-8)

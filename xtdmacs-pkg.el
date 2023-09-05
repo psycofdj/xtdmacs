@@ -2,7 +2,7 @@
 
 (define-package "xtdmacs" "0.6" "Set of developping tools."
   '((auto-complete             "20170124.1845")
-    (lsp-mode                  "7.1.0" )
+    (lsp-mode                  "8.0.0" )
     (flycheck                  "31" )
     (cmake-mode                "20160928.505" )
     (column-enforce-mode       "20170103.1231")

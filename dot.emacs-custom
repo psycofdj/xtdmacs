@@ -13,8 +13,7 @@
  '(ac-quick-help-height 10)
  '(ac-quick-help-prefer-pos-tip nil)
  '(ac-trigger-commands-on-completing
-   (quote
-    (delete-backward-char backward-delete-char backward-delete-char-untabify autopair-backspace paredit-backward-delete paredit-backward-delete-word self-insert-command)))
+   '(delete-backward-char backward-delete-char backward-delete-char-untabify autopair-backspace paredit-backward-delete paredit-backward-delete-word self-insert-command))
  '(ac-trigger-key "M-.")
  '(ac-use-comphist nil)
  '(ac-use-menu-map t)
@@ -30,47 +29,44 @@
  '(create-lockfiles nil)
  '(fill-column 84)
  '(flycheck-checkers
-   (quote
-    (ada-gnat asciidoctor asciidoc c/c++-clang c/c++-gcc c/c++-cppcheck cfengine chef-foodcritic coffee coffee-coffeelint coq css-csslint css-stylelint cuda-nvcc cwl d-dmd dockerfile-hadolint emacs-lisp emacs-lisp-checkdoc erlang-rebar3 erlang eruby-erubis fortran-gfortran groovy haml handlebars haskell-stack-ghc haskell-ghc haskell-hlint html-tidy javascript-eslint javascript-jshint javascript-standard json-jsonlint json-python-json json-jq jsonnet less less-stylelint llvm-llc lua-luacheck lua markdown-markdownlint-cli markdown-mdl nix nix-linter opam perl perl-perlcritic php php-phpmd php-phpcs processing proselint protobuf-protoc protobuf-prototool pug puppet-parser puppet-lint python-flake8 python-pylint python-pycompile python-mypy r-lintr racket rpm-rpmlint rst-sphinx rst ruby-rubocop ruby-reek ruby-rubylint ruby ruby-jruby rust-cargo rust rust-clippy scala scala-scalastyle scheme-chicken scss-lint scss-stylelint sass/scss-sass-lint sass scss sh-bash sh-posix-dash sh-posix-bash sh-zsh sh-shellcheck slim slim-lint sql-sqlint systemd-analyze tcl-nagelfar terraform terraform-tflint tex-chktex tex-lacheck texinfo textlint typescript-tslint verilog-verilator vhdl-ghdl xml-xmlstarlet xml-xmllint yaml-jsyaml yaml-ruby)))
+   '(ada-gnat asciidoctor asciidoc c/c++-clang c/c++-gcc c/c++-cppcheck cfengine chef-foodcritic coffee coffee-coffeelint coq css-csslint css-stylelint cuda-nvcc cwl d-dmd dockerfile-hadolint emacs-lisp emacs-lisp-checkdoc erlang-rebar3 erlang eruby-erubis fortran-gfortran groovy haml handlebars haskell-stack-ghc haskell-ghc haskell-hlint html-tidy javascript-eslint javascript-jshint javascript-standard json-jsonlint json-python-json json-jq jsonnet less less-stylelint llvm-llc lua-luacheck lua markdown-markdownlint-cli markdown-mdl nix nix-linter opam perl perl-perlcritic php php-phpmd php-phpcs processing proselint protobuf-protoc protobuf-prototool pug puppet-parser puppet-lint python-flake8 python-pylint python-pycompile python-mypy r-lintr racket rpm-rpmlint rst-sphinx rst ruby-rubocop ruby-reek ruby-rubylint ruby ruby-jruby rust-cargo rust rust-clippy scala scala-scalastyle scheme-chicken scss-lint scss-stylelint sass/scss-sass-lint sass scss sh-bash sh-posix-dash sh-posix-bash sh-zsh sh-shellcheck slim slim-lint sql-sqlint systemd-analyze tcl-nagelfar terraform terraform-tflint tex-chktex tex-lacheck texinfo textlint typescript-tslint verilog-verilator vhdl-ghdl xml-xmlstarlet xml-xmllint yaml-jsyaml yaml-ruby))
  '(flycheck-python-pycompile-executable "python3")
  '(flycheck-python-pylint-executable "python3")
- '(flycheck-shellcheck-excluded-warnings (quote ("SC2086" "SC2155")))
+ '(flycheck-shellcheck-excluded-warnings '("SC2086" "SC2155"))
  '(flyspell-duplicate-distance 0)
  '(flyspell-issue-message-flag nil)
  '(flyspell-issue-welcome-flag nil)
  '(flyspell-large-region 2000)
  '(flyspell-use-meta-tab t)
- '(fringe-mode (quote (nil . 0)) nil (fringe))
+ '(fringe-mode '(nil . 0) nil (fringe))
  '(global-auto-complete-mode nil)
  '(global-auto-revert-mode t)
  '(global-rudel-header-subscriptions-mode t)
  '(global-rudel-minor-mode t)
  '(gud-gdb-command-name "/ke/local/toolchain3-x86_64-nptl/tools/bin/gdb -i=mi")
- '(ido-create-new-buffer (quote always))
- '(ido-default-buffer-method (quote selected-window))
+ '(ido-create-new-buffer 'always)
+ '(ido-default-buffer-method 'selected-window)
  '(ido-enable-last-directory-history nil)
- '(ido-ignore-buffers (quote ("^[*]" "\\` ")))
- '(ido-mode (quote buffer) nil (ido))
+ '(ido-ignore-buffers '("^[*]" "\\` "))
+ '(ido-mode 'buffer nil (ido))
  '(imenu-use-popup-menu t)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(initial-buffer-choice nil)
- '(initial-major-mode (quote fundamental-mode))
+ '(initial-major-mode 'fundamental-mode)
  '(js-indent-level 2)
  '(js2-basic-offset 2)
  '(js2-highlight-level 1)
- '(linum-format (quote dynamic))
+ '(linum-format 'dynamic)
  '(lsp-enable-symbol-highlighting nil)
  '(lsp-file-watch-ignored
-   (quote
-    ("[/\\\\]\\.git$" "[/\\\\]\\.hg$" "[/\\\\]\\.bzr$" "[/\\\\]_darcs$" "[/\\\\]\\.svn$" "[/\\\\]_FOSSIL_$" "[/\\\\]\\.idea$" "[/\\\\]\\.ensime_cache$" "[/\\\\]\\.eunit$" "[/\\\\]node_modules$" "[/\\\\]\\.fslckout$" "[/\\\\]\\.tox$" "[/\\\\]\\.stack-work$" "[/\\\\]\\.bloop$" "[/\\\\]\\.metals$" "[/\\\\]target$" "[/\\\\]\\.ccls-cache$" "[/\\\\]\\.deps$" "[/\\\\]build-aux$" "[/\\\\]autom4te.cache$" "[/\\\\]\\.reference$" ".*/vendor/.*")))
+   '("[/\\\\]\\.git$" "[/\\\\]\\.hg$" "[/\\\\]\\.bzr$" "[/\\\\]_darcs$" "[/\\\\]\\.svn$" "[/\\\\]_FOSSIL_$" "[/\\\\]\\.idea$" "[/\\\\]\\.ensime_cache$" "[/\\\\]\\.eunit$" "[/\\\\]node_modules$" "[/\\\\]\\.fslckout$" "[/\\\\]\\.tox$" "[/\\\\]\\.stack-work$" "[/\\\\]\\.bloop$" "[/\\\\]\\.metals$" "[/\\\\]target$" "[/\\\\]\\.ccls-cache$" "[/\\\\]\\.deps$" "[/\\\\]build-aux$" "[/\\\\]autom4te.cache$" "[/\\\\]\\.reference$" ".*/vendor/.*"))
  '(lsp-file-watch-ignored-directories
-   (quote
-    ("[/\\\\]\\.git$" "[/\\\\]\\.hg$" "[/\\\\]\\.bzr$" "[/\\\\]_darcs$" "[/\\\\]\\.svn$" "[/\\\\]_FOSSIL_$" "[/\\\\]\\.idea$" "[/\\\\]\\.ensime_cache$" "[/\\\\]\\.eunit$" "[/\\\\]node_modules$" "[/\\\\]\\.fslckout$" "[/\\\\]\\.tox$" "[/\\\\]\\.stack-work$" "[/\\\\]\\.bloop$" "[/\\\\]\\.metals$" "[/\\\\]target$" "[/\\\\]\\.ccls-cache$" "[/\\\\]\\.deps$" "[/\\\\]build-aux$" "[/\\\\]autom4te.cache$" "[/\\\\]\\.reference$" ".*/vendor/.*")))
+   '("[/\\\\]\\.git$" "[/\\\\]\\.hg$" "[/\\\\]\\.bzr$" "[/\\\\]_darcs$" "[/\\\\]\\.svn$" "[/\\\\]_FOSSIL_$" "[/\\\\]\\.idea$" "[/\\\\]\\.ensime_cache$" "[/\\\\]\\.eunit$" "[/\\\\]node_modules$" "[/\\\\]\\.fslckout$" "[/\\\\]\\.tox$" "[/\\\\]\\.stack-work$" "[/\\\\]\\.bloop$" "[/\\\\]\\.metals$" "[/\\\\]target$" "[/\\\\]\\.ccls-cache$" "[/\\\\]\\.deps$" "[/\\\\]build-aux$" "[/\\\\]autom4te.cache$" "[/\\\\]\\.reference$" ".*/vendor/.*"))
  '(lsp-pyls-plugins-autopep8-enabled nil)
  '(lsp-pyls-plugins-flake8-enabled t)
- '(lsp-pyls-plugins-flake8-exclude (quote ("")))
- '(lsp-pyls-plugins-flake8-ignore (quote ("E501" "E121" "E111")))
+ '(lsp-pyls-plugins-flake8-exclude '(""))
+ '(lsp-pyls-plugins-flake8-ignore '("E501" "E121" "E111"))
  '(lsp-pyls-plugins-flake8-max-line-length 100)
  '(lsp-pyls-plugins-pycodestyle-enabled nil)
  '(lsp-pyls-plugins-pycodestyle-max-line-length 100)
@@ -79,11 +75,10 @@
  '(lsp-ui-doc-delay 0)
  '(lsp-ui-doc-enable nil)
  '(lsp-ui-doc-header t)
- '(lsp-ui-imenu-kind-position (quote left))
+ '(lsp-ui-imenu-kind-position 'left)
  '(message-log-max t)
  '(mode-line-format
-   (quote
-    ("%&%&%& "
+   '("%&%&%& "
      (:propertize "%b " face mode-line-buffer-id)
      "- (%l:%c) - %p - "
      (:eval
@@ -92,10 +87,9 @@
           (file-name-directory
            (buffer-file-name))
         "[not a real file]"))
-     " %-")))
+     " %-"))
  '(package-selected-packages
-   (quote
-    (robot-mode dash-functional flycheck lsp-ui use-package company lsp-mode yaml-path xtdmacs terraform-mode paas-manifest-helper)))
+   '(typescript-mode lsp-treemacs xref robot-mode dash-functional flycheck lsp-ui use-package company yaml-path xtdmacs terraform-mode paas-manifest-helper))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
@@ -106,16 +100,14 @@
  '(python-indent-offset 4)
  '(python-shell-interpreter "python3")
  '(rcirc-server-alist
-   (quote
-    (("floobits.com" :nick "psycofdj" :port 6697 :user-name "psycofdj" :password "7q15flet083q9fqp79b4fw945" :channels
+   '(("floobits.com" :nick "psycofdj" :port 6697 :user-name "psycofdj" :password "7q15flet083q9fqp79b4fw945" :channels
       ("#ArthurHlt/terraform-provider-concourse")
-      :encryption tls))))
- '(require-final-newline (quote ask))
+      :encryption tls)))
+ '(require-final-newline 'ask)
  '(rtags-local-references-enabled t)
  '(rtags-tracking t)
  '(safe-local-variable-values
-   (quote
-    ((eval setq xtdmacs-code-python-test-bin-path
+   '((eval setq xtdmacs-code-python-test-bin-path
            (concat
             (file-name-directory
              (let
@@ -134,16 +126,15 @@
      (xtdmacs-code-cpp-indent-save-auto . f)
      (xtdmacs-code-cpp-indent-load-auto . f)
      (sh-indent-comment . t)
-     (sh-basic-offset . 4))))
+     (sh-basic-offset . 4)))
  '(scroll-bar-mode nil)
- '(sh-basic-offset 2)
+ '(sh-basic-offset 4)
  '(show-trailing-whitespace t)
  '(speedbar-tag-regroup-maximum-length 10000)
  '(split-height-threshold nil)
  '(split-width-threshold nil)
  '(swbuff-exclude-buffer-regexps
-   (quote
-    ("^ " "*Help*" "*scratch*" "*Messages*" "*compilation*" "*shell*" "*Completions*" "*Buffer List*")))
+   '("^ " "*Help*" "*scratch*" "*Messages*" "*compilation*" "*shell*" "*Completions*" "*Buffer List*"))
  '(tab-width 2)
  '(transient-mark-mode nil)
  '(truncate-lines t)
@@ -165,8 +156,7 @@
  '(web-mode-markup-indent-offset 2)
  '(xtdmacs-bindings-mode t)
  '(xtdmacs-code-go-compile-alist
-   (quote
-    ((:compile
+   '((:compile
       (:dir . xtdmacs-compile++-get-dir-git)
       (:bin . "go build ./...")
       (:env . "")
@@ -195,19 +185,17 @@
       (:bin . "true")
       (:env . "")
       (:get-params . xtdmacs-compile++-default-params)
-      (:command . xtdmacs-compile++-default-command)))))
+      (:command . xtdmacs-compile++-default-command))))
  '(xtdmacs-code-go-indent-load-auto nil)
  '(xtdmacs-code-go-indent-save-auto nil)
  '(xtdmacs-code-python-default-compile-env "")
  '(xtdmacs-code-python-default-deploy-bin (lambda nil "make doc"))
- '(xtdmacs-code-python-pylint-args (quote xtdmacs-code-python-pylint-getargs))
+ '(xtdmacs-code-python-pylint-args 'xtdmacs-code-python-pylint-getargs)
  '(xtdmacs-code-python-pylint-bin-path "python3 -m pylint")
  '(xtdmacs-code-spell-ignore-regexp
-   (quote
-    ("@subsubsection [^ ]+" "@image html [^ ]+" "@subsection [^ ]+" "@param [^ ]+" "@section [^ ]+" "//  LocalWords: *" "@ref [^ ]+" "[^ ]+\\.[^ ]+")))
+   '("@subsubsection [^ ]+" "@image html [^ ]+" "@subsection [^ ]+" "@param [^ ]+" "@section [^ ]+" "//  LocalWords: *" "@ref [^ ]+" "[^ ]+\\.[^ ]+"))
  '(xtdmacs-loader-auto-major-mode-alist
-   (quote
-    ((("Dockerfile")
+   '((("Dockerfile")
       dockerfile-mode)
      (("\\.php\\'")
       php-mode)
@@ -234,10 +222,9 @@
      (("\\.el\\'")
       emacs-lisp-mode)
      (("\\.java\\'")
-      java-mode))))
+      java-mode)))
  '(xtdmacs-loader-auto-minor-mode-alist
-   (quote
-    ((("Dockerfile")
+   '((("Dockerfile")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode)
      (("\\.php\\'")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-php-mode)
@@ -272,7 +259,7 @@
      (("\\.tf\\'")
       xtdmacs-code-mode)
      (("\\.yml" "\\.yaml" "\\.ytpl" "spec")
-      xtdmacs-code-mode xtdmacs-code-line-mode xtdmacs-code-yaml-mode)))))
+      xtdmacs-code-mode xtdmacs-code-line-mode xtdmacs-code-yaml-mode))))
 
 
 ;; ----------------------------------------------------------
@@ -289,8 +276,8 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :background "unspecified-bg" :foreground "unspecified-fg" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1 :width normal :foundry "default" :family "default"))))
  '(column-enforce-face ((t (:background "color-235"))))
- '(company-scrollbar-bg ((t (:background "color-241"))))
- '(company-scrollbar-fg ((t (:background "color-237"))))
+ '(company-scrollbar-bg ((t (:background "color-241"))) t)
+ '(company-scrollbar-fg ((t (:background "color-237"))) t)
  '(company-tooltip ((t (:background "color-235"))))
  '(company-tooltip-annotation ((t (:foreground "color-105"))))
  '(company-tooltip-common ((t (:foreground "color-105" :underline t))))
@@ -327,7 +314,7 @@
  '(linum ((t (:inherit mode-line-inactive))))
  '(menu ((t (:inherit mode-line-inactive))))
  '(minibuffer-prompt ((((min-colors 256) (background dark)) (:foreground "#875fff" :weight bold)) (((min-colors 256) (background light)) (:foreground "#0000cd" :weight bold))))
- '(mode-line ((((min-colors 256) (background dark)) (:background "#303030" :foreground "#af5f00")) (((min-colors 256) (background light)) (:background "#bfbfbf" :foreground "#000000" :box (:line-width -1 :style (quote released-button))))))
+ '(mode-line ((((min-colors 256) (background dark)) (:background "#303030" :foreground "#af5f00")) (((min-colors 256) (background light)) (:background "#bfbfbf" :foreground "#000000" :box (:line-width -1 :style 'released-button)))))
  '(mode-line-buffer-id ((t (:foreground "red" :weight bold))))
  '(mode-line-emphasis ((t (:weight bold))))
  '(mode-line-inactive ((((min-colors 256) (background dark)) (:inherit mode-line :background "#1c1c1c")) (((min-colors 256) (background light)) (:inherit mode-line :background "#e5e5e5" :foreground "#333333" :weight normal :box (:line-width -1 :color "#bfbfbf" :style nil)))))
