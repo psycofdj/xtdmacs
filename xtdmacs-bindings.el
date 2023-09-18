@@ -4,6 +4,9 @@
 (eval-when-compile
   (defvar shell-last-visited-buffer))
 
+(eval-when-compile
+  (defvar xtdmacs-bindings-mode-map))
+
 (defun xtdmacs-insert-date ()
   (interactive)
   (insert (format-time-string "%e-%m-%Y"))
@@ -88,8 +91,6 @@
     (,(kbd "M-<DEL>") . xtdmacs-backward-delete-word)
     ([f5]         . delete-trailing-whitespace)
     ([C-f5]       . font-lock-fontify-buffer)
-    ;; ([C-f11]      . xtdmacs-shell-toggle)
-    ;; ([f11]        . tmm-menubar)
     )
   :global t
 

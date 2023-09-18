@@ -6,6 +6,9 @@
 (require 'xtdmacs-compile++)
 (require 'column-enforce-mode)
 
+(eval-when-compile
+  (defvar xtdmacs-code-mode-map))
+
 (defface xtdmacs-code-face-status-ok
   '((t (:foreground "#005f00")))
   "status codes KEERROR."
@@ -254,16 +257,23 @@
     (define-key yafolding-mode-map (kbd "M-f")   'yafolding-toggle-element)
     (define-key yafolding-mode-map (kbd "C-M-f") 'yafolding-toggle-all)
     )
+
+  (if (require 'kustomize nil 'noerror)
+      (progn
+        (when (kustomize-in-kustomize-file)
+          (define-key xtdmacs-code-mode-map [f12]              'kustomize-open-at-point)
+          (define-key xtdmacs-code-mode-map (kbd "C-<f12>")    '(lambda () (interactive) (kustomize-open-at-point t)))
+          (define-key xtdmacs-code-mode-map "\C-e"             'kustomize-patch-at-point)
+          (kustomize-which-func))
+        (when (kustomize-in-dir-strcture)
+          (define-key xtdmacs-code-mode-map (kbd "C-x C-<up>") 'kustomize-open-overlay))
+        )
+    (message "unable to initialize kustomize")
+    )
+
   (unless (mode-enabled 'column-enforce-mode)
     (column-enforce-mode t))
   (highlight-regexp " +$" 'trailing-whitespace)
-  (define-key go-mode-map (kbd "C-e <f12>") 'dap-debug)
-  (define-key go-mode-map (kbd "C-e s") 'dap-step-in)
-  (define-key go-mode-map (kbd "C-e o") 'dap-step-out)
-  (define-key go-mode-map (kbd "C-e n") 'dap-next)
-  (define-key go-mode-map (kbd "C-e c") 'dap-continue)
-  (define-key go-mode-map (kbd "C-e r") 'dap-debug-restart)
-  (define-key go-mode-map (kbd "C-e b") 'dap-breakpoint-toggle)
   (message "enabled : xtdmacs-code-mode")
   )
 
