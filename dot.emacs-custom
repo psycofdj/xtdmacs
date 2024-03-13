@@ -89,7 +89,7 @@
         "[not a real file]"))
      " %-"))
  '(package-selected-packages
-   '(typescript-mode lsp-treemacs xref robot-mode dash-functional flycheck lsp-ui use-package company yaml-path xtdmacs terraform-mode paas-manifest-helper))
+   '(go-mode dap-mode typescript-mode lsp-treemacs xref robot-mode dash-functional flycheck lsp-ui use-package company yaml-path xtdmacs terraform-mode paas-manifest-helper))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
@@ -143,6 +143,7 @@
  '(user-full-name "Xavier MARCELET")
  '(user-mail-address "xavier@marcelet.com")
  '(vc-handled-backends nil)
+ '(warning-suppress-log-types '((comp)))
  '(web-mode-code-indent-offset 2)
  '(web-mode-comment-style 2)
  '(web-mode-css-indent-offset 2)

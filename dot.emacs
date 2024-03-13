@@ -2,17 +2,10 @@
 ;; -*- lexical-binding: t -*-
 
 ;; configure repositories
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (setq package-archives
-        '(("GNU ELPA" . "https://elpa.gnu.org/packages/")
-          ("MELPA Stable" . "https://stable.melpa.org/packages/")
-          ("MELPA" . "https://melpa.org/packages/"))
-        package-archive-priorities
-        '(("MELPA Stable" . 10)
-          ("MELPA" . 0)
-          ("GNU ELPA" . 20)))
-  (package-initialize))
+(require 'package)
+(add-to-list 'package-archives '("melpa"        . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(package-initialize)
 
 (fset 'xterm-color-unfontify-region 'font-lock-default-unfontify-region)
 
