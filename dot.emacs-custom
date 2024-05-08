@@ -89,7 +89,7 @@
         "[not a real file]"))
      " %-"))
  '(package-selected-packages
-   '(go-mode dap-mode typescript-mode lsp-treemacs xref robot-mode dash-functional flycheck lsp-ui use-package company yaml-path xtdmacs terraform-mode paas-manifest-helper))
+   '(## go-mode dap-mode typescript-mode lsp-treemacs xref robot-mode dash-functional flycheck lsp-ui use-package company yaml-path xtdmacs terraform-mode paas-manifest-helper))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
