@@ -14,6 +14,8 @@ xtdmacs-$(VERSION).tar: $(SOURCES)
 
 install: xtdmacs-$(VERSION).tar
 	@rm -rf ~/.emacs.d/elpa/xtdmacs*/
+	@mkdir -p ~/.emacs.d/elpa/gnupg
+	@gpg --homedir ~/.emacs.d/elpa/gnupg --keyserver hkp://keyserver.ubuntu.com  --recv-keys 645357D2883A0966
 	@emacs --batch --eval "(defconst pkg-to-install \"$(DIR)/xtdmacs-$(VERSION).tar\")" --eval "(defconst pkg-refresh t)" -l vendor/emacs-pkg-install.el
 
 install-quick: xtdmacs-$(VERSION).tar
