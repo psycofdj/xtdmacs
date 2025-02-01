@@ -1,5 +1,22 @@
 ;; -*- lexical-binding: t -*-
 
+
+
+;;;###autoload
+(defun --xtdmacs-lsp-find-references()
+  (interactive)
+  (lsp-find-references nil :display-action 'window))
+
+;;;###autoload
+(defun --xtdmacs-lsp-find-references-other-window()
+  (interactive)
+  (lsp-find-references t :display-action 'window))
+
+;;;###autoload
+(defun --xtdmacs-lsp-find-definition-other-window()
+  (interactive)
+  (lsp-find-definition :display-action 'window))
+
 ;;;###autoload
 (defun xtdmacs-get-install-dir()
   (package-desc-dir (or

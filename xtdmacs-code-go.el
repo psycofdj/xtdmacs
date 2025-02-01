@@ -125,10 +125,6 @@
             (funcall-or-value bin)))
   )
 
-(defun --xtdmacs-lsp-find-definition-other-window()
-  (interactive)
-  (lsp-find-definition :display-action 'window))
-
 (defun --xtdmacs-lsp-find-references-other-window()
   (interactive)
   (lsp-find-references t :display-action 'window))

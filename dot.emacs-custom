@@ -89,7 +89,7 @@
         "[not a real file]"))
      " %-"))
  '(package-selected-packages
-   '(## go-mode dap-mode typescript-mode lsp-treemacs xref robot-mode dash-functional flycheck lsp-ui use-package company yaml-path xtdmacs terraform-mode paas-manifest-helper))
+   '(kubernetes jsonnet-mode ## go-mode dap-mode typescript-mode lsp-treemacs xref robot-mode dash-functional flycheck lsp-ui use-package company yaml-path xtdmacs paas-manifest-helper))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
@@ -97,7 +97,7 @@
  '(python-continuation-offset 2)
  '(python-indent 2)
  '(python-indent-guess-indent-offset nil)
- '(python-indent-offset 4)
+ '(python-indent-offset 2)
  '(python-shell-interpreter "python3")
  '(rcirc-server-alist
    '(("floobits.com" :nick "psycofdj" :port 6697 :user-name "psycofdj" :password "7q15flet083q9fqp79b4fw945" :channels
@@ -257,10 +257,14 @@
       xtdmacs-code-mode xtdmacs-code-spell-mode xtdmacs-code-sphinx-mode xtdmacs-code-line-mode)
      (("\\.go\\'")
       xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-go-mode)
+     (("\\.ts\\'")
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-typescript-mode)
      (("\\.tf\\'")
-      xtdmacs-code-mode)
+      xtdmacs-code-mode xtdmacs-code-spell-prog-mode xtdmacs-code-line-mode xtdmacs-code-terraform-mode)
      (("\\.yml" "\\.yaml" "\\.ytpl" "spec")
-      xtdmacs-code-mode xtdmacs-code-line-mode xtdmacs-code-yaml-mode))))
+      xtdmacs-code-mode xtdmacs-code-line-mode xtdmacs-code-yaml-mode)
+     (("\\.jsonnet\\'" "\\.libjsonnet\\'")
+      jsonnet-mode xtdmacs-code-mode))))
 
 
 ;; ----------------------------------------------------------
@@ -282,7 +286,7 @@
  '(company-tooltip ((t (:background "color-235"))))
  '(company-tooltip-annotation ((t (:foreground "color-105"))))
  '(company-tooltip-common ((t (:foreground "color-105" :underline t))))
- '(company-tooltip-selection ((t (:background "color-239"))))
+ '(company-tooltip-selection ((t (:background "saddlebrown" :foreground "black"))))
  '(custom-variable-tag ((((min-colors 256) (background dark)) (:foreground "#ff00ff" :weight bold)) (((background light)) (:foreground "#blue1" :weight bold))))
  '(ediff-current-diff-A ((t (:background "color-52"))))
  '(ediff-current-diff-B ((t (:background "color-52"))))
@@ -301,8 +305,9 @@
  '(flyspell-duplicate ((((min-colors 256) (background dark)) (:background "#d7af00")) (((min-colors 256) (background light)) (:inherit warning :underline (:color foreground-color :style line)))))
  '(flyspell-incorrect ((t (:underline (:color "red" :style wave)))))
  '(font-lock-builtin-face ((t (:inherit font-lock-keyword-face))))
- '(font-lock-comment-face ((t (:foreground "color-160"))))
+ '(font-lock-comment-face ((t (:foreground "firebrick"))))
  '(font-lock-constant-face ((((min-colors 256) (background dark)) (:foreground "#cd00cd")) (((min-colors 256) (background light)) (:foreground "#008b8b"))))
+ '(font-lock-doc-face ((t (:foreground "seagreen"))))
  '(font-lock-function-name-face ((((min-colors 256) (background dark)) (:foreground "#5c5cff")) (((min-colors 256) (background light)) (:foreground "#0000ff"))))
  '(font-lock-keyword-face ((((min-colors 256) (background dark)) (:foreground "#00ffff" :weight bold)) (((min-colors 256) (background light)) (:foreground "#a020f0" :weight bold))))
  '(font-lock-preprocessor-face ((((min-colors 256) (background dark)) (:inherit font-lock-builtin-face :foreground "#005fd7" :weight bold)) (((background light)) (:inherit font-lock-builtin-face))))

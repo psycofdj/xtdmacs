@@ -5,7 +5,6 @@
 (require 'typescript-mode)
 (require 'yasnippet)
 
-
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode))
@@ -15,16 +14,11 @@
   :commands (lsp lsp-deferred)
   :hook (typescript-mode . lsp-deferred))
 
-;; Company mode is a standard completion package that works well with lsp-mode.
 (use-package company
   :ensure t
   :config
-  ;; ;; Optionally enable completion-as-you-type behavior.
-  ;; (setq company-idle-delay 0)
-  ;; (setq company-minimum-prefix-length 1)
   )
 
-;; Optional - provides snippet support.
 (use-package yasnippet
   :ensure t
   :commands yas-minor-mode
@@ -101,18 +95,6 @@
    (directory-file-name
     (xtdmacs-compile++-get-dir-git)))
   )
-
-(defun --xtdmacs-lsp-find-definition-other-window()
-  (interactive)
-  (lsp-find-definition :display-action 'window))
-
-(defun --xtdmacs-lsp-find-references-other-window()
-  (interactive)
-  (lsp-find-references t :display-action 'window))
-
-(defun --xtdmacs-lsp-find-references()
-  (interactive)
-  (lsp-find-references nil :display-action 'window))
 
 ;; --------------------------------------------------------------------------- ;
 
