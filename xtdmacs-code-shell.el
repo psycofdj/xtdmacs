@@ -1,93 +1,77 @@
-;; -*- lexical-binding: t -*-
+;;; xtdmacs-code-shell.el --- Shell-script support  -*- lexical-binding: t -*-
 
-(require 'xtdmacs-compile++)
+;;; Commentary:
+
+;; xtdmacs setup for sh-mode buffers: font-lock keywords, flycheck +
+;; auto-complete, and a shellcheck compile recipe.
+
+;;; Code:
+
+(require 'xtdmacs-code)
 (require 'auto-complete)
+
+(eval-when-compile (defvar sh-mode-map))
+
+(declare-function xtdmacs-compile++-register-config "xtdmacs-compile++")
 
 (defcustom xtdmacs-code-shell-compile-alist
   '((:compile . ((:file       . buffer-file-name)
                  (:bin        . xtdmacs-code-shell-shellcheck-bin)
                  (:get-params . xtdmacs-compile++-current-file-params)
-                 (:command    . xtdmacs-compile++-simple-file-command)
-                 )))
-  "Xtdmacs-code-shell compilation configuration"
+                 (:command    . xtdmacs-compile++-simple-file-command))))
+  "Shell script compilation configuration."
   :group 'xtdmacs-code-shell
-  :safe '(lambda(p) t)
+  :safe (lambda (_) t)
   :type '(alist :key-type string
                 :value-type (alist :key-type string
-                                   :value-type (choice (string) (function))))
-  )
+                                   :value-type (choice (string) (function)))))
 
 (defcustom xtdmacs-code-shell-keywords-alist
-  '(("\\<l_[_a-zA-Z0-9]+\\>" .       'xtdmacs-code-face-local-variable)
+  '(("\\<l_[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-local-variable)
     ("\\<\\(p_[_a-zA-Z0-9]+\\)\\>" . 'xtdmacs-code-face-param)
-    ("\\<c_[_a-zA-Z0-9]+\\>" .       'xtdmacs-code-face-counter))
-  "List of additional shell font-lock keywords"
+    ("\\<c_[_a-zA-Z0-9]+\\>"       . 'xtdmacs-code-face-counter))
+  "Additional shell font-lock keywords."
   :group 'xtdmacs-code-shell
-  :safe '(lambda(p) t))
+  :safe (lambda (_) t)
+  :type '(alist :key-type string :value-type sexp))
 
 (defcustom xtdmacs-code-shell-shellcheck-bin-path "/usr/bin/shellcheck"
-  "shellcheck code checker file path"
-  :group 'xtdmacs-code-shell
-  :type 'file
-  :safe 'file-exists-p)
+  "Shellcheck binary path."
+  :group 'xtdmacs-code-shell :type 'file :safe #'file-exists-p)
 
-;; --------------------------------------------------------------------------- ;
+(defun xtdmacs-code-shell-shellcheck-bin ()
+  "Return the full shellcheck command line including standard exclusions."
+  (concat (or xtdmacs-code-shell-shellcheck-bin-path "shellcheck")
+          " -f gcc -e SC2046,SC2086,SC2155 -C=never -x"))
 
-(defun xtdmacs-code-shell-shellcheck-bin()
-  (concat
-   (if xtdmacs-code-shell-shellcheck-bin-path
-       xtdmacs-code-shell-shellcheck-bin-path
-     "spellcheck")
-   " -f gcc -e SC2046,SC2086,SC2155 -C=never -x")
-  )
+(defun xtdmacs-code-shell-shellcheck-file ()
+  "Return the path of the file shellcheck should lint (current buffer)."
+  (buffer-file-name))
 
-(defun xtdmacs-code-shell-shellcheck-file()
-  (buffer-file-name)
-  )
+(with-eval-after-load 'sh-script
+  (define-key sh-mode-map (kbd "M-.") #'ac-start))
 
-;; --------------------------------------------------------------------------- ;
-
-(defun --xtdmacs-code-shell-construct()
+;;;###autoload
+(defun xtdmacs-code-shell-setup ()
+  "Configure a Shell-script buffer with xtdmacs conventions."
+  (xtdmacs-code-setup)
   (font-lock-add-keywords nil xtdmacs-code-shell-keywords-alist)
-  (when (mode-enabled 'xtdmacs-compile++-mode)
+  (when (bound-and-true-p xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "sh-mode" xtdmacs-code-shell-compile-alist)
-    (make-local-variable 'xtdmacs-compile++-config-alist)
-    )
-  (unless (mode-enabled 'auto-complete-mode)
-    (auto-complete-mode t))
-  (unless (mode-enabled 'flycheck-mode)
-    (flycheck-mode t))
-  (message "enabled : xtdmacs-code-shell-mode")
-  )
-
-(defun --xtdmacs-code-shell-destroy()
-  (font-lock-remove-keywords nil xtdmacs-code-shell-keywords-alist)
-  (when (mode-enabled 'flycheck-mode)
-    (flycheck-mode nil))
-  (when (mode-enabled 'auto-complete-mode)
-    (auto-complete-mode nil))
-  (message "disabled : xtdmacs-code-shell-mode")
+    (make-local-variable 'xtdmacs-compile++-config-alist))
+  (auto-complete-mode 1)
   )
 
 ;;;###autoload
-(define-minor-mode xtdmacs-code-shell-mode
-  "Code for Shell" nil "Code"
-  '(("\M-."    . ac-start))
-  (if xtdmacs-code-shell-mode
-      (--xtdmacs-code-shell-construct)
-    (--xtdmacs-code-shell-destroy))
-  )
+(add-hook 'sh-mode-hook #'xtdmacs-code-shell-setup)
 
-;; --------------------------------------------------------------------------- ;
-
-;;;###autoload
-(put 'xtdmacs-code-shell-compile-alist 'safe-local-variable '(lambda(val) t))
-;;;###autoload
-(put 'xtdmacs-code-shell-keywords-alist 'safe-local-variable '(lambda(val) t))
-;;;###autoload
-(put 'xtdmacs-code-shell-shellcheck-bin-path 'safe-local-variable 'file-exists-p)
+;;;###autoload (put 'xtdmacs-code-shell-compile-alist 'safe-local-variable (lambda (_) t))
+;;;###autoload (put 'xtdmacs-code-shell-keywords-alist 'safe-local-variable (lambda (_) t))
+;;;###autoload (put 'xtdmacs-code-shell-shellcheck-bin-path 'safe-local-variable #'file-exists-p)
 
 (provide 'xtdmacs-code-shell)
+
+;;; xtdmacs-code-shell.el ends here
 
 ;; Local Variables:
 ;; ispell-local-dictionary: "american"

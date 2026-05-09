@@ -1,5 +1,5 @@
 (autoload 'highlight-80+-mode               "highlight-80+" "" t)
-(autoload 'linum-mode                       "linum"         "" t)
+(autoload 'display-line-numbers-mode        "display-line-numbers" "" t)
 (autoload 'js2-mode                         "js2-mode"      "" t)
 (autoload 'compile++-mode                   "compile++"     "" t)
 (autoload 'php-mode                         "pi-php-mode"   "" t)
@@ -120,7 +120,7 @@
   (if code-mode
       (progn
         (highlight-80+-mode  t)
-        (linum-mode          t)
+        (display-line-numbers-mode t)
         (compile++-mode      t)
         (message "enabled : code-mode")))
   )

@@ -1,4 +1,15 @@
-;; -*- lexical-binding: t -*-
+;;; xtdmacs-code-js.el --- JavaScript font-lock keywords  -*- lexical-binding: t -*-
+
+;;; Commentary:
+
+;; Adds Hungarian-style variable face keywords on top of js-mode / js2-mode.
+
+;;; Code:
+
+(require 'xtdmacs-code)
+
+(use-package js2-mode
+  :ensure t)
 
 (defcustom xtdmacs-code-js-keywords-alist
   '(("\\<\\(gcs_[_a-zA-Z0-9]+\\)\\>" (1 'xtdmacs-code-face-global-variable-const-static))
@@ -12,39 +23,32 @@
     ("\\<\\(mcs_[_a-zA-Z0-9]+\\)\\>" (1 'xtdmacs-code-face-class-member-const-static))
     ("\\([_a-zA-Z0-9]+\\)::"         (1 'font-lock-constant-face))
     ("\\(__[_A-Z]+__\\)"             (1 'xtdmacs-code-face-macro))
-    (" +static +" .                     'font-lock-keyword-face)
-    (" +const +" .                      'font-lock-keyword-face)
-    ("\\<\\(self\\)\\>" .               'font-lock-keyword-face)
+    (" +static +"                    .  'font-lock-keyword-face)
+    (" +const +"                     .  'font-lock-keyword-face)
+    ("\\<\\(self\\)\\>"              .  'font-lock-keyword-face)
     ("\\<\\(ms_[_a-zA-Z0-9]+\\)\\>"  (1 'xtdmacs-code-face-class-member-static))
     ("\\<\\(mc_[_a-zA-Z0-9]+\\)\\>"  (1 'xtdmacs-code-face-class-member-const))
     ("\\<\\(m_[_a-zA-Z0-9]+\\)\\>"   (1 'xtdmacs-code-face-class-member))
     ("\\<\\(my_[_a-zA-Z0-9]+\\)\\>"  (1 'xtdmacs-code-face-class-member))
-    ("\\<\\(pcs_[_a-zA-Z0-9]+\\)\\>" (1 'xtdmacs-code-face-param-const-static))
-    ("\\<\\(ps_[_a-zA-Z0-9]+\\)\\>"  (1 'xtdmacs-code-face-param-static))
-    ("\\<\\(pc_[_a-zA-Z0-9]+\\)\\>"  (1 'xtdmacs-code-face-param-const))
     ("\\<\\(p_[_a-zA-Z0-9]+\\)\\>"   (1 'xtdmacs-code-face-param))
     ("\\<\\(c_[_a-zA-Z0-9]+\\)\\>"   (1 'xtdmacs-code-face-counter))
     ("\\<\\(cc_[_a-zA-Z0-9]+\\)\\>"  (1 'xtdmacs-code-face-counter-const)))
-  "List of additional js font-lock keywords"
+  "Additional JavaScript font-lock keywords."
   :group 'xtdmacs-code-js
-  :safe '(lambda(p) t))
-
-
-(defun --xtdmacs-code-js-mode-construct()
-  (font-lock-add-keywords nil xtdmacs-code-js-keywords-alist)
-  (message "enabled : xtdmacs-code-js-mode")
-  )
-
-(defun --xtdmacs-code-js-mode-destroy()
-  (font-lock-remove-keywords nil xtdmacs-code-js-keywords-alist)
-  (message "disabled : xtdmacs-code-js-mode")
-  )
+  :safe (lambda (_) t)
+  :type '(alist :key-type string :value-type sexp))
 
 ;;;###autoload
-(define-minor-mode xtdmacs-code-js-mode "Code for Javascript" nil "Code" nil
-  (if xtdmacs-code-js-mode
-      (--xtdmacs-code-js-mode-construct)
-    (--xtdmacs-code-js-mode-destroy))
-  )
+(defun xtdmacs-code-js-setup ()
+  "Configure a JavaScript buffer with xtdmacs conventions."
+  (xtdmacs-code-setup)
+  (font-lock-add-keywords nil xtdmacs-code-js-keywords-alist))
+
+;;;###autoload
+(add-hook 'js2-mode-hook #'xtdmacs-code-js-setup)
+;;;###autoload
+(add-hook 'js-mode-hook  #'xtdmacs-code-js-setup)
 
 (provide 'xtdmacs-code-js)
+
+;;; xtdmacs-code-js.el ends here

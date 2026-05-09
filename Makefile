@@ -1,5 +1,5 @@
 SOURCES = $(wildcard *.el bin/* vendor/* | grep -v autoloader)
-VERSION = $(shell cat xtdmacs-pkg.el | grep define-package | awk '{print $$3}' | sed 's/"//g')
+VERSION = $(shell grep '^;; Version:' xtdmacs.el | awk '{print $$3}')
 DIR := $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 
 all: install
@@ -9,6 +9,9 @@ dist: xtdmacs-$(VERSION).tar
 xtdmacs-$(VERSION).tar: $(SOURCES)
 	@mkdir xtdmacs-$(VERSION)
 	@cp --parents -dR $(SOURCES) xtdmacs-$(VERSION)/
+	@emacs --batch --eval "(require 'package)" \
+		--eval "(with-temp-buffer (insert-file-contents \"xtdmacs-$(VERSION)/xtdmacs.el\") \
+		         (package-generate-description-file (package-buffer-info) \"xtdmacs-$(VERSION)/xtdmacs-pkg.el\"))"
 	@tar cvf xtdmacs-$(VERSION).tar xtdmacs-$(VERSION)
 	@rm -rf xtdmacs-$(VERSION)
 

@@ -6,322 +6,234 @@
 - [Loading modes](#loading-modes)
 - [General purpose modes](#general-purpose-modes)
     - [Bindings](#bindings)
-        - [Cursor Bindings](#cursor-bindings)
+        - [Cursor bindings](#cursor-bindings)
         - [Other bindings](#other-bindings)
-    - [File Opener](#file-opener)
+    - [File opener](#file-opener)
     - [Generic code](#generic-code)
         - [Column enforce](#column-enforce)
-        - [Line number](#line-number)
+        - [Line numbers](#line-numbers)
         - [Aligning variables and parameters](#aligning-variables-and-parameters)
-        - [Code Bindings](#code-bindings)
+        - [Code bindings](#code-bindings)
     - [Compile](#compile)
         - [Window management](#window-management)
-        - [Behind the curtain](#behind-the-curtain)
+        - [How it works](#how-it-works)
         - [Compile API](#compile-api)
             - [Helper functions](#helper-functions)
             - [Params functions](#params-functions)
             - [Command functions](#command-functions)
-        - [Compile Configuration](#compile-configuration)
+        - [Compile configuration](#compile-configuration)
             - [Standard customization](#standard-customization)
-            - [Per project commands](#per-project-commands)
-            - [Per mode commands](#per-mode-commands)
-        - [Compile Bindings](#compile-bindings)
-    - [Line mode](#line-mode)
+            - [Per-project commands](#per-project-commands)
+            - [Per-mode commands](#per-mode-commands)
+        - [Compile bindings](#compile-bindings)
+    - [Mode line](#mode-line)
     - [Spelling](#spelling)
-        - [Spell Configuration](#spell-configuration)
-        - [Spell Faces](#spell-faces)
-        - [Spell API](#spell-api)
-        - [Spell Bindings](#spell-bindings)
 - [Language specific modes](#language-specific-modes)
     - [C++](#c)
-        - [C++ Configuration](#c-configuration)
-        - [C++ Faces](#c-faces)
-        - [C++ API](#c-api)
-        - [C++ Bindings](#c-bindings)
-        - [C++ Compilation](#c-compilation)
     - [Go](#go)
-        - [Go Configuration](#go-configuration)
-        - [Go Faces](#go-faces)
-        - [Go API](#go-api)
-        - [Go Bindings](#go-bindings)
-        - [Go Compilation](#go-compilation)
     - [Python](#python)
-        - [Python Faces](#python-faces)
-        - [Python API](#python-api)
-        - [Python Configuration](#python-configuration)
-        - [Python Compilation](#python-compilation)
-    - [Php](#php)
-        - [Php Faces](#php-faces)
-        - [Php Configuration](#php-configuration)
+    - [TypeScript](#typescript)
+    - [Terraform](#terraform)
+    - [PHP](#php)
     - [Lisp](#lisp)
-        - [Configuration](#configuration)
     - [Shell](#shell)
-        - [Shell Compilation](#shell-compilation)
-    - [Json](#json)
-        - [Json Bindings](#json-bindings)
-        - [Json Compilation](#json-compilation)
-    - [Yaml](#yaml)
-        - [Yaml Bindings](#yaml-bindings)
-        - [Yaml Compilation](#yaml-compilation)
+    - [JSON](#json)
+    - [YAML](#yaml)
     - [Web](#web)
     - [Makefile](#makefile)
     - [Java](#java)
-    - [Javascript](#javascript)
-    - [Sphinx](#sphinx)
-        - [Sphinx Compilation](#sphinx-compilation)
+    - [JavaScript](#javascript)
+    - [Sphinx / reStructuredText](#sphinx--restructuredtext)
 
 <!-- markdown-toc end -->
 
 # Introduction
 
-Xtdmacs provides a bunch a development tools and ready-to-use configuration.
-Each feature is bundled as a separate minor mode.
+Xtdmacs is a bundle of opinionated Emacs development tools. Each feature is
+packaged as an independent setup function or minor mode, so you can pick what
+you need and ignore the rest. It ships:
 
+- a generic editing layer (alignment, indent, column highlight, line numbers, spell-check)
+- a **compilation framework** (`xtdmacs-compile++`) that generalizes `:compile`,
+  `:test`, `:deploy`, `:doc`, `:lint`, `:manual` commands per project / per mode,
+  including Docker / docker-compose helpers
+- per-language setups for C++, Go, Python, TypeScript, Terraform, PHP, Lisp,
+  Shell, JSON, YAML, Web, Makefile, Java, JavaScript and Sphinx
+- a file extension → mode dispatcher (`xtdmacs-loader`)
+- a `find-file` overload that understands `path:line[:column]` syntax
 
 # Install
 
-Xtdmacs depends on [yaml-path](https://github.com/psycofdj/yaml-path) which is not yet included
-as MELPA package and should be installed manually following [instructions](https://github.com/psycofdj/yaml-path).
+Xtdmacs is distributed as an Emacs package archive. Build and install with:
 
+```bash
+git clone https://github.com/psycofdj/xtdmacs.git
+cd xtdmacs
+make install
+```
 
-The following procedure downloads latest package version and install xtdmacs and
-all its dependencies in your elpa directory, usually `~/.emacs.d/elpa`.
+`make install` imports the package's GPG signing key, builds the tarball,
+removes any prior `~/.emacs.d/elpa/xtdmacs*` install and runs an Emacs batch
+job that installs xtdmacs and all its package dependencies. Use
+`make install-quick` to skip the package-archive refresh.
 
- ```bash
- tag=$(curl -s https://api.github.com/repos/psycofdj/xtdmacs/tags | jq -r '[ .[] | .["name"] ] | sort | last')
- wget https://github.com/psycofdj/xtdmacs/archive/${tag}.tar.gz -O xtdmacs-${tag}.tar.gz
- tar xvzf xtdmacs-${tag}.tar.gz
- cd xtdmacs-${tag}
- make install
- ```
+External binaries are required for some language modes (only when you use them):
+`pylint`, `shellcheck`, `jsonlint-php`, `yamllint`, `terraform`, `gofmt`,
+`sphinx-build`, `npm`, the `irony-server` (`M-x irony-install-server`).
 
 # Loading modes
 
-Each mode provided by xtdmacs can be loaded like every other minor mode. However we recommend
-to use the **`xtdmacs-loader`** described below.
+Each language setup hooks itself onto its major mode automatically when its
+file is `require`d. The recommended entry point is `xtdmacs-loader`, which
+maps file extensions to major modes and triggers the right xtdmacs setup
+hooks (spell-check, mode-line, …) for each.
 
-* **Manually**
+```elisp
+;; in your ~/.emacs
+(require 'xtdmacs-loader)
+(require 'xtdmacs-bindings)
+(require 'xtdmacs-find)
+(xtdmacs-bindings-mode)
+```
 
-  Example:
-  `M-x xtdmacs-bindings-mode RET`
+To customize the file extension → major mode association:
 
-* **From ~/.emacs**
+```
+M-x customize-variable RET xtdmacs-loader-auto-major-mode-alist RET
+```
 
-  Example:
-  `(xtdmacs-bindings-mode)`
+![xtdmacs-loader](doc/xtdmacs-loader.png)
 
-* **Using customization**
-
-  `M-x customize-variable RET xtdmacs-bindings-mode RET`
-
-* **Using xtdmacs's loader**
-
-  **`xtdmacs-loader`** package provides its own minor-mode loading system. It is very similar
-  to default `minor-mode-alist` but allows to define the same mode list to several file extensions.
-
-  This package helps customizing which minors modes should be loaded for each
-  file extensions.
-
-  In order modify associations between file extensions are minor modes, the easiest is to
-  run the following command:
-  * `M-x customize-variable RET xtdmacs-loader-auto-minor-mode-alist RET`
-
-  ![alt text](doc/xtdmacs-loader.png "Logo Title Text 1")
-
-
-  To enable `xtdmacs-loader`, you need to load package at start up :
-  ```elisp
-  ;; in your ~/.emacs
-  (require 'xtdmacs-loader)
-  ```
-
-
+You can still load any individual language setup directly, e.g.
+`(require 'xtdmacs-code-cpp)` or `(require 'xtdmacs-code-typescript)`.
 
 # General purpose modes
 
 ## Bindings
 
-**`xtdmacs-bindings`** setup keyboard bindings for the most commonly used features.
+`xtdmacs-bindings-mode` is a global minor mode that installs the keybindings
+listed below and turns on `ido-mode` for buffer switching.
 
-The [ido](https://www.emacswiki.org/emacs/InteractivelyDoThings) mode provides an efficient way
-to navigate among opened buffers. Ido display available buffer names in mini-buffer and filters the
-list as you type characters.
+[`ido`](https://www.emacswiki.org/emacs/InteractivelyDoThings) shows
+matching buffer names in the minibuffer and filters them as you type.
+Buffers in `ido-ignore-buffers` are demoted but still selectable when nothing
+else matches. Customize the ignore list with:
 
-It defines functions to directly cycle among existing buffers. It also
-provides a way to ignore a list of buffer names in this cycle. Typically,
-users will ignore systems buffers like `*Help*` or `*Message*`.
+```
+M-x customize-variable RET ido-ignore-buffers RET
+```
 
-Ignored buffers but will be suggested if typed characters matches nothing but
-filtered buffer names.
+![ido](doc/ido-mode.png)
 
-To customize list of ignored buffers :
-`M-x customize-variable RET ido-ignore-buffers RET`
+| Key                       | Effect                                |
+|---------------------------|---------------------------------------|
+| `C-x C-<down>`            | ido buffer selection                  |
+| `<right>` / `<left>`      | (in ido) next / previous suggestion   |
+| `RET`                     | (in ido) display selected buffer      |
+| `C-x C-<right>`           | next buffer (iflipb)                  |
+| `C-x C-<left>`            | previous buffer (iflipb)              |
 
-Example:
-![IDO mode](doc/ido-mode.png "IDO mode")
+### Cursor bindings
 
-
-| Key                           | Effect                                |
-|-------------------------------|---------------------------------------|
-| \<ctrl\>+x \<ctrl\>+\<down\>  | Run ido interactive buffer selection  |
-| \<right\>                     | (in ido) next buffer suggestion       |
-| \<left\>                      | (in ido) previous buffer suggestion   |
-| RET                           | (in ido) display selected buffer      |
-| \<ctrl\>+x \<ctrl\>+\<right\> | display next buffer (iflipb)          |
-| \<ctrl\>+x \<ctrl\>+\<left\>  | display previous buffer (iflipb)      |
-
-
-### Cursor Bindings
-
-| Key                           | Effect                                |
-|-------------------------------|---------------------------------------|
-| \<home\>                      | move cursor to beginning of line      |
-| \<select\>                    | move cursor to end of line            |
-| \<alt\>+\<up\>                | move cursor to beginning of buffer    |
-| \<alt\>+\<down\>              | move cursor to end of buffer          |
-| \<ctrl\>+\<left\>             | move cursor to beginning of word      |
-| \<ctrl\>+\<right\>            | move cursor to end of word            |
-| \<ctrl\>+x \<right\>          | move cursor to the right window       |
-| \<ctrl\>+x \<left\>           | move cursor to the left window        |
-| \<ctrl\>+x \<up\>             | move cursor to the top window         |
-| \<ctrl\>+x \<down\>           | move cursor to the bottom window      |
-| \<ctrl\>+x \<ctrl\>+g         | move cursor to given line             |
+| Key             | Effect                            |
+|-----------------|-----------------------------------|
+| `<home>`        | beginning of line                 |
+| `<select>`      | end of line                       |
+| `M-<up>`        | beginning of buffer               |
+| `M-<down>`      | end of buffer                     |
+| `C-<left>`      | beginning of word                 |
+| `C-<right>`    | end of word                       |
+| `C-x <right>`   | move to right window              |
+| `C-x <left>`    | move to left window               |
+| `C-x <up>`      | move to top window                |
+| `C-x <down>`    | move to bottom window             |
+| `C-x C-g`       | goto line                         |
 
 ### Other bindings
 
-| Key                           | Effect                                |
-|-------------------------------|---------------------------------------|
-| \<ctrl\>+x \<ctrl\>+f         | open file with xtdmacs's file opener  |
-| \<alt\>+\<plus\>              | enlarge current window's height       |
-| \<alt\>+\<minus\>             | shrink current window's height        |
-| \<alt\>+\<delete\>            | delete previous word (no kill-ring)   |
-| \<alt\>+s                     | display speed-bar                     |
-| \<alt\>+/                     | auto-complete current word            |
-| \<ctrl\>+d                    | search and replace                    |
-| \<ctrl\>+f                    | search and replace regexp             |
-| \<alt\>+d                     | align regexp                          |
-| \<ctrl\>+\<F11\>              | toggle terminal shell                 |
-| \<ctrl\>+l                    | insert current date                   |
-| \<alt\>+q                     | comment region                        |
-| \<alt\>+a                     | uncomment region                      |
-| \<F5\>                        | delete buffer's trailing white-spaces |
-| \<ctrl\>+\<F5\>               | refresh buffer syntax colors          |
-| \<F11\>                       | display menu                          |
+| Key             | Effect                                    |
+|-----------------|-------------------------------------------|
+| `C-x C-f`       | open file (xtdmacs-find, see below)       |
+| `M-+`           | enlarge current window                    |
+| `M--`           | shrink current window                     |
+| `M-<delete>`    | delete previous word (no kill-ring)       |
+| `M-s`           | toggle speedbar                           |
+| `M-/`           | dabbrev complete                          |
+| `C-d`           | search and replace                        |
+| `C-f`           | search and replace (regexp)               |
+| `M-d`           | align by regexp                           |
+| `C-<F11>`       | toggle terminal shell                     |
+| `C-l`           | insert current date                       |
+| `M-q`           | comment region                            |
+| `M-a`           | uncomment region                          |
+| `<F5>`          | strip trailing whitespace                 |
+| `C-<F5>`        | refresh font-lock colors                  |
+| `<F11>`         | display menu                              |
 
+## File opener
 
-## File Opener
-
-**`xtdmacs-find`** package provides an overload of standard emacs' `find-file`
-function. This overload allows to open existing files to specified line and
-column number.
+`xtdmacs-find` advises `find-file-noselect` so files can be opened at a
+specific location using `path:line` or `path:line:column`. Useful when
+pasting compiler / grep output:
 
 ```bash
-# open file to line 38
-$ emacs -nw ~/.emacs:38
-
-# open file to line 38 and column 5
-$ emacs -nw ~/.emacs:38:5
-
-# open file normally
-$ emacs -nw ~/.emacs
-
-# open unexisting file
-$ emacs -nw ~/does_not_exist:20:4
-# this will literally open the file named "does_not_exist:20:4"
+emacs -nw ~/.emacs:38       # open at line 38
+emacs -nw ~/.emacs:38:5     # open at line 38, column 5
+emacs -nw ~/does_not_exist  # falls through to normal find-file
 ```
 
-To enable Xtdmacs' find overload, you need to load package at start up :
+If a file literally named `foo:20:4` exists, it is opened as-is.
+
 ```elisp
-;;in your .emacs:
 (require 'xtdmacs-find)
 ```
 
-
-
 ## Generic code
 
-**`xtdmacs-code-mode`** enables multi-language tools that help editing code.
+`xtdmacs-code` is the shared base for every language setup. It provides
+font-lock faces (variables, parameters, members, counters, return values, …),
+indent/format/align utilities and the bindings below — all installed via the
+per-language setup functions.
 
 ### Column enforce
 
-`column-enforce` colors text beyond a given column, discouraging (but not preventing) the developer
-to make too long lines.
+[`column-enforce-mode`](https://github.com/jordonbiondo/column-enforce-mode)
+colors text past `fill-column` to discourage long lines without rewrapping.
 
-To customize column limit :
 ```
 M-x customize-variable RET fill-column RET
-```
-
-To customize warning face :
-```
 M-x customize-face RET column-enforce-face RET
 ```
 
-### Line number
+### Line numbers
 
-`linum-mode` displays current line number and fix default window margin
+Buffer line numbers are displayed via Emacs' built-in `display-line-numbers-mode`.
 
-![alt text](doc/xtdmacs-code-linum.png "Logo Title Text 1")
+![linum](doc/xtdmacs-code-linum.png)
 
-To customize columns number face :
 ```
-M-x customize-face RET linum RET
-```
-
-More generally, to customize the linum mode :
-```
-M-x customize-group RET linum RET
+M-x customize-face RET line-number RET
+M-x customize-face RET line-number-current-line RET
 ```
 
 ### Aligning variables and parameters
 
-xtdmacs-code-mode provides two utility functions that format a specific region
-to a **matrix readable** form :
+Two functions reformat a region into a "matrix-like" layout:
 
-- *xtdmacs-code-align-vars*
-- *xtdmacs-code-align-args*
+- `xtdmacs-code-align-vars` — for local variable declarations
+- `xtdmacs-code-align-args` — for parameter lists / chained operators
 
 ```c++
-// given this code snippet :
-// mark
-void myfunction(const std::string& p_parameter1,
-                int p_param2,
-                std::vector<std::string>& p_result);
-// cursor
-
-// xtdmacs-code-align-args between mark and cursor will produce :
+// xtdmacs-code-align-args between mark and cursor :
 void myfunction(const std::string&        p_parameter1,
                 int                       p_param2,
                 std::vector<std::string>& p_result);
 
-
-// given this code snippet :
-// mark
-  std::cout << "my current process" << l_tmp
-            << "is about to fail because of " << l_reason
-            << std::endl;
-// cursor
-
-// xtdmacs-code-align-args between mark and cursor will produce :
   std::cout << "my current process"           << l_tmp
             << "is about to fail because of " << l_reason
             << std::endl;
 
-
-
-// given this code snippet :
-void foo(void)
-{
-// mark
-  int l_var1 = 0;
-  string l_name = "bar";
-  const vector<string> l_contacts = { "foo", "bar" };
-// cursor
-}
-
-
-// xtdmacs-code-align-vars between mark and cursor will produce :
-void foo(void)
+// xtdmacs-code-align-vars between mark and cursor :
 {
   int                  l_var1     = 0;
   string               l_name     = "bar";
@@ -329,828 +241,557 @@ void foo(void)
 }
 ```
 
+`align-vars` relies on a Hungarian-style naming convention (`[cs]?` = optional
+const / static modifier):
 
-This feature relies on a strict parameter and variables naming convention.
-- parameters : `p[cs]?_.* | p[cs]?[A-Z].*`
-- variables  : `l[cs]?_.* | l[cs]?[A-Z].*`
-- members    : `m[cs]?_.* | m[cs]?[A-Z].*`
-- globals    : `g[cs]?_.* | g[cs]?[A-Z].*`
-- counters   : `c[cs]?_.* | c[cs]?[A-Z].*`
+| Kind       | Pattern                              |
+|------------|--------------------------------------|
+| parameter  | `p[cs]?_.*` or `p[cs]?[A-Z].*`       |
+| local      | `l[cs]?_.*` or `l[cs]?[A-Z].*`       |
+| member     | `m[cs]?_.*` or `m[cs]?[A-Z].*`       |
+| global     | `g[cs]?_.*` or `g[cs]?[A-Z].*`       |
+| counter    | `c[cs]?_.*` or `c[cs]?[A-Z].*`       |
 
-Note: `c` and `s` optional modifiers stands respectively for const and static
+### Code bindings
 
-
-
-### Code Bindings
-
-
-| Key                           | Effect                                         |
-|-------------------------------|------------------------------------------------|
-| \<ctrl\>+\<alt\>+\<up\>       | move cursor to beginning of current expression |
-| \<ctrl\>+\<alt\>+\<down\>     | move cursor to end of current expression       |
-| \<alt\>+q                     | comment region                                 |
-| \<alt\>+a                     | uncomment region                               |
-| \<F4\>                        | indent region                                  |
-| \<ctrl\>+\<F4\>               | indent buffer                                  |
-| \<alt\>+d                     | runs `align-regexp` interactively              |
-| \<ctrl\>+\<F1\>               | align variables between mark and cursor        |
-| \<ctrl\>+\<F2\>               | align parameters between mark and cursor       |
-| \<alt\>+f                     | fold current element using `yafolding-mode`    |
-| \<ctrl\>+\<F2\>               | fold all elements using `yafolding-mode`       |
-
+| Key             | Effect                                       |
+|-----------------|----------------------------------------------|
+| `C-M-<up>`      | beginning of current sexp                    |
+| `C-M-<down>`    | end of current sexp                          |
+| `M-q`           | comment region                               |
+| `M-a`           | uncomment region                             |
+| `<F4>`          | indent region                                |
+| `C-<F4>`        | indent buffer                                |
+| `M-d`           | `align-regexp` interactive                   |
+| `C-<F1>`        | align variables (mark → cursor)              |
+| `C-<F2>`        | align parameters (mark → cursor)             |
+| `M-f`           | toggle fold (`yafolding-mode`)               |
 
 ## Compile
 
-**`xtdmacs-compile++-mode`** wraps the default compilation mode in order to provide a set of
-predefined compilation commands. It also allows to use function instead of
-plain string as default compile commands.
+`xtdmacs-compile++` wraps the standard `compilation-mode` with a small
+abstraction: every project / mode advertises up to **six** named commands
+(`:compile`, `:test`, `:deploy`, `:doc`, `:lint`, `:manual`), each of which
+is mapped to an F-key. By default each command runs `make -j` in the buffer's
+directory.
 
-There is 6 predefined commands :
- - **:compile**
- - **:test**
- - **:deploy**
- - **:doc**
- - **:lint**
- - **:manual**
-
-Where each commands are meant to be overridden in each specific language modes.
-By default, the all run `make -j` in the current directory.
+A command can be a plain string or a function — that's how the package
+provides ready-to-use Docker, docker-compose and per-language compile
+behaviour.
 
 ### Window management
 
-xtdmacs-compile++ dedicates a window to the compilation buffer's preventing
-emacs to use it to open new files. It also sets this window's height according
-to `xtdmacs-compile++-buffer-height` variable and enables optionally
-automatic scrolling if `xtdmacs-compile++-scroll-output` is non nil.
+The compilation buffer is shown in a dedicated window whose height is
+controlled by `xtdmacs-compile++-buffer-height`. Auto-scrolling is governed
+by `xtdmacs-compile++-scroll-output`. Output is colorized via `xterm-color`.
 
+The mode-line is recolored while a command is running
+(`xtdmacs-compile++-compiling-face`) and on failure
+(`xtdmacs-compile++-error-face`).
 
-### Behind the curtain
+### How it works
 
-The predefined commands are defined in the `xtdmacs-compile++-config-alist` variable.
+Configurations are stored in `xtdmacs-compile++-config-alist`:
 
-Where `xtdmacs-compile++-config-alist` is an alist of the form
-```lisp
-(("<mode-name>" .
-    ((:<command1> . config-alist)
-     (:<command2> . config-alist))))
+```elisp
+(("<mode-name>"
+  (:<command1> . config-alist)
+  (:<command2> . config-alist)))
 ```
 
-and where each *config-alist* is an alist of the form
-```lisp
-((:get-params . function)
- (:command    . string-or-function))
+Each `config-alist` describes how to build the shell command:
+
+```elisp
+((:get-params . function)   ;; interactive prompt for params
+ (:command    . function-or-string))  ;; final command builder
 ```
 
+`<mode-name>` matches the current major mode; if no entry is found the
+fallback is the `default` key, which holds
+`xtdmacs-compile++-default-config-alist`.
 
-The **`<mode-name>`** gives a different configuration for the current major mode.
-When current major mode is not found, it falls back to the **default** key which values is given
-by `xtdmacs-compile++-default-config-alist`.
+`:get-params` is called interactively and prompts for the parameters
+the `:command` builder needs. For most commands these are `:dir`, `:env`
+and `:bin`; Docker variants also ask for `:service`, `:container` or
+`:image`. Default values are read from the same config:
 
-
-The **`<command>`** is one of the pre-defined command **:compile**, **:test**, **:deploy**, **:doc**
-**:lint** and **:manual**.
-
-The **`:get-params`** function is called interactively to prompt for specific parameters
-of the command. Ex. for c++ :compile command, we prompt for working directory,
-optional environment variables and specific script to run.
-
-The **`:command`** item build the final command send to default compilation-mode. Ex. for
-c++ it will construct something like `cd dir && key=value make -j` from values
-prompted by `:get-params`.
-
-Usually, **`:get-params`** uses `xtdmacs-compile++-config-alist` itself to store values given by
-user. It also read defaults values from this variable when ran non interactively.
-```lisp
-((:compile .
-   ((:dir        . "~/build")
-    (:env        . "VE=1")
-    (:bin        . "make -j 12")
-    (:get-params . xtdmacs-compile++-default-params)
-    (:command    . xtdmacs-compile++-default-command))))
+```elisp
+(:compile
+ (:dir        . "~/build")
+ (:env        . "VE=1")
+ (:bin        . "make -j 12")
+ (:get-params . xtdmacs-compile++-default-params)
+ (:command    . xtdmacs-compile++-default-command))
 ```
+
+When prompted, you decide whether the values are saved buffer-locally or
+globally for the mode.
 
 ### Compile API
 
-This mode provides utility functions that helps building your own `:get-params`, `:command`
-and default functions value.
-
 #### Helper functions
 
-* **`xtdmacs-compile++-get-nearest-filename (name)`** returns the closest path parent
-  to current buffer file that contains a file or a directory named *name*
-
-* **`xtdmacs-compile++-get-dir-locals-directory`** returns the path containing
-  the nearest .dir-locals.el configuration file (nil if none)
-
-* **`xtdmacs-compile++-get-dir-git`** return the closest parent from buffer containing
-  a *.git* directory, often used as project root directory.
-
-* **`xtdmacs-compile++-get-dir-buffer`** returns the directory path of current buffer.
-
-* **`xtdmacs-compile++-guess-directory`** returns the build directory assuming your
-  are using automake's VPATH builds in a directory named .release in your project root
-
-* **`xtdmacs-compile++-get-current-branch`** returns (if any) the git branch name of
-  the current buffer
+| Function                                          | Purpose                                                        |
+|---------------------------------------------------|----------------------------------------------------------------|
+| `xtdmacs-compile++-get-nearest-filename(name)`    | walk up tree looking for file/dir `name`                       |
+| `xtdmacs-compile++-get-dir-buffer`                | directory of current buffer                                    |
+| `xtdmacs-compile++-get-dir-git`                   | nearest parent containing `.git` (project root)                |
+| `xtdmacs-compile++-get-dir-locals-directory`      | nearest parent containing `.dir-locals.el`                     |
+| `xtdmacs-compile++-guess-directory`               | VPATH build dir (uses `xtdmacs-compile++-iwyu-build-directory-name`) |
+| `xtdmacs-compile++-get-current-branch`            | git branch of current buffer                                   |
 
 #### Params functions
 
-* **`xtdmacs-compile++-default-params(type &optional mode)`**: Prompt
-  interactively for a **Directoy**, some **Environement** variables and for
-  a **Binary** for the current `type`.
-  Defaults values are respectively given by:
-  * `:dir` function/value
-  * `:env` function/value
-  * `:bin` function/value
-
-  In addition, use will be ask if given setting should be store to local buffer or
-  across all buffers.
-
-* **`xtdmacs-compile++-current-file-params(type &optional mode)`** : Only
-  prompts for a **Binary** and a **File**
-  Defaults values are respectively given by:
-  * `:bin` function/value.
-  * `:file` function/value. Note: `buffer-file-name` is often given has
-    default value.
-
-* **`xtdmacs-compile++-compose-params(type &optional mode)`** :
-  like `xtdmacs-compile++-default-params` but also prompts for :
-  * a docker-compose service name, default given by `:service` function/value
-  * a docker-compose file path, default given by `:compose-file` function/value
-
-* **`xtdmacs-compile++-docker-exec-params(type &optional mode)`** :
-  like `xtdmacs-compile++-default-params` but also prompts for :
-  * a container name, default given by `:container` function/value
-
-
-* **`xtdmacs-compile++-docker-run-params(type &optional mode)`** :
-  like `xtdmacs-compile++-default-params` but also prompts for :
-  * a docker image name, default given by `:image` function/value
-
+| Function                                | Prompts for                                                         |
+|-----------------------------------------|---------------------------------------------------------------------|
+| `xtdmacs-compile++-default-params`      | `:dir`, `:env`, `:bin`                                              |
+| `xtdmacs-compile++-current-file-params` | `:bin`, `:file` (`buffer-file-name` by default)                     |
+| `xtdmacs-compile++-compose-params`      | default + `:service` + `:compose-file`                              |
+| `xtdmacs-compile++-docker-run-params`   | default + `:image`                                                  |
+| `xtdmacs-compile++-docker-exec-params`  | default + `:container`                                              |
 
 #### Command functions
 
-* **`xtdmacs-compile++-default-command(type &optional mode)`** : build the command as:
-  * `cd :bin && :env> :bin`
+| Function                                  | Produces                                                           |
+|-------------------------------------------|--------------------------------------------------------------------|
+| `xtdmacs-compile++-default-command`       | `cd :dir && :env :bin`                                             |
+| `xtdmacs-compile++-simple-file-command`   | `:bin :file`                                                       |
+| `xtdmacs-compile++-compose-run-command`   | `cd :dir && SRCDIR=:dir docker-compose -f :compose-file run --rm [-e :env]* :service :bin` |
+| `xtdmacs-compile++-compose-exec-command`  | `cd :dir && SRCDIR=:dir docker-compose -f :compose-file exec :service :bin`                |
+| `xtdmacs-compile++-docker-run-command`    | `docker run --rm=true :image [-e :env]* /bin/bash -c 'cd :dir && :bin'` |
+| `xtdmacs-compile++-docker-exec-command`   | `docker exec -t :container /bin/bash -c 'cd :dir && :env :bin'`    |
 
-* **`xtdmacs-compile++-simple-file-command(type &optional mode)`** : build the command as:
-  * `:bin :file`
-
-* **`xtdmacs-compile++-compose-run-command(type &optional mode)`** : build the command as:
-  * `cd :dir && SRCDIR=:dir docker-compose -f :compose-file run --rm [-e :env:key=:env:val]* :service :bin`
-
-* **`xtdmacs-compile++-compose-exec-command(type &optional mode)`** : build the command as:
-  * `cd :dir && SRCDIR=:dir docker-compose -f :compose-file exec :service :bin`
-
-* **`xtdmacs-compile++-docker-run-command(type &optional mode)`** : build the command as
-  * `docker run --rm=true :image [-e :env:key=:env:val]* /bin/bash -c 'cd :dir && :bin'`
-
-* **`xtdmacs-compile++-docker-exec-command(type &optional mode)`** : build the command as
-  * `docker exec -t :container /bin/bash -c 'cd :dir && :env :bin'`
-
-
-### Compile Configuration
+### Compile configuration
 
 #### Standard customization
 
-Define the number of lines displayed in compilation buffer :
-* `M-x customize-variable RET xtdmacs-compile++-buffer-height RET`
+| Variable                              | Purpose                                          |
+|---------------------------------------|--------------------------------------------------|
+| `xtdmacs-compile++-buffer-height`     | Lines shown in compilation window                |
+| `xtdmacs-compile++-scroll-output`     | Auto-scroll while running                        |
+| `xtdmacs-compile++-command-1` … `-6`  | Map F-keys → command keys (see bindings below)   |
+| `xtdmacs-compile++-default-config-alist` | Fallback config for modes without a registration |
 
-Enables automatic scrolling of compilation buffer :
-* `M-x customize-variable RET xtdmacs-compile++-scroll-output RET`
+Default mapping:
 
-Set commands configuration interactively :
-* `M-x customize-variable RET xtdmacs-compile++-buffer-local RET`
+| Variable                       | Default key  |
+|--------------------------------|--------------|
+| `xtdmacs-compile++-command-1`  | `:compile`   |
+| `xtdmacs-compile++-command-2`  | `:test`      |
+| `xtdmacs-compile++-command-3`  | `:deploy`    |
+| `xtdmacs-compile++-command-4`  | `:doc`       |
+| `xtdmacs-compile++-command-5`  | `:lint`      |
+| `xtdmacs-compile++-command-6`  | `:manual`    |
 
-The following variables targets one of the `xtdmacs-compile++-config-alist` keys.
-Each command is bound to a specific keyboard key.
-- `M-x customize-variable RET xtdmacs-compile++-command-1 RET` : default `:compile`
-- `M-x customize-variable RET xtdmacs-compile++-command-2 RET` : default `:test`
-- `M-x customize-variable RET xtdmacs-compile++-command-3 RET` : default `:deploy`
-- `M-x customize-variable RET xtdmacs-compile++-command-4 RET` : default `:doc`
-- `M-x customize-variable RET xtdmacs-compile++-command-5 RET` : default `:lint`
-- `M-x customize-variable RET xtdmacs-compile++-command-6 RET` : default `:manual`
+#### Per-project commands
 
-Customize mode-line face when compile process is running :
-* `M-x customize-face RET xtdmacs-compile++-compiling-face RET`
+Drop a `.dir-locals.el` at the project root:
 
-Customize mode-line face when compile exited with error :
-* `M-x customize-face RET xtdmacs-compile++-error-face RET`
-
-#### Per project commands
-
-Set commands for a specific project :
-```lisp
-cat ~/.dir-locals.el
-("dev/myproject/"
+```elisp
+(("dev/myproject/"
   . ((nil
-    . ((xtdmacs-compile++-config-alist
-       . (("default"
-          . ((:compile
-             . ((:dir        . xtdmacs-compile++-get-dir-git)
-                (:get-params . xtdmacs-compile++-docker-params)
-                (:command    . xtdmacs-compile++-docker-run-command)
-                (:env        . "")
-                (:bin        . "make -j 12")
-                (:service    . "ws-compile")))
-             (:test
-             . ((:dir        . xtdmacs-compile++-get-dir-git)
-                (:get-params . xtdmacs-compile++-docker-params)
-                (:command    . xtdmacs-compile++-docker-run-command)
-                (:env        . "")
-                (:bin        . "make test")
-                (:service    . "ws-rt"))
-             (:deploy
-             . ((:dir        . xtdmacs-compile++-get-dir-git)
-                (:get-params . xtdmacs-compile++-docker-params)
-                (:command    . xtdmacs-compile++-docker-run-command)
-                (:env        . "")
-                (:bin        . "sudo -E make install_all")
-                (:service    . "ws-rt"))))))))))))
+     . ((xtdmacs-compile++-config-alist
+         . (("default"
+             . ((:compile
+                 . ((:dir        . xtdmacs-compile++-get-dir-git)
+                    (:get-params . xtdmacs-compile++-docker-run-params)
+                    (:command    . xtdmacs-compile++-docker-run-command)
+                    (:env        . "")
+                    (:bin        . "make -j 12")
+                    (:image      . "myorg/build:latest")))
+                (:test
+                 . ((:dir        . xtdmacs-compile++-get-dir-git)
+                    (:get-params . xtdmacs-compile++-compose-params)
+                    (:command    . xtdmacs-compile++-compose-run-command)
+                    (:env        . "")
+                    (:bin        . "make test")
+                    (:service    . "ws-rt"))))))))))))
 ```
 
-#### Per mode commands
+#### Per-mode commands
 
-The following example set the `compile` command for the mode `yaml-mode`
+Register a config for a major mode at load time:
 
-```
-(defvar my-alist
-  '((:compile .
-     ((:file       . buffer-file-name)
-      (:bin        . "yamllint -f parsable -d '{extends: relaxed, rules: {indentation: {spaces: consistent}, line-length: {max: 300}}}'")
-      (:get-params . xtdmacs-compile++-current-file-params)
-      (:command    . xtdmacs-compile++-simple-file-command))))
-  )
+```elisp
+(defvar my-yaml-compile-alist
+  '((:compile
+     . ((:file       . buffer-file-name)
+        (:bin        . "yamllint -f parsable")
+        (:get-params . xtdmacs-compile++-current-file-params)
+        (:command    . xtdmacs-compile++-simple-file-command)))))
 
-
-(xtdmacs-compile++-register-config "yaml-mode" my-alist)
+(xtdmacs-compile++-register-config "yaml-mode" my-yaml-compile-alist)
 ```
 
+### Compile bindings
 
+| Key            | Effect                                   |
+|----------------|------------------------------------------|
+| `<F6>`         | command-1 (default `:compile`)           |
+| `C-u <F6>`     | command-1, prompt for params             |
+| `<F7>`         | command-2 (default `:test`)              |
+| `C-u <F7>`     | command-2, prompt for params             |
+| `<F8>`         | command-3 (default `:deploy`)            |
+| `C-u <F8>`     | command-3, prompt for params             |
+| `C-<F6>`       | command-4 (default `:doc`)               |
+| `C-<F7>`       | command-5 (default `:lint`)              |
+| `C-<F8>`       | command-6 (default `:manual`)            |
+| `M-<F6/7/8>`   | kill running process                     |
+| `<F9>`         | next compile error                       |
+| `C-<F9>`       | next error or warning                    |
 
-### Compile Bindings
+## Mode line
 
+`xtdmacs-code-line` rewrites `mode-line-format` to show:
 
-| Key                           | Effect                                                                   |
-|-------------------------------|--------------------------------------------------------------------------|
-| \<F6\>                        | run xtdmacs-compile++-command-1 command (*compile*)                      |
-| \<ctrl\>+u \<F6\>             | run xtdmacs-compile++-command-1 command (*compile*), interactive version |
-| \<F7\>                        | run xtdmacs-compile++-command-2 command (*test*)                         |
-| \<ctrl\>+u \<F7\>             | run xtdmacs-compile++-command-2 command (*test*), interactive version    |
-| \<F8\>                        | run xtdmacs-compile++-command-3 command (*deploy*)                       |
-| \<ctrl\>+u \<F8\>             | run xtdmacs-compile++-command-3 command (*deploy*), interactive version  |
-| \<ctrl\>+\<F6\>               | run xtdmacs-compile++-command-4 command (*doc*)                          |
-| \<ctrl\>+u \<ctrl\>+\<F6\>    | run xtdmacs-compile++-command-4 command (*doc*), interactive version     |
-| \<ctrl\>+\<F7\>               | run xtdmacs-compile++-command-5 command (*lint*)                         |
-| \<ctrl\>+u \<ctrl\>+\<F7\>    | run xtdmacs-compile++-command-5 command (*lint*), interactive version    |
-| \<ctrl\>+\<F8\>               | run xtdmacs-compile++-command-6 command (*manual*)                       |
-| \<ctrl\>+u \<ctrl\>+\<F8\>    | run xtdmacs-compile++-command-6 command (*manual*), interactive version  |
-| \<alt\>+\<F6\>                | kill running process                                                     |
-| \<alt\>+\<F7\>                | kill running process                                                     |
-| \<alt\>+\<F8\>                | kill running process                                                     |
-| \<F9>                         | goto next compile error                                                  |
-| \<ctrl\>+\<F9>                | goto next compile error or warning                                       |
+- buffer name (face: `mode-line-buffer-id`)
+- line and column of point
+- buffer scroll percentage
+- enclosing function name (via `which-function-mode`) or buffer directory
 
+`M-x customize-mode RET which-func-mode RET` to tweak which-function-mode.
 
-
-## Line mode
-
-**`xtdmacs-code-line-mode`** tweaks the `mode-line` format in order to display :
-- **`buffer name`**:  with the customizable face `mode-line-buffer-id`
-- **`line`** and **`column`** of current point position
-- **`percentage`** of the current buffer scroll
-- **`function name`**, if any, or the current `buffer directory`
-
-The function name is deduces by **`which-func-mode`** which is customizable with
-the following command:
-
-`C-u M-x customize-mode RET which-func-mode RET`
-
-
-Example:
-
-![xtdmacs-code-line-mode](doc/code-line-mode.png "xtdmacs-code-line-mode")
-
+![mode-line](doc/code-line-mode.png)
 
 ## Spelling
 
-**`xtdmacs-code-spell-mode`** and **`xtdmacs-code-spell-prog-mode`** are wrapping of `flyspell-mode`
-and `flyspell-prog-mode`. They both detected spelling error in current buffer.
-The first analyzes all available text and the second only analyzes strings and comment.
+`xtdmacs-code-spell-setup` enables `flyspell-mode` (full text);
+`xtdmacs-code-spell-prog-setup` enables `flyspell-prog-mode` (comments and
+strings only). Both are wired up automatically by the language setups.
 
-### Spell Configuration
+| Variable                              | Purpose                                                |
+|---------------------------------------|--------------------------------------------------------|
+| `xtdmacs-code-spell-ignore-regexp`    | Regexps to skip while spelling                         |
+| `xtdmacs-code-spell-max-lines`        | Skip flyspell on buffers larger than this              |
+| `ispell-local-dictionary`             | Default dictionary                                     |
 
-The modes are affected by the following customizable variables :
+Faces: `flyspell-incorrect`, `flyspell-duplicate`.
 
-- `M-x customize-variable RET xtdmacs-code-spell-ignore-regexp RET` : list of
-  regexp patterns to ignore while spelling the buffer.
+| Function                                   | Purpose                                                       |
+|--------------------------------------------|---------------------------------------------------------------|
+| `flyspell-buffer`                          | re-run spell check                                            |
+| `xtdmacs-code-spell-change-dictionary`     | switch dictionary, persist as file-local var                  |
+| `xtdmacs-code-spell-next-word`             | jump to next misspelling and prompt for correction            |
+| `xtdmacs-code-spell-prev-word`             | same, previous misspelling                                    |
 
-- `M-x customize-variable RET xtdmacs-code-spell-max-lines RET` : maximum
-  allowed buffer lines to automatically run flyspell on buffer.
+| Key            | Function                                |
+|----------------|-----------------------------------------|
+| `C-c C-c`      | `xtdmacs-code-spell-change-dictionary`  |
+| `C-c C-<down>` | `flyspell-buffer`                       |
+| `C-c C-<right>`| `xtdmacs-code-spell-next-word`          |
+| `C-c C-<left>` | `xtdmacs-code-spell-prev-word`          |
 
-- `M-x customize-variable RET ispell-local-dictionary RET` : default spelling
-  dictionary
-
-
-### Spell Faces
-
-The following faces are used by underlying flyspell mode :
-
-- `M-x customize-face RET flyspell-incorrect RET` : Face to display detected
-  spelling errors
-
-- `M-x customize-face RET flyspell-duplicate RET` : Face to display detected
-  duplicated words.
-
-
-### Spell API
-
-Useful functions :
-
-- `M-X flyspell-buffer RET` : refresh spelling analysis of current buffer
-
-- `M-X xtdmacs-code-spell-change-dictionary RET` : changes spelling dictionary
-  and set new dictionary are local file variable.
-
-- `M-X xtdmacs-code-spell-next-word RET` : interactively correct the next
-  detected error
-
-- `M-X xtdmacs-code-spell-prev-word RET` : interactively correct the previous
-  detected error
-
-### Spell Bindings
-
-| Key                           | Effect                                 |
-|-------------------------------|----------------------------------------|
-| \<ctrl\>+c \<ctrl\>+c         | `xtdmacs-code-spell-change-dictionary` |
-| \<ctrl\>+c \<ctrl\>+\<down\>  | `flyspell-buffer`                      |
-| \<ctrl\>+c \<ctrl\>+\<right\> | `xtdmacs-code-spell-next-word`         |
-| \<ctrl\>+c \<ctrl\>+\<left\>  | `xtdmacs-code-spell-prev-word`         |
-
-
-![xtdmacs-code-spell-mode](doc/code-spell-mode.png "xtdmacs-code-spell-mode")
+![spell](doc/code-spell-mode.png)
 
 # Language specific modes
 
 ## C++
 
-**`xtdmacs-code-cpp-mode`** provides the following features :
+`xtdmacs-code-cpp` provides:
 
-- **Fix -std=c++11 enum class** : Aging c++-mode doesn't handle new enum
-  class syntax available in c++11 and leads to a broken indentation. This minor
-  mode fixes `c-offsets-alist` and properly indents this structure.
+- A fix for C++11 `enum class` indentation (broken in stock `cc-mode`).
+- Header / implementation cycling: jump between `.cc`, `.hh`, `.hxx`, …
+  Extensions list is `xtdmacs-code-cpp-header-extensions`.
+- Optional automatic indent on load and on save.
+- Extra font-lock keywords: C++11/14 keywords (`nullptr`, `decltype`, utf-8
+  string literals) plus rules that color local / parameter / member /
+  const / static names without a real C++ parser.
+- Variable renaming via `query-replace-regexp` with a prefix prompt.
+- Code completion via [irony](https://github.com/Sarcasm/irony-mode) +
+  `auto-complete` (run `M-x irony-install-server` once). Completion is
+  asynchronous; the buffer name is highlighted with
+  `xtdmacs-code-cpp-ac-irony-working-face` until results arrive.
 
-- **Cycling through headers and implementation files** : When editing a c++ header
-  (.hh), we often need to visit the corresponding implementation (.cc) and vice
-  versa. The mode defines a function that searches for file that matches current
-  buffer file name with the correct extension. Another function does the same but
-  creates the file if it doesn't already exist. Because c++ extensions are not
-  well standardized, you can set the list of searched extension in the variable
-  `xtdmacs-code-cpp-header-extensions` .
+| Variable                                | Purpose                                                       |
+|-----------------------------------------|---------------------------------------------------------------|
+| `xtdmacs-code-cpp-indent-load-auto`     | indent buffer on open                                         |
+| `xtdmacs-code-cpp-indent-save-auto`     | indent buffer on save                                         |
+| `xtdmacs-code-cpp-header-extensions`    | extensions tried during header cycle                          |
+| `xtdmacs-code-cpp-keywords-alist`       | font-lock additions                                           |
+| `xtdmacs-code-cpp-compile-alist`        | per-mode compilation config                                   |
 
-- **Automatic indentation** : The mode offers to automatically indent
-  the whole buffer at open and/or at close. (*)
+| Function                                  | Purpose                                            |
+|-------------------------------------------|----------------------------------------------------|
+| `xtdmacs-code-cpp-header-cycle`           | cycle through extensions                           |
+| `xtdmacs-code-cpp-header-cycle-create`    | cycle, creating missing files                      |
+| `xtdmacs-code-cpp-rename-variable`        | rename symbol at point with prefix prompt          |
+| `xtdmacs-code-cpp-complete-irony-async`   | trigger completion at point                        |
+| `irony-get-type`                          | print type of symbol at point in minibuffer        |
 
-  (*) Personnal note : Emacs is the best market product for editing and indenting
-  code. Sadly, not everybody uses Emacs and real world code is often poorly indented.
-  This usage is certainly highly arguable but I've been using this in industrial
-  collaborative environment for the past ten years and automatic code indentation
-  solved far more problems than it has created.
-
-- **Keywords** : The mode provides many font-lock additional keywords. Some of them
-  try to catch the new C++11/14 language keywords like `nullptr` or
-  `decltype` or `utf-8 strings` . Others define font-lock rules to color
-  particular naming patterns, allowing to easily distinguish local variables,
-  parameter, class members, const and static attributes without need to use
-  heavy syntax analyzers that often need to actually compile the code.
-
-- **Renaming variables** : The mode defines a function that generated the correct
-  `query-replace-regexp` call to rename symbol at point to match one of the
-  prefix rule defined for local variable, parameters or class member syntax
-  coloring.
-
-- **Completion** : The mode integrates [irony](https://github.com/Sarcasm/irony-mode)
-  and [auto-complete](https://github.com/auto-complete/auto-complete) to provide
-  C++ code completion. `xtdmacs-code-cpp-complete-irony-async` is bound to
-  `M-.` by default.
-
-  Completion is asynchronous, buffer name will be colored  with
-  `xtdmacs-code-cpp-ac-irony-working-face` until completion is ready. First call
-  may be quite long, further calls are cached by server and will return immediately.
-
-  It relies on a completion server provided by irony which can be automatically
-  installed using `M-x irony-install-server RET`.
-
-  In addition, `irony-get-type` bound to `C-e` keys prints the type of symbol
-  under cursor in the minibuffer.
-
-### C++ Configuration
-
-- `M-x customize-variable RET xtdmacs-code-cpp-indent-load-auto RET` : tells
-  if buffer should be automatically indented at load.
-
-- `M-x customize-variable RET xtdmacs-code-cpp-indent-save-auto RET` :  tells
-  if buffer should be automatically indented at save.
-
-- `M-x customize-variable RET xtdmacs-code-cpp-header-extensions RET` : defines
-  the list of extensions that are searched when cycling through headers and
-  implementation files. Note: this list can have more than two elements, this is
-  useful to handle template implementations or inline definition files like
-  `.hpp` or `.hxx` .
-
-- `M-x customize-variable RET xtdmacs-code-cpp-keywords-alist RET` : alist of
-  keywords and faces to add to font-lock when mode is activated.
-
-### C++ Faces
-
-The mode uses faces defined in `xtdmacs-code-mode`. See
-`M-x customize-group RET code RET` .
-
-### C++ API
-
-- `M-x xtdmacs-code-cpp-header-cycle RET` : cycle through extensions defined
-  by `xtdmacs-code-cpp-header-extensions` .
-
-- `M-x xtdmacs-code-cpp-header-cycle-create RET` : cycle through extensions defined
-  by `xtdmacs-code-cpp-header-extensions`, create files if they don't exist.
-
-- `M-x xtdmacs-code-cpp-rename-variable RET` : rename variable under cursor. The
-  function prompt interactively for renaming prefix.
-
-- `M-x irony-get-type RET` : display in minibuffer the type of the symbol under
-  cursor.
-
-- `M-x xtdmacs-code-cpp-complete-irony-async RET` : trigger completion at current point.
-
-### C++ Bindings
-
-| Key                           | Effect                                                             |
-|-------------------------------|--------------------------------------------------------------------|
-| \<F12\>                       | `xtdmacs-code-cpp-header-cycle`                                |
-| \<ctrl\>+\<F12\>              | `xtdmacs-code-cpp-header-cycle` (create file if dosen't exist) |
-| \<ctrl\>+c \<ctrl>+e          | `xtdmacs-code-cpp-rename-variable`                             |
-| \<ctrl\>+e                    | `irony-get-type`                                               |
-| \<alt\>+.                     | `xtdmacs-code-cpp-complete-irony-async`                        |
-
-
-### C++ Compilation
-
-Commands are set by `xtdmacs-code-cpp-compile-alist` which can be customized by running:
-* `M-x customize-variable RET xtdmacs-code-cpp-compile-alist RET`
-
-By default `xtdmacs-code-cpp-compile-alist` takes the value of
-`xtdmacs-compile++-default-config-alist`.
-
+| Key       | Effect                                             |
+|-----------|----------------------------------------------------|
+| `<F12>`   | `xtdmacs-code-cpp-header-cycle`                    |
+| `C-<F12>` | header cycle, create file if missing               |
+| `C-c C-e` | rename variable                                    |
+| `C-e`     | `irony-get-type`                                   |
+| `M-.`     | async completion at point                          |
 
 ## Go
 
-**`xtdmacs-code-go-mode`** provides the following features:
+`xtdmacs-code-go` is built around `lsp-mode` (gopls) and `company`. It loads
+default Go snippets, ships a font-lock keyword set and adds a default
+compile / lint config (`go build`, `go vet`).
 
-* **Keywords**: define font-lock rules to color particular naming patterns, allowing to easily
-  distinguish local variables, parameter... etc.
+| Variable                                | Purpose                                |
+|-----------------------------------------|----------------------------------------|
+| `xtdmacs-code-go-keywords-alist`        | font-lock additions                    |
+| `xtdmacs-code-go-format-on-save`        | run `lsp-format-buffer` on save        |
+| `xtdmacs-code-go-compile-alist`         | per-mode compilation config            |
 
-* **Completion**: Integrates [gocode](https://github.com/mdempsky/gocode) which must be manually
-  installed
+Face: `xtdmacs-code-go-face-indent-error` (highlights spaces where tabs are expected).
 
-* **Formatting**: Provides automatic formatting functions, on-demand or at load/save
+| Function                            | Purpose                                                 |
+|-------------------------------------|---------------------------------------------------------|
+| `xtdmacs-code-go-get-project-name`  | Go package name (used to build output binary path)      |
+| `xtdmacs-code-go-command`           | builds a `go build` command from the compile config     |
 
-* **Snippets**: Loads default go language snippets
-
-* **Compilation**: Provides default commands for compilation and linter checking
-
-
-### Go Configuration
-
-* `M-x customize-variable RET xtdmacs-code-go-keywords-alist RET`
-* `M-x customize-variable RET xtdmacs-code-go-indent-load-auto RET`
-* `M-x customize-variable RET xtdmacs-code-go-indent-save-auto RET`
-
-### Go Faces
-
-* `M-x customize-face RET xtdmacs-code-go-face-indent-error RET`
-
-### Go API
-
-* `xtdmacs-code-go-format-region`: (interactive) applies `gofmt` on current region
-* `xtdmacs-code-go-get-project-name`: compute and returns current go package name
-* `xtdmacs-code-go-command`: generates a `go build` command from current compilation configuration
-
-### Go Bindings
-
-| Key              | Effect                                             |
-|------------------|----------------------------------------------------|
-| \<alt\>+t        | format region using `gofmt`                        |
-| \<ctrl\>+<alt>+t | format buffer using `gofmt`                        |
-| \<alt\>+.        | completion at point                                |
-| \<ctrl\>+e       | print documentation for symbol at point            |
-| \<alt\>+e        | interactively query go documentation               |
-| f12              | go to definition of symbol at point                |
-| \<ctrl\>+f12     | go to definition of symbol at point (other-window) |
-
-
-### Go Compilation
-
-* **`compile`**: Runs `go build` from top git directory. Output binary name is computed
-  from current package name.
-
-* **`lint`**: runs [gometalinter](https://github.com/alecthomas/gometalinter) on current package.
-  gometalinter must be installed manually.
+| Key         | Effect                                       |
+|-------------|----------------------------------------------|
+| `<F12>`     | `lsp-find-definition`                        |
+| `C-<F12>`   | `lsp-find-definition` (other window)         |
+| `<F11>`     | `lsp-find-references`                        |
+| `C-<F11>`   | `lsp-find-references` (other window)         |
+| `<F10>`     | `lsp-ui-doc-glance`                          |
+| `C-<F10>`   | `lsp-ui-imenu`                               |
+| `M-t`       | `lsp-format-region`                          |
+| `C-M-t`     | `lsp-format-buffer`                          |
+| `M-r`       | `lsp-rename`                                 |
+| `M-.`       | `company-complete`                           |
 
 ## Python
 
-**`xtdmacs-code-python-mode`** provides the following features :
+`xtdmacs-code-python` provides:
 
-- Automatic indentation on load and/or save
+- Optional automatic indent on load and on save.
+- A default compile config that runs **pylint** on the project root, with
+  automatic discovery of a `.pylintrc` (project root, `~/`, or the bundled
+  `vendor/pylintrc`).
+- A default test config that runs the bundled
+  `<install-dir>/bin/unittests.py` runner (override with
+  `xtdmacs-code-python-test-bin-path`).
+- Font-lock for Hungarian-style local / parameter / member names.
+- LSP integration (same keybindings as Go).
 
-- Overrides default xtdmacs-compile++ configuration :
-  - run pylint on current buffer
-  - run unittest script
+| Variable                                  | Purpose                                                  |
+|-------------------------------------------|----------------------------------------------------------|
+| `xtdmacs-code-python-pylint-bin-path`     | pylint binary                                            |
+| `xtdmacs-code-python-pylint-args`         | string or function returning extra arguments             |
+| `xtdmacs-code-python-test-bin-path`       | test runner (nil → bundled `unittests.py`)               |
+| `xtdmacs-code-python-test-args`           | string or function with test arguments                   |
+| `xtdmacs-code-python-format-on-save`      | run `lsp-format-buffer` on save                          |
+| `xtdmacs-code-python-indent-load-auto`    | indent on open                                           |
+| `xtdmacs-code-python-indent-save-auto`    | indent on save                                           |
+| `xtdmacs-code-python-keywords-alist`      | font-lock additions                                      |
+| `xtdmacs-code-python-compile-alist`       | per-mode compilation config                              |
 
-- Defines font-lock keywords to identify local variables, parameters and class
-  members
+| Function                                  | Purpose                                                  |
+|-------------------------------------------|----------------------------------------------------------|
+| `xtdmacs-code-python-module-root`         | walk up while `__init__.py` is present                   |
+| `xtdmacs-code-python-project-root`        | parent directory of the module root                      |
+| `xtdmacs-code-python-pylint-bin`          | full pylint command (with `--rcfile` if found)           |
+| `xtdmacs-code-python-test-bin`            | full test command                                        |
+| `xtdmacs-code-python-params`              | params function (dir + binary only)                      |
+| `xtdmacs-code-python-command`             | command builder                                          |
 
-- Defines useful functions used in compilation commands
+Default compile config:
 
-### Python Faces
-
-The mode uses faces defined in `xtdmacs-code-mode`.
-
-### Python API
-
-- `xtdmacs-code-python-module-root` : Returns buffers' most distant parent directory
-  containing a `___init__.py` file. If no such file found, returns buffer's
-  file directory.
-
-- `xtdmacs-code-python-project-root` : Returns parent directory of module root. If
-  module root couldn't be identified, returns buffer's file directory.
-
-- `xtdmacs-code-python-pylint-getargs` : Constructs argument string to pass to
-  compile command. If `.pylintrc` is found in project root, includes
-  `--rcfile=file` in constructed string.
-
-- `xtdmacs-code-python-pylint-bin` Constructs compile command from
-  `xtdmacs-code-python-pylint-bin-path` and `xtdmacs-code-python-pylint-args`.
-  The buffer's file path is added as last  argument on the returned command.
-
-- `xtdmacs-code-python-test-bin` Constructs compile command from
-  `xtdmacs-code-python-test-bin-path` and `xtdmacs-code-python-test-args`.
-
-- `xtdmacs-code-python-params` : same as `xtdmacs-compile++-default-params`,
-  prompt only for directory and binary command.
-
-- `xtdmacs-code-python-command` : same as `xtdmacs-compile++-default-command`,
-  construct final compile command from parameters built by
-  `xtdmacs-code-python-params` .
-
-### Python Configuration
-
-- `M-x customize-variable RET xtdmacs-code-python-pylint-bin-path RET`
-  - pylint static code checker file path
-
-- `M-x customize-variable RET xtdmacs-code-python-pylint-args RET`
-  - Static string or function to use as pylint script argument
-
-- `M-x customize-variable RET xtdmacs-code-python-test-bin-path RET`
-  - Unit test runner file path. If nil, use default xtdmacs runner
-
-- `M-x customize-variable RET xtdmacs-code-python-test-args RET`
-  - Static string or function to use as test binary arguments
-
-- `M-x customize-variable RET xtdmacs-code-python-indent-save-auto RET`
-  - Enables python code auto-indentation on save.
-
-- `M-x customize-variable RET xtdmacs-code-python-indent-load-auto RET`
-  - Enables python code auto-indentation on load.
-
-- `M-x customize-variable RET xtdmacs-code-python-keywords-alist RET`
-  - List of additional python font-lock keywords
-
-- `M-x customize-variable RET xtdmacs-code-python-compile-alist RET`
-  - overrides `xtdmacs-compile++-config-alist` for `python-mode`
-
-### Python Compilation
-
-Commands are set by `xtdmacs-code-python-compile-alist` which can be customized by running:
-* `M-x customize-variable RET xtdmacs-code-python-compile-alist RET`
-
-* **`compile`**: run [pylint](https://www.pylint.org/) on project root. Root is deduced by
-  walking buffer's parent directory until no `__init__.py` file is found.
-
-  Pylint configuration is searched by order of priority in the following locations:
-  * `<root>/.pylintrc`
-  * `${HOME}/.pylintrc`
-  * `<xtdmacs_installdir>/vendor/pylintrc`
-
-* **`test`**: run unittests. Binary is given by `xtdmacs-code-python-test-bin-path` and
-  defaults to `<xtdmacs_installdir>/bin/unittests.py` which is a default python unittest wrapper
-  that produces a parsable output.
-
-
-Full definition
-```lisp
-'((:compile .
-     ((:dir        . xtdmacs-code-python-project-root)
+```elisp
+'((:compile
+   . ((:dir        . xtdmacs-code-python-project-root)
       (:bin        . xtdmacs-code-python-pylint-bin)
       (:env        . "")
       (:get-params . xtdmacs-compile++-default-params)
       (:command    . xtdmacs-compile++-default-command)))
-    (:test .
-     ((:dir        . xtdmacs-code-python-project-root)
+  (:test
+   . ((:dir        . xtdmacs-code-python-project-root)
       (:bin        . xtdmacs-code-python-test-bin)
       (:env        . "")
       (:get-params . xtdmacs-compile++-default-params)
       (:command    . xtdmacs-compile++-default-command))))
 ```
 
+## TypeScript
 
-## Php
+`xtdmacs-code-typescript` integrates `lsp-mode`, `yasnippet` and `dap-mode`,
+adds a TypeScript font-lock keyword set, and provides default compile / test /
+lint commands that delegate to `npm run`.
 
-**`xtdmacs-code-php-mode`**  provides de following features :
-- Fix anonymous function indentation introduced in PHP 5.3.0
+| Variable                                       | Purpose                            |
+|------------------------------------------------|------------------------------------|
+| `xtdmacs-code-typescript-format-on-save`       | run `lsp-format-buffer` on save    |
+| `xtdmacs-code-typescript-keywords-alist`       | font-lock additions                |
+| `xtdmacs-code-typescript-compile-alist`        | compile config                     |
 
-- Sets default doxymacs comment template `doxymacs-function-comment-template`
-  to phpdoc compatible `xtdmacs-code-doxymacs-template-phpdoc`.
+Face: `xtdmacs-code-typescript-face-indent-error`.
 
-- Adds font-lock keywords to identify local variables, parameters and class members
+| Key         | Effect                                       |
+|-------------|----------------------------------------------|
+| `<F12>`     | `lsp-find-definition`                        |
+| `C-<F12>`   | `lsp-find-definition` (other window)         |
+| `<F11>`     | `lsp-find-references`                        |
+| `C-<F11>`   | `lsp-find-references` (other window)         |
+| `<F10>`     | `lsp-ui-doc-glance`                          |
+| `C-<F10>`   | `lsp-ui-imenu`                               |
+| `M-t`       | `lsp-format-region`                          |
+| `C-M-t`     | `lsp-format-buffer`                          |
+| `M-r`       | `lsp-rename`                                 |
+| `M-.`       | `company-complete`                           |
+| `C-e <F12>` | `dap-debug`                                  |
+| `C-e s`     | step in                                      |
+| `C-e o`     | step out                                     |
+| `C-e n`     | next                                         |
+| `C-e c`     | continue                                     |
+| `C-e r`     | restart                                      |
+| `C-e b`     | toggle breakpoint                            |
 
-- Fixes syntax table for a better work boundary detection
+## Terraform
 
-- Automatic indentation on buffer load and/or save
+`xtdmacs-code-terraform` enables `lsp-mode` (terraform-ls), `yasnippet`,
+and provides a default compile config that runs `terraform validate` from
+the project root.
 
-### Php Faces
+| Variable                                      | Purpose                            |
+|-----------------------------------------------|------------------------------------|
+| `xtdmacs-code-terraform-format-on-save`       | run `lsp-format-buffer` on save    |
+| `xtdmacs-code-terraform-compile-alist`        | compile config                     |
 
-In addition to faces defined in `xtdmacs-code-mode`. (See
-`M-x customize-group RET code RET` ), the mode defines :
+Bindings: same LSP / formatting keys as Go (`F12`, `F11`, `M-t`, `C-M-t`, `M-.`, …).
 
-- `M-x customize-face RET xtdmacs-code-php-operator RET` : Used to fontify PHP
-  language operators such as ';' or '::'"
+## PHP
 
+`xtdmacs-code-php` provides:
 
-### Php Configuration
+- A fix for the indentation of PHP 5.3+ anonymous functions.
+- Sets `doxymacs-function-comment-template` to a phpdoc-compatible template.
+- Font-lock for local / parameter / member names.
+- A syntax-table tweak for better word boundary detection.
+- Optional automatic indent on load / save.
 
-- `M-x customize-variable RET xtdmacs-code-php-indent-load-auto RET` : Enables
-  code auto-indentation on buffer load.
+Face: `xtdmacs-code-php-operator` (PHP operator highlighting).
 
-- `M-x customize-variable RET xtdmacs-code-php-indent-save-auto RET` : Enables
-  code auto-indentation on buffer save.
-
+| Variable                                | Purpose                |
+|-----------------------------------------|------------------------|
+| `xtdmacs-code-php-indent-load-auto`     | indent on open         |
+| `xtdmacs-code-php-indent-save-auto`     | indent on save         |
+| `xtdmacs-code-php-keywords-alist`       | font-lock additions    |
 
 ## Lisp
 
-**`xtdmacs-code-lisp-mode`** provides automatic indentation on load and save.
+`xtdmacs-code-lisp` provides automatic indent on load and on save, plus
+`auto-complete` at point.
 
-### Configuration
+| Variable                                  | Purpose            |
+|-------------------------------------------|--------------------|
+| `xtdmacs-code-lisp-indent-load-auto`      | indent on open     |
+| `xtdmacs-code-lisp-indent-save-auto`      | indent on save     |
 
-- `M-x customize-variable RET xtdmacs-code-lisp-indent-load-auto RET` : Enables
-  code auto-indentation on buffer load.
-
-- `M-x customize-variable RET xtdmacs-code-lisp-indent-save-auto RET` : Enables
-  code auto-indentation on buffer save.
+Binding: `M-.` triggers `auto-complete` in `emacs-lisp-mode` and `lisp-interaction-mode`.
 
 ## Shell
 
-**`xtdmacs-code-shell-mode`**  defines additional fontlock keywords and a default compilation
-command that runs [shellcheck](https://github.com/koalaman/shellcheck) linter.
+`xtdmacs-code-shell` adds extra font-lock keywords and a default compile
+config that runs [shellcheck](https://github.com/koalaman/shellcheck) on
+the current file.
 
-### Shell Configuration
+| Variable                                       | Purpose                          |
+|------------------------------------------------|----------------------------------|
+| `xtdmacs-code-shell-shellcheck-bin-path`       | shellcheck binary                |
+| `xtdmacs-code-shell-keywords-alist`            | font-lock additions              |
+| `xtdmacs-code-shell-compile-alist`             | compile config                   |
 
-Define path to `shellcheck` binary
-* `M-x customize-variable RET xtdmacs-code-shell-shellcheck-bin-path RET`
-
-Define additional fontlock keywords
-* `M-x customize-variable RET xtdmacs-code-shell-keywords-alist RET`
-
-Define compilation configuration
-* `M-x customize-variable RET xtdmacs-code-shell-compile-alist RET`
-
-### Shell Compilation
-
-Commands are set by `xtdmacs-code-shell-compile-alist` which can be customized by running:
-* `M-x customize-variable RET xtdmacs-code-shell-compile-alist RET`
-
-* **`compile`** : runs `shellcheck` on current buffer
-
-Full definition:
-
-```lisp
-  '((:compile .
-     ((:file      . buffer-file-name)
-     (:bin        . xtdmacs-code-shell-shellcheck-bin)
-     (:get-params . xtdmacs-compile++-current-file-params)
-     (:command    . xtdmacs-compile++-simple-file-command))))
+```elisp
+'((:compile
+   . ((:file       . buffer-file-name)
+      (:bin        . xtdmacs-code-shell-shellcheck-bin)
+      (:get-params . xtdmacs-compile++-current-file-params)
+      (:command    . xtdmacs-compile++-simple-file-command))))
 ```
 
-## Json
+## JSON
 
-**`xtdmacs-code-json-mode`** loads `json-mode`, sets defaults `js-indent-level` to 2 and defines default compilation
-command.
+`xtdmacs-code-json` loads `json-mode`, sets `js-indent-level` to 2 and
+provides a default compile config that runs `jsonlint-php`.
 
-### Json Bindings
+| Key            | Effect                       |
+|----------------|------------------------------|
+| `C-c C-f`      | beautify buffer              |
+| `C-c C-p`      | show JSON path at point      |
 
-| Key                           | Effect                              |
-|-------------------------------|-------------------------------------|
-| \<ctrl\>+c \<ctrl\>+f         | beautify-buffer                     |
-| \<ctrl\>+c \<ctrl\>+p         | show json path at point             |
-
-### Json Compilation
-
-Commands are set by `xtdmacs-code-json-compile-alist` which can be customized by running:
-* `M-x customize-variable RET xtdmacs-code-json-compile-alist RET`
-
-* **`compile`** : runs `jsonlint-php` on current  buffer
-
-Full definition:
-
-```lisp
-  '((:compile .
-     ((:file       . buffer-file-name)
+```elisp
+'((:compile
+   . ((:file       . buffer-file-name)
       (:bin        . "jsonlint-php -q")
       (:get-params . xtdmacs-compile++-current-file-params)
-      (:command    . xtdmacs-compile++-simple-file-command)))
-    )
+      (:command    . xtdmacs-compile++-simple-file-command))))
 ```
 
-## Yaml
+## YAML
 
-**`xtdmacs-code-yaml-mode`** integrates [yaml-path](https://github.com/psycofdj/yaml-path) to
-`which-function-mode` and define default compilation settings.
+`xtdmacs-code-yaml` provides a default compile config that runs
+[yamllint](https://github.com/adrienverge/yamllint), and integrates the
+optional `yaml-lsp` package for path navigation (e.g. Kubernetes manifests).
 
-### Yaml Bindings
+| Key       | Effect                                                  |
+|-----------|---------------------------------------------------------|
+| `C-e`     | `yaml-lsp-copy-address-at-point` (when yaml-lsp present)|
 
-| Key                           | Effect                              |
-|-------------------------------|-------------------------------------|
-| \<ctrl\>+e                    | prints yaml path under cursor       |
-
-
-### Yaml Compilation
-
-Commands are set by `xtdmacs-code-yaml-compile-alist` which can be customized by running:
-* `M-x customize-variable RET xtdmacs-code-yaml-compile-alist RET`
-
-* **`compile`** : Runs [yamllint](https://github.com/adrienverge/yamllint) on current buffer
-
-Full definition:
-
-```lisp
-  '((:compile .
-     ((:file       . buffer-file-name)
+```elisp
+'((:compile
+   . ((:file       . buffer-file-name)
       (:bin        . "yamllint -f parsable -d '{extends: relaxed, rules: {indentation: {spaces: consistent}, line-length: {max: 300}}}'")
       (:get-params . xtdmacs-compile++-current-file-params)
-      (:command    . xtdmacs-compile++-simple-file-command)))
-    )
+      (:command    . xtdmacs-compile++-simple-file-command))))
 ```
-
-
 
 ## Web
 
-**`xtdmacs-code-web-mode`** overrides default `comment-start` and `comment-end` that are
-poorly set by `web-mode`.
+`xtdmacs-code-web` overrides the comment delimiters that `web-mode`
+sometimes guesses incorrectly, sets the markup indent offset to 2, and adds:
+
+| Key         | Effect                            |
+|-------------|-----------------------------------|
+| `C-M-<up>`  | `web-mode-element-beginning`      |
+| `C-M-<down>`| `web-mode-element-end`            |
 
 ## Makefile
 
-**`xtdmacs-code-makefile-mode`** highlights tabs with `hi-yellow` face.
+`xtdmacs-code-makefile` highlights tab characters with the `hi-yellow` face
+and strips trailing whitespace on save.
 
 ## Java
 
-**`xtdmacs-code-java-mode`** adds font-lock keywords :
-`M-x customize-variable RET xtdmacs-code-java-keywords-alist RET`
+`xtdmacs-code-java` adds font-lock keywords; customize via
+`xtdmacs-code-java-keywords-alist`.
 
-## Javascript
+## JavaScript
 
-**`xtdmacs-code-js-mode`** adds font-lock keywords :
-`M-x customize-variable RET xtdmacs-code-js-keywords-alist RET`
+`xtdmacs-code-js` adds font-lock keywords; customize via
+`xtdmacs-code-js-keywords-alist`.
 
-## Sphinx
+## Sphinx / reStructuredText
 
-**`xtdmacs-code-sphinx-mode`** set compilation settings for `rst-mode`.  It also turns
-off `electric-indent-mode` which appear to not work very properly with reStructuredText.
+`xtdmacs-code-sphinx` configures `rst-mode`. It disables
+`electric-indent-mode` (it doesn't behave well with reST) and provides a
+default compile config that detects how to build the documentation:
 
-### Sphinx Compilation
+- searches upward for a directory containing `conf.py` (the Sphinx project root)
+- if that directory has a `Makefile`, runs `make html`
+- otherwise runs `sphinx-build -M html . build`
 
-Commands are set by `xtdmacs-code-sphinx-compile-alist` which can be customized by running:
-* `M-x customize-variable RET xtdmacs-code-sphinx-compile-alist RET`
-
-* **`compile`** : Generates sphinx documentation by:
-  - searching for directory containing conf.py as compile directory
-  - detects compile command as follow :
-    - `make html` when compile directory has a Makefile
-    - `sphinx-build -M html . build` otherwise
-
-Full definition:
-```lisp
-  '((:compile .
-     ((:dir        . xtdmacs-code-sphinx-project-root)
+```elisp
+'((:compile
+   . ((:dir        . xtdmacs-code-sphinx-project-root)
       (:bin        . xtdmacs-code-sphinx-bin)
       (:env        . "")
       (:get-params . xtdmacs-compile++-default-params)
       (:command    . xtdmacs-compile++-default-command))))
 ```
 
-
 <!-- LocalWords:  xtdmacs config alist RET params cd dir env API dev toc wget -->
-<!-- LocalWords:  param filename automake's VPATH sudo ctrl goto xvzf ido fci -->
-<!-- LocalWords:  swbuff multi linum doxymacs flyspell reStructuredText -->
+<!-- LocalWords:  param filename automake VPATH sudo ctrl goto xvzf ido fci LSP -->
+<!-- LocalWords:  swbuff multi linum doxymacs flyspell reStructuredText pylint -->
+<!-- LocalWords:  shellcheck yamllint jsonlint terraform gofmt npm yasnippet -->
+<!-- LocalWords:  dap gopls -->
 <!-- Local Variables: -->
 <!-- ispell-local-dictionary: "american" -->
 <!-- End: -->

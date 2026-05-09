@@ -1,73 +1,55 @@
-;; -*- lexical-binding: t -*-
+;;; xtdmacs-code-yaml.el --- YAML support  -*- lexical-binding: t -*-
 
+;;; Commentary:
+
+;; xtdmacs setup for yaml-mode buffers: LSP via yaml-lsp (when
+;; available) and a yamllint compile recipe.
+
+;;; Code:
+
+(require 'xtdmacs-code)
+
+(eval-when-compile
+  (when (locate-library "yaml-lsp") (require 'yaml-lsp)))
+
+(declare-function xtdmacs-compile++-register-config "xtdmacs-compile++")
+(declare-function yaml-lsp-which-func-mode          "yaml-lsp")
+(declare-function yaml-lsp-reload                   "yaml-lsp")
 
 (use-package yaml-lsp
-  :ensure t
   :load-path "~/dev/yaml-lsp/emacs"
   ;; :if (locate-library "yaml-lsp")
-  :hook ((yaml-mode . yaml-lsp-which-func-mode)
+  :hook ((yaml-mode    . yaml-lsp-which-func-mode)
          (yaml-ts-mode . yaml-lsp-which-func-mode))
   :bind (:map lsp-mode-map
               ("C-e" . yaml-lsp-copy-address-at-point)))
-
-(use-package lsp-mode
-  :ensure t
-  ;; :if (locate-library "yaml-lsp")
-  :commands (lsp lsp-deferred)
-  :hook (yaml-mode . lsp-deferred))
-
-(eval-when-compile
-  (defvar xtdmacs-code-yaml-mode-map))
 
 (defcustom xtdmacs-code-yaml-compile-alist
   '((:compile . ((:file       . buffer-file-name)
                  (:bin        . "yamllint -f parsable -d '{extends: relaxed, rules: {indentation: {spaces: consistent}, line-length: {max: 300}}}'")
                  (:get-params . xtdmacs-compile++-current-file-params)
-                 (:command    . xtdmacs-compile++-simple-file-command)))
-    )
-  "xtdmacs yaml compilation configuration"
+                 (:command    . xtdmacs-compile++-simple-file-command))))
+  "YAML compilation configuration."
   :group 'xtdmacs-code-yaml
-  :safe '(lambda(p) t)
+  :safe (lambda (_) t)
   :type '(alist :key-type string
                 :value-type (alist :key-type string
-                                   :value-type (choice (string) (function))))
-  )
-
-(defun --xtdmacs-code-yaml-mode-construct()
-  (unless (mode-enabled 'yafolding-mode)
-    (yafolding-mode t))
-  (yaml-lsp-which-func-mode t)
-  (yaml-lsp-reload)
-  (lsp)
-  ;; (if (require 'yaml-path nil 'noerror)
-  ;;     (when (mode-enabled 'which-function-mode)
-  ;;       (yaml-path-which-func))
-  ;;   (message "package yaml-path not found, which-func function is disabled"))
-
-  ;; (if (require 'paas-manifest-helper nil 'noerror)
-  ;;     (when (paas-manifest-helper-is-manifest)
-  ;;       (define-key xtdmacs-code-yaml-mode-map [f12]           'paas-manifest-helper-open-at-point)
-  ;;       (define-key xtdmacs-code-yaml-mode-map (kbd "C-<f12>") '(lambda () (interactive) (paas-manifest-helper-open-at-point t)))
-  ;;       (define-key xtdmacs-code-yaml-mode-map "\C-e"          'paas-manifest-helper-print-at-point)))
-
-  (when (mode-enabled 'xtdmacs-compile++-mode)
-    (xtdmacs-compile++-register-config "yaml-mode" xtdmacs-code-yaml-compile-alist))
-  (message "enabled : xtdmacs-code-yaml-mode")
-  )
-
-(defun --xtdmacs-code-yaml-mode-destroy()
-  (when (mode-enabled 'yafolding-mode)
-    (yafolding-mode nil))
-  (message "disabled : xtdmacs-code-yaml-mode")
-  )
+                                   :value-type (choice (string) (function)))))
 
 ;;;###autoload
-(define-minor-mode xtdmacs-code-yaml-mode
-  "Code for yaml" nil "Code"
-  '()
-  (if xtdmacs-code-yaml-mode
-      (--xtdmacs-code-yaml-mode-construct)
-    (--xtdmacs-code-yaml-mode-destroy))
-  )
+(defun xtdmacs-code-yaml-setup ()
+  "Configure a YAML buffer with xtdmacs conventions."
+  (yaml-lsp-which-func-mode 1)
+  (yaml-lsp-reload)
+  (xtdmacs-code-setup)
+  (when (bound-and-true-p xtdmacs-compile++-mode)
+    (xtdmacs-compile++-register-config "yaml-mode" xtdmacs-code-yaml-compile-alist)))
+
+;;;###autoload
+(add-hook 'yaml-mode-hook #'xtdmacs-code-yaml-setup)
+
+;;;###autoload (put 'xtdmacs-code-yaml-compile-alist 'safe-local-variable (lambda (_) t))
 
 (provide 'xtdmacs-code-yaml)
+
+;;; xtdmacs-code-yaml.el ends here

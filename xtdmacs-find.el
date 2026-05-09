@@ -1,11 +1,19 @@
-;; -*- lexical-binding: t -*-
+;;; xtdmacs-find.el --- Open-file advice for path:line:col  -*- lexical-binding: t -*-
 
-;; Open files and goto lines like we see from g++ etc. i.e. file:line#
+;;; Commentary:
+
+;; Advice on `find-file-noselect' that recognizes paths of the form
+;; FILE:LINE or FILE:LINE:COL (as printed by g++, Python tracebacks,
+;; grep, etc.) and opens FILE at the given line/column.
+
+;;; Code:
+
+;; Open files and goto lines like we see from g++ etc., i.e. file:line#.
 (defadvice find-file-noselect
     (around find-file-noselect-at-line
             (filename &optional nowarn rawfile wildcards)
             activate)
-  "Turn files like file.cpp:14:5 into file.cpp and going to the 14-th line and 5th col"
+  "Open file.cpp:14:5 as file.cpp and jump to line 14, column 5."
 
   (save-match-data
     (let* ((matched (string-match "^\\(.*?\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?:?$" filename))
@@ -34,3 +42,5 @@
   )
 
 (provide 'xtdmacs-find)
+
+;;; xtdmacs-find.el ends here

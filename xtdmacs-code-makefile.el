@@ -1,23 +1,24 @@
-;; -*- lexical-binding: t -*-
+;;; xtdmacs-code-makefile.el --- Makefile support  -*- lexical-binding: t -*-
 
-(defun --xtdmacs-code-makefile-mode-construct()
-  (highlight-regexp "\t" 'hi-yellow)
-  (delete-trailing-whitespace)
-  (message "enabled : xtdmacs-code-makefile-mode")
-  )
+;;; Commentary:
 
-(defun --xtdmacs-code-makefile-mode-destroy()
-  (unhighlight-regexp "\t")
-  (message "disabled : xtdmacs-code-makefile-mode")
-  )
+;; xtdmacs setup for makefile-mode buffers: highlights tabs and strips
+;; trailing whitespace on entry.
+
+;;; Code:
+
+(require 'xtdmacs-code)
 
 ;;;###autoload
-(define-minor-mode xtdmacs-code-makefile-mode "Code for Makefiles" nil "Code"
-  nil
+(defun xtdmacs-code-makefile-setup ()
+  "Configure a Makefile buffer with xtdmacs conventions."
+  (xtdmacs-code-setup)
+  (highlight-regexp "\t" 'hi-yellow)
+  (delete-trailing-whitespace))
 
-  (if xtdmacs-code-makefile-mode
-      (--xtdmacs-code-makefile-mode-construct)
-    (--xtdmacs-code-makefile-mode-destroy))
-  )
+;;;###autoload
+(add-hook 'makefile-mode-hook #'xtdmacs-code-makefile-setup)
 
 (provide 'xtdmacs-code-makefile)
+
+;;; xtdmacs-code-makefile.el ends here

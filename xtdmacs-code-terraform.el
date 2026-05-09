@@ -1,113 +1,56 @@
-(require 'xtdmacs-compile++)
-(require 'package)
-(require 'terraform-mode)
+;;; xtdmacs-code-terraform.el --- Terraform support  -*- lexical-binding: t -*-
 
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
+;;; Commentary:
 
-(use-package lsp-mode
-  :ensure t
-  :commands (lsp lsp-deferred)
-  :hook (terraform-mode . lsp-deferred))
+;; xtdmacs setup for terraform-mode buffers: LSP, yas, optional
+;; format-on-save, and a `terraform validate' compile recipe.
 
-(use-package company
-  :ensure t
-  :config
-  )
+;;; Code:
 
-(use-package yasnippet
-  :ensure t
-  :commands yas-minor-mode
-  :hook (terraform-mode . yas-minor-mode))
+(require 'xtdmacs-code)
 
-(defcustom xtdmacs-code-terraform-indent-load-auto
-  nil
-  "Enables terraform code auto-indentation on load."
-  :group 'xtdmacs-code-terraform
-  :type 'boolean
-  :safe 'booleanp)
+(declare-function xtdmacs-compile++-register-config "xtdmacs-compile++")
+(declare-function --xtdmacs-compile++-get-value     "xtdmacs-compile++")
 
-(defcustom xtdmacs-code-terraform-indent-save-auto
-  nil
-  "Enables terraform code auto-indentation on save."
-  :group 'xtdmacs-code-terraform
-  :type 'boolean
-  :safe 'booleanp
-  )
-
+(defcustom xtdmacs-code-terraform-format-on-save nil
+  "When non-nil, run lsp-format-buffer on save."
+  :group 'xtdmacs-code-terraform :type 'boolean :safe #'booleanp)
 
 (defun xtdmacs-code-terraform-command (type &optional mode)
-  (let* ((dir    (--xtdmacs-compile++-get-value mode type :dir)))
-    (format "cd %s && terraform validate"
-            (funcall-or-value dir)))
-  )
+  "Build the `terraform validate' command for compile entry TYPE in MODE."
+  (let ((dir (--xtdmacs-compile++-get-value mode type :dir)))
+    (format "cd %s && terraform validate" (funcall-or-value dir))))
 
 (defcustom xtdmacs-code-terraform-compile-alist
   '((:compile . ((:dir        . xtdmacs-compile++-get-dir-buffer)
                  (:get-params . xtdmacs-compile++-only-dir)
                  (:command    . xtdmacs-code-terraform-command)))
-
-    (:test .    ((:dir        . xtdmacs-compile++-get-dir-buffer)
+    (:test    . ((:dir        . xtdmacs-compile++-get-dir-buffer)
                  (:get-params . xtdmacs-compile++-only-dir)
                  (:command    . xtdmacs-code-terraform-command))))
-  "Xtdmacs-Code-terraform compilation configuration"
+  "Terraform compilation configuration."
   :group 'xtdmacs-code-terraform
-  :safe '(lambda(p) t)
+  :safe (lambda (_) t)
   :type '(alist :key-type string
                 :value-type (alist :key-type string
-                                   :value-type (choice (string) (function))))
-  )
+                                   :value-type (choice (string) (function)))))
 
-(defun --xtdmacs-code-terraform-construct()
-  (yas-minor-mode t)
-  (lsp)
-  (define-key terraform-mode-map (kbd "<f12>")   'lsp-find-definition)
-  (define-key terraform-mode-map (kbd "C-<f12>") '--xtdmacs-lsp-find-definition-other-window)
-  (define-key terraform-mode-map (kbd "<f11>")   '--xtdmacs-lsp-find-references)
-  (define-key terraform-mode-map (kbd "C-<f11>") '--xtdmacs-lsp-find-references-other-window)
 
-  (when (mode-enabled 'xtdmacs-compile++-mode)
+;;;###autoload
+(defun xtdmacs-code-terraform-setup ()
+  "Configure a Terraform buffer with xtdmacs conventions."
+  (xtdmacs-code-setup)
+  (when (bound-and-true-p xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "terraform-mode" xtdmacs-code-terraform-compile-alist))
-
-  (if xtdmacs-code-terraform-indent-save-auto
-      (progn
-        (add-hook 'before-save-hook #'lsp-format-buffer t t)))
-
-  (if xtdmacs-code-terraform-indent-load-auto
-      (progn
-        (add-hook 'before-save-hook #'lsp-format-buffer t t)))
-  (message "enabled : xtdmacs-code-terraform-mode")
-  )
-
-(defun --xtdmacs-code-terraform-destroy()
-  (if xtdmacs-code-terraform-indent-save-auto
-      (remove-hook 'before-save-hook '(lambda() (xtdmacs-code-format-buffer t nil))))
-  (when (mode-enabled 'yas-minor-mode)
-    (yas-minor-mode nil))
-  (message "disabled : xtdmacs-code-terraform-mode")
-  )
+  (when xtdmacs-code-terraform-format-on-save
+    (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
 
 ;;;###autoload
-(define-minor-mode xtdmacs-code-terraform-mode
-  "Code for Terraform" nil "Code"
-  '(("\M-t"    . lsp-format-region)
-    ("\C-\M-t" . lsp-format-buffer)
-    ("\M-."    . company-complete)
-    )
-  (if xtdmacs-code-terraform-mode
-      (--xtdmacs-code-terraform-construct)
-    (--xtdmacs-code-terraform-destroy))
-  )
+(add-hook 'terraform-mode-hook #'xtdmacs-code-terraform-setup)
 
-
-;; --------------------------------------------------------------------------- ;
-
-;;;###autoload
-(put 'xtdmacs-code-terraform-compile-alist 'safe-local-variable '(lambda(val) t))
-;;;###autoload
-(put 'xtdmacs-code-terraform-indent-load-auto 'safe-local-variable 'booleanp)
-;;;###autoload
-(put 'xtdmacs-code-terraform-indent-save-auto 'safe-local-variable 'booleanp)
+;;;###autoload (put 'xtdmacs-code-terraform-compile-alist 'safe-local-variable (lambda (_) t))
+;;;###autoload (put 'xtdmacs-code-terraform-format-on-save 'safe-local-variable #'booleanp)
 
 (provide 'xtdmacs-code-terraform)
+
+;;; xtdmacs-code-terraform.el ends here

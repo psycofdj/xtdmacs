@@ -1,78 +1,88 @@
-;; -*- lexical-binding: t -*-
+;;; xtdmacs-loader.el --- Wire major modes and extra setup hooks  -*- lexical-binding: t -*-
 
-;;;###autoload
-(defcustom xtdmacs-loader-auto-minor-mode-alist
-  '((("Dockerfile") xtdmacs-code-mode)
-    (("\\.php\\'") xtdmacs-code-mode  xtdmacs-code-line-mode)
-    (("\\.xml\\.erb\\'" "\\.erb\\'" "Rakefile\\'") xtdmacs-code-mode)
-    (("\\.html\\'" "\\.tpl\\'") xtdmacs-code-mode xtdmacs-code-web-mode)
-    (("\\.py\\'") xtdmacs-code-mode xtdmacs-code-python-mode xtdmacs-code-line-mode)
-    (("\\.h\\'" "\\.c\\'" "\\.cc\\'" "\\.hh\\'" "\\.cpp\\'" "\\.hpp\\'" "\\.hxx\\'") xtdmacs-code-mode xtdmacs-code-cpp-mode xtdmacs-code-line-mode  ac-clang-async-mode)
-    (("\\.js\\'") xtdmacs-code-js-mode xtdmacs-code-line-mode xtdmacs-code-mode)
-    (("\\.json\\'") xtdmacs-code-mode xtdmacs-code-json-mode linum-mode)
-    (("CMakeLists\\.txt\\'") xtdmacs-code-mode)
-    (("\\.groovy\\'") xtdmacs-code-mode)
-    (("Makefile") xtdmacs-code-mode xtdmacs-code-makefile-mode xtdmacs-code-line-mode)
-    (("\\.el\\'") xtdmacs-code-mode xtdmacs-code-lisp-mode xtdmacs-code-line-mode)
-    (("\\.java\\'") xtdmacs-code-mode xtdmacs-code-java-mode  xtdmacs-code-line-mode))
-  "Alist of filename patterns vs correpsonding minor mode functions,
-see `auto-mode-alist'. All elements of this alist are checked,
-meaning you can enable multiple minor modes for the same
-regexp."
-  :group 'loader
-  :safe '(lambda(p) t)
-  :type '(alist
-          :key-type   (repeat string)
-          :value-type (repeat symbol))
-  )
+;;; Commentary:
+
+;; xtdmacs-loader: wire file extensions to major modes, and attach extra
+;; setup functions to selected major-mode hooks.
+;;
+;; Per-language setup functions (e.g. `xtdmacs-code-go-setup') are installed
+;; on their language's hook by the language file itself, so this loader does
+;; NOT need a "minor-mode-alist" anymore.  It only:
+;;   - registers file-extension -> major-mode pairs in `auto-mode-alist'
+;;   - installs cross-cutting setup functions like `xtdmacs-code-line-setup'
+;;     and `xtdmacs-code-spell-prog-setup' on the hooks the user chooses.
+
+;;; Code:
 
 ;;;###autoload
 (defcustom xtdmacs-loader-auto-major-mode-alist
-  '((("Dockerfile") dockerfile-mode)
-    (("\\.php\\'")  php-mode)
+  '((("Dockerfile")                              dockerfile-mode)
+    (("\\.php\\'")                               php-mode)
     (("\\.xml\\.erb\\'" "\\.erb\\'" "Rakefile\\'") ruby-mode)
-    (("\\.html\\'" "\\.tpl\\'") web-mode)
-    (("\\.py\\'") python-mode)
+    (("\\.html\\'" "\\.tpl\\'")                  web-mode)
+    (("\\.py\\'")                                python-mode)
     (("\\.h\\'" "\\.c\\'" "\\.cc\\'" "\\.hh\\'" "\\.cpp\\'" "\\.hpp\\'" "\\.hxx\\'") c++-mode)
-    (("\\.js\\'") js2-mode)
-    (("\\.json\\'") json-mode)
-    (("CMakeLists\\.txt\\'") cmake-mode)
-    (("\\.groovy\\'") groovy-mode)
-    (("Makefile") makefile-mode)
-    (("\\.el\\'") emacs-lisp-mode)
-    (("\\.java\\'") java-mode))
-  "Alist of filename patterns vs correpsonding major modes,
-see `auto-mode-alist'."
-  :group 'loader
-  :safe '(lambda(p) t)
-  :type '(alist
-          :key-type   (repeat string)
-          :value-type symbol)
-  )
+    (("\\.js\\'")                                js2-mode)
+    (("\\.json\\'")                              json-mode)
+    (("CMakeLists\\.txt\\'")                     cmake-mode)
+    (("\\.groovy\\'")                            groovy-mode)
+    (("Makefile")                                makefile-mode)
+    (("\\.el\\'")                                emacs-lisp-mode)
+    (("\\.java\\'")                              java-mode))
+  "Alist of filename patterns to corresponding major modes.
+See `auto-mode-alist'."
+  :group 'xtdmacs-loader
+  :safe (lambda (_) t)
+  :type '(alist :key-type   (repeat string)
+                :value-type symbol))
 
-(defun xtdmacs-loader-load-minor-modes ()
-  (dolist (item xtdmacs-loader-auto-minor-mode-alist)
-    (let* ((exts (car item))
-           (modes (cdr item)))
-      (dolist (ext exts)
-        (when (string-match-p ext (buffer-file-name))
-          (dolist (mode modes)
-            (unless (mode-enabled mode)
-              (funcall mode)
-              ))))))
-  )
+;;;###autoload
+(defcustom xtdmacs-loader-extra-setup-alist
+  '((python-mode-hook        xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (c-mode-hook             xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (c++-mode-hook           xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (js2-mode-hook           xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (js-mode-hook            xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (json-mode-hook          xtdmacs-code-spell-prog-setup)
+    (sh-mode-hook            xtdmacs-code-spell-prog-setup)
+    (makefile-mode-hook      xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (emacs-lisp-mode-hook    xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (java-mode-hook          xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (markdown-mode-hook      xtdmacs-code-spell-setup)
+    (rst-mode-hook           xtdmacs-code-spell-setup     xtdmacs-code-line-setup)
+    (go-mode-hook            xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (typescript-mode-hook    xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (terraform-mode-hook     xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
+    (yaml-mode-hook          xtdmacs-code-line-setup)
+    (php-mode-hook           xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup))
+  "Alist mapping major-mode hooks to extra xtdmacs setup functions.
+Each entry is (HOOK-SYMBOL FN1 FN2 ...).  The loader installs each FN
+on HOOK-SYMBOL when first loaded.  Customize to change which buffer
+types get the line-mode mode-line, spellcheck, etc."
+  :group 'xtdmacs-loader
+  :safe (lambda (_) t)
+  :type '(alist :key-type   symbol
+                :value-type (repeat function)))
 
+(defun xtdmacs-loader--register-major-modes ()
+  "Add `xtdmacs-loader-auto-major-mode-alist' entries to `auto-mode-alist'."
+  (dolist (entry xtdmacs-loader-auto-major-mode-alist)
+    (let ((patterns (car entry))
+          (mode     (cadr entry)))
+      (dolist (pattern patterns)
+        (add-to-list 'auto-mode-alist (cons pattern mode))))))
 
-(defun xtdmacs-loader-define-major-modes ()
-  (dolist (item xtdmacs-loader-auto-major-mode-alist)
-    (let* ((exts  (car item))
-           (mode  (car (cdr item))))
-      (dolist (ext exts)
-        (add-to-list 'auto-mode-alist `(,ext . ,mode))
-        )))
-  )
+(defun xtdmacs-loader--install-extra-hooks ()
+  "Install `xtdmacs-loader-extra-setup-alist' entries via `add-hook'."
+  (dolist (entry xtdmacs-loader-extra-setup-alist)
+    (let ((hook (car entry))
+          (fns  (cdr entry)))
+      (dolist (fn fns)
+        (add-hook hook fn)))))
 
-(xtdmacs-loader-define-major-modes)
-(add-hook 'find-file-hook 'xtdmacs-loader-load-minor-modes)
+(xtdmacs-loader--register-major-modes)
+(xtdmacs-loader--install-extra-hooks)
 
 (provide 'xtdmacs-loader)
+
+;;; xtdmacs-loader.el ends here

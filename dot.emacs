@@ -30,10 +30,9 @@
     (setq frame-background-mode 'light)
   (setq frame-background-mode 'dark))
 
-(add-hook 'sh-mode-hook 'xtdmacs-code-shell-mode)
-(add-hook 'sh-mode-hook 'xtdmacs-code-mode)
-(add-hook 'python-mode-hook 'xtdmacs-code-python-mode)
-(add-hook 'python-mode-hook 'xtdmacs-code-mode)
+;; Per-language setup functions (xtdmacs-code-shell-setup, xtdmacs-code-python-setup
+;; etc.) are auto-attached to their major-mode hooks by the language files via
+;; ;;;###autoload cookies.  No manual add-hook calls needed here.
 
 (require 'xtdmacs-find)
 (require 'xtdmacs-loader)
