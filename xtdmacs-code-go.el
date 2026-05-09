@@ -4,7 +4,7 @@
 (require 'package)
 (require 'go-mode)
 (require 'yasnippet)
-(require 'dap-dlv-go)
+;; (require 'dap-dlv-go)
 
 (use-package flycheck
   :ensure t
@@ -145,13 +145,13 @@
   (define-key go-mode-map (kbd "C-<f11>") '--xtdmacs-lsp-find-references-other-window)
   (define-key go-mode-map (kbd "<f10>") 'lsp-ui-doc-glance)
   (define-key go-mode-map (kbd "C-<f10>") 'lsp-ui-imenu)
-  (define-key go-mode-map (kbd "C-e <f12>") 'dap-debug)
-  (define-key go-mode-map (kbd "C-e s") 'dap-step-in)
-  (define-key go-mode-map (kbd "C-e o") 'dap-step-out)
-  (define-key go-mode-map (kbd "C-e n") 'dap-next)
-  (define-key go-mode-map (kbd "C-e c") 'dap-continue)
-  (define-key go-mode-map (kbd "C-e r") 'dap-debug-restart)
-  (define-key go-mode-map (kbd "C-e b") 'dap-breakpoint-toggle)
+  ;; (define-key go-mode-map (kbd "C-e <f12>") 'dap-debug)
+  ;; (define-key go-mode-map (kbd "C-e s") 'dap-step-in)
+  ;; (define-key go-mode-map (kbd "C-e o") 'dap-step-out)
+  ;; (define-key go-mode-map (kbd "C-e n") 'dap-next)
+  ;; (define-key go-mode-map (kbd "C-e c") 'dap-continue)
+  ;; (define-key go-mode-map (kbd "C-e r") 'dap-debug-restart)
+  ;; (define-key go-mode-map (kbd "C-e b") 'dap-breakpoint-toggle)
 
   (when (mode-enabled 'xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "go-mode" xtdmacs-code-go-compile-alist))

@@ -76,6 +76,7 @@
  '(lsp-ui-doc-enable nil)
  '(lsp-ui-doc-header t)
  '(lsp-ui-imenu-kind-position 'left)
+ '(markdown-toc-header-toc-title "## Table of Contents")
  '(message-log-max t)
  '(mode-line-format
    '("%&%&%& "
@@ -89,7 +90,7 @@
         "[not a real file]"))
      " %-"))
  '(package-selected-packages
-   '(kubernetes jsonnet-mode ## go-mode dap-mode typescript-mode lsp-treemacs xref robot-mode dash-functional flycheck lsp-ui use-package company yaml-path xtdmacs paas-manifest-helper))
+   '(flutter k8s-mode protobuf-mode git-blamed mustache-mode poly-ansible kubernetes jsonnet-mode ## go-mode dap-mode typescript-mode lsp-treemacs xref robot-mode dash-functional flycheck lsp-ui use-package company yaml-path xtdmacs paas-manifest-helper))
  '(php-mode-dollar-property-warning t)
  '(php-mode-dot-property-warning t)
  '(pop-up-windows t)
@@ -139,6 +140,7 @@
  '(transient-mark-mode nil)
  '(truncate-lines t)
  '(truncate-partial-width-windows t)
+ '(typescript-indent-level 2)
  '(undo-limit 80000)
  '(user-full-name "Xavier MARCELET")
  '(user-mail-address "xavier@marcelet.com")
@@ -147,7 +149,7 @@
  '(web-mode-code-indent-offset 2)
  '(web-mode-comment-style 2)
  '(web-mode-css-indent-offset 2)
- '(web-mode-enable-auto-indentation t)
+ '(web-mode-enable-auto-indentation nil)
  '(web-mode-enable-auto-pairing t)
  '(web-mode-enable-block-face t)
  '(web-mode-enable-css-colorization t)
@@ -189,6 +191,8 @@
       (:command . xtdmacs-compile++-default-command))))
  '(xtdmacs-code-go-indent-load-auto nil)
  '(xtdmacs-code-go-indent-save-auto nil)
+ '(xtdmacs-code-php-indent-load-auto nil)
+ '(xtdmacs-code-php-indent-save-auto nil)
  '(xtdmacs-code-python-default-compile-env "")
  '(xtdmacs-code-python-default-deploy-bin (lambda nil "make doc"))
  '(xtdmacs-code-python-pylint-args 'xtdmacs-code-python-pylint-getargs)
@@ -264,7 +268,8 @@
      (("\\.yml" "\\.yaml" "\\.ytpl" "spec")
       xtdmacs-code-mode xtdmacs-code-line-mode xtdmacs-code-yaml-mode)
      (("\\.jsonnet\\'" "\\.libjsonnet\\'")
-      jsonnet-mode xtdmacs-code-mode))))
+      jsonnet-mode xtdmacs-code-mode)))
+ '(yaml-lsp-address-format "helm-values"))
 
 
 ;; ----------------------------------------------------------

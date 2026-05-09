@@ -1,5 +1,21 @@
 ;; -*- lexical-binding: t -*-
 
+
+(use-package yaml-lsp
+  :ensure t
+  :load-path "~/dev/yaml-lsp/emacs"
+  ;; :if (locate-library "yaml-lsp")
+  :hook ((yaml-mode . yaml-lsp-which-func-mode)
+         (yaml-ts-mode . yaml-lsp-which-func-mode))
+  :bind (:map lsp-mode-map
+              ("C-e" . yaml-lsp-copy-address-at-point)))
+
+(use-package lsp-mode
+  :ensure t
+  ;; :if (locate-library "yaml-lsp")
+  :commands (lsp lsp-deferred)
+  :hook (yaml-mode . lsp-deferred))
+
 (eval-when-compile
   (defvar xtdmacs-code-yaml-mode-map))
 
@@ -20,17 +36,19 @@
 (defun --xtdmacs-code-yaml-mode-construct()
   (unless (mode-enabled 'yafolding-mode)
     (yafolding-mode t))
+  (yaml-lsp-which-func-mode t)
+  (yaml-lsp-reload)
+  (lsp)
+  ;; (if (require 'yaml-path nil 'noerror)
+  ;;     (when (mode-enabled 'which-function-mode)
+  ;;       (yaml-path-which-func))
+  ;;   (message "package yaml-path not found, which-func function is disabled"))
 
-  (if (require 'yaml-path nil 'noerror)
-      (when (mode-enabled 'which-function-mode)
-        (yaml-path-which-func))
-    (message "package yaml-path not found, which-func function is disabled"))
-
-  (if (require 'paas-manifest-helper nil 'noerror)
-      (when (paas-manifest-helper-is-manifest)
-        (define-key xtdmacs-code-yaml-mode-map [f12]           'paas-manifest-helper-open-at-point)
-        (define-key xtdmacs-code-yaml-mode-map (kbd "C-<f12>") '(lambda () (interactive) (paas-manifest-helper-open-at-point t)))
-        (define-key xtdmacs-code-yaml-mode-map "\C-e"          'paas-manifest-helper-print-at-point)))
+  ;; (if (require 'paas-manifest-helper nil 'noerror)
+  ;;     (when (paas-manifest-helper-is-manifest)
+  ;;       (define-key xtdmacs-code-yaml-mode-map [f12]           'paas-manifest-helper-open-at-point)
+  ;;       (define-key xtdmacs-code-yaml-mode-map (kbd "C-<f12>") '(lambda () (interactive) (paas-manifest-helper-open-at-point t)))
+  ;;       (define-key xtdmacs-code-yaml-mode-map "\C-e"          'paas-manifest-helper-print-at-point)))
 
   (when (mode-enabled 'xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "yaml-mode" xtdmacs-code-yaml-compile-alist))
