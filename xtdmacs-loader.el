@@ -53,7 +53,7 @@ See `auto-mode-alist'."
     (go-mode-hook            xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
     (typescript-mode-hook    xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
     (terraform-mode-hook     xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup)
-    (yaml-mode-hook          xtdmacs-code-line-setup)
+    (yaml-ts-mode-hook       xtdmacs-code-line-setup)
     (php-mode-hook           xtdmacs-code-spell-prog-setup xtdmacs-code-line-setup))
   "Alist mapping major-mode hooks to extra xtdmacs setup functions.
 Each entry is (HOOK-SYMBOL FN1 FN2 ...).  The loader installs each FN

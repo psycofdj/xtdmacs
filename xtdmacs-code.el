@@ -5,7 +5,9 @@
 ;; xtdmacs-code: shared faces, helpers, and base buffer setup for code editing.
 ;;
 ;; Public API (called from per-language files):
-;;   - xtdmacs-code-setup      : enable base features in the current buffer
+;;   - xtdmacs-code-setup      : enable base features in the current buffer.
+;;                               Pass :with-lsp t to also enable lsp + lsp-ui
+;;                               (only for languages with an LSP server).
 ;;   - xtdmacs-code-format-buffer-with-ident
 ;;   - xtdmacs-code-format-buffer-without-ident
 ;;   - xtdmacs-code-align-vars / -align-args / -align-regexp
@@ -15,15 +17,10 @@
 ;;; Code:
 
 (require 'align)
+(require 'cl-lib)
 (require 'xtdmacs-lang)
 
 (declare-function xtdmacs-compile++-mode "xtdmacs-compile++")
-(declare-function kustomize-in-kustomize-file "kustomize")
-(declare-function kustomize-in-dir-strcture   "kustomize")
-(declare-function kustomize-open-at-point     "kustomize")
-(declare-function kustomize-open-overlay      "kustomize")
-(declare-function kustomize-patch-at-point    "kustomize")
-(declare-function kustomize-which-func        "kustomize")
 
 ;; ---------------------------------------------------------------------------
 ;; Shared external packages.  Per-language files used to redeclare these.
@@ -41,42 +38,29 @@
   :commands display-line-numbers-mode)
 
 (use-package lsp-mode
-  :hook (prog-mode . lsp-deferred)
-  :commands (lsp))
+  :commands (lsp lsp-deferred)
+  :custom
+  (lsp-disabled-clients '(tfls)))
 
 (use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
-  :config
-  (setq lsp-ui-doc-enable t
-        lsp-ui-doc-position 'at-point
-        lsp-ui-doc-delay 0.3
-        lsp-ui-sideline-enable t
-        lsp-ui-sideline-show-diagnostics t
-        lsp-ui-sideline-show-hover nil
-        lsp-ui-peek-enable t))
+  :commands lsp-ui-mode
+  :config (setq lsp-ui-doc-enable t
+                lsp-ui-doc-position 'at-point
+                lsp-ui-doc-delay 0.3
+                lsp-ui-sideline-enable t
+                lsp-ui-sideline-show-diagnostics t
+                lsp-ui-sideline-show-hover nil
+                lsp-ui-peek-enable t))
 
 (use-package flycheck
-  :hook (prog-mode . flycheck-mode))
+  :commands flycheck-mode)
 
 (use-package company
-  :hook (prog-mode . company-mode))
+  :commands company-mode)
 
 (use-package yasnippet
   :commands yas-minor-mode)
 
-(with-eval-after-load 'prog-mode
-  (let ((m prog-mode-map))
-    (define-key m (kbd "<f12>")   #'lsp-find-definition)
-    (define-key m (kbd "C-<f12>") #'--xtdmacs-lsp-find-definition-other-window)
-    (define-key m (kbd "<f11>")   #'--xtdmacs-lsp-find-references)
-    (define-key m (kbd "C-<f11>") #'--xtdmacs-lsp-find-references-other-window)
-    (define-key m (kbd "M-r")     #'lsp-rename)
-    (define-key m (kbd "M-.")     #'company-complete)
-    (define-key m (kbd "<f10>")   #'lsp-ui-doc-glance)
-    (define-key m (kbd "C-<f10>") #'lsp-ui-imenu)
-    (define-key m (kbd "M-t")     #'lsp-format-region)
-    (define-key m (kbd "C-M-t")   #'lsp-format-buffer)
-    ))
 
 ;; ---------------------------------------------------------------------------
 ;; Faces.
@@ -239,32 +223,44 @@ non-nil, repeat the alignment for every match on each line."
     (define-key m [C-f2]     #'xtdmacs-code-align-args)
     (define-key m (kbd "M-d") #'xtdmacs-code-align-regexp)))
 
+(defun xtdmacs-code--install-lsp-bindings ()
+  "Install LSP key bindings as buffer-local overrides."
+  (local-set-key (kbd "<f12>")   #'lsp-find-definition)
+  (local-set-key (kbd "C-<f12>") #'--xtdmacs-lsp-find-definition-other-window)
+  (local-set-key (kbd "<f11>")   #'--xtdmacs-lsp-find-references)
+  (local-set-key (kbd "C-<f11>") #'--xtdmacs-lsp-find-references-other-window)
+  (local-set-key (kbd "M-r")     #'lsp-rename)
+  (local-set-key (kbd "M-.")     #'company-complete)
+  (local-set-key (kbd "<f10>")   #'lsp-ui-doc-glance)
+  (local-set-key (kbd "C-<f10>") #'lsp-ui-imenu)
+  (local-set-key (kbd "M-t")     #'lsp-format-region)
+  (local-set-key (kbd "C-M-t")   #'lsp-format-buffer))
+
 ;; ---------------------------------------------------------------------------
 ;; Per-buffer base setup.  Per-language setup functions call this first.
+;; Pass :with-lsp t to also start `lsp-mode' + `lsp-ui-mode' — only do this
+;; for languages with an LSP server (go, python, typescript, ...).  Languages
+;; with no server (lisp, makefile, shell, yaml, ...) must leave it nil to
+;; avoid noisy lsp-mode errors.
 
 ;;;###autoload
-(defun xtdmacs-code-setup ()
+(cl-defun xtdmacs-code-setup (&key with-lsp)
   "Enable base xtdmacs editing features in the current buffer.
 Called from major-mode hooks (see `xtdmacs-loader-base-mode-hooks')
-and from per-language setup functions."
+and from per-language setup functions.  When WITH-LSP is non-nil, also
+enable `lsp-mode' and `lsp-ui-mode'."
   (display-line-numbers-mode 1)
   (yafolding-mode 1)
   (column-enforce-mode 1)
-  (lsp 1)
-  (lsp-ui-mode 1)
   (company-mode 1)
   (flycheck-mode 1)
   (yas-minor-mode 1)
+  (when with-lsp
+    (lsp-deferred)
+    (lsp-ui-mode 1)
+    (xtdmacs-code--install-lsp-bindings))
   (when (require 'xtdmacs-compile++ nil 'noerror)
     (xtdmacs-compile++-mode 1))
-  (when (require 'kustomize nil 'noerror)
-    (when (kustomize-in-kustomize-file)
-      (local-set-key [f12]           #'kustomize-open-at-point)
-      (local-set-key (kbd "C-<f12>") (lambda () (interactive) (kustomize-open-at-point t)))
-      (local-set-key (kbd "C-e")     #'kustomize-patch-at-point)
-      (kustomize-which-func))
-    (when (kustomize-in-dir-strcture)
-      (local-set-key (kbd "C-x C-<up>") #'kustomize-open-overlay)))
   (highlight-regexp " +$" 'trailing-whitespace))
 
 (provide 'xtdmacs-code)

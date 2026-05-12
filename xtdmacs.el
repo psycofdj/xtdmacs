@@ -2,7 +2,7 @@
 
 ;; Author: Xavier Marcelet
 ;; URL: https://github.com/psycofdj/xtdmacs
-;; Version: 0.8
+;; Version: 0.9
 ;; Package-Requires: ((emacs "27.1")
 ;;                    (auto-complete             "20250101.843")
 ;;                    (company                   "20260424.2111")
@@ -24,7 +24,8 @@
 ;;                    (popup                     "20250101.843")
 ;;                    (smarty-mode               "20100703.1158")
 ;;                    (use-package               "2.4.5")
-;;                    (web-mode                  "20241227.530")
+;;                    (web-mode                  "20260331.1441")
+;;                    (terraform-mode            "20251115.2210")
 ;;                    (xterm-color               "20251128.1842")
 ;;                    (yafolding                 "20250601.2133")
 ;;                    (yaml-mode                 "20260420.156")

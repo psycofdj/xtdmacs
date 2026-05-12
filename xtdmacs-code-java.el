@@ -34,7 +34,7 @@
 ;;;###autoload
 (defun xtdmacs-code-java-setup ()
   "Configure a Java buffer with xtdmacs conventions."
-  (xtdmacs-code-setup)
+  (xtdmacs-code-setup :with-lsp t)
   (font-lock-add-keywords nil xtdmacs-code-java-keywords-alist))
 
 ;;;###autoload

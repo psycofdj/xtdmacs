@@ -2,25 +2,18 @@
 
 ;;; Commentary:
 
-;; xtdmacs setup for python-mode buffers: LSP, yas, font-lock keywords,
+;; xtdmacs setup for python-mode buffers: LSP, font-lock keywords,
 ;; key bindings, pylint-driven compile and a configurable test runner.
 
 ;;; Code:
 
 (require 'xtdmacs-code)
 
-(eval-when-compile (defvar python-mode-map))
-
 (declare-function xtdmacs-compile++-register-config "xtdmacs-compile++")
 (declare-function xtdmacs-compile++-query-local     "xtdmacs-compile++")
 (declare-function --xtdmacs-compile++-get-value     "xtdmacs-compile++")
 (declare-function --xtdmacs-compile++-set-value     "xtdmacs-compile++")
 (declare-function --xtdmacs-compile++-prompt-value  "xtdmacs-compile++")
-(declare-function lsp-ui-imenu                      "lsp-ui-imenu")
-
-;; python-mode is built in; just add hooks for completion/snippets/lsp.
-(add-hook 'python-mode-hook #'lsp-deferred)
-(add-hook 'python-mode-hook #'yas-minor-mode)
 
 (defcustom xtdmacs-code-python-compile-alist
   '((:compile . ((:dir        . xtdmacs-code-python-project-root)
@@ -73,7 +66,7 @@
   :type '(choice (string :tag "string") (function :tag "function"))
   :safe (lambda (_) t))
 
-(defcustom xtdmacs-code-python-pylint-bin-path "/usr/local/bin/pylint"
+(defcustom xtdmacs-code-python-pylint-bin-path "pylint"
   "Pylint binary path."
   :group 'xtdmacs-code-python :type 'file :safe #'file-exists-p)
 
@@ -153,22 +146,10 @@
         (bin (--xtdmacs-compile++-get-value mode type :bin)))
     (format "cd %s && %s" (funcall-or-value dir) (funcall-or-value bin))))
 
-(with-eval-after-load 'python
-  (let ((m python-mode-map))
-    (define-key m (kbd "<f12>")   #'lsp-find-definition)
-    (define-key m (kbd "C-<f12>") #'--xtdmacs-lsp-find-definition-other-window)
-    (define-key m (kbd "<f11>")   #'--xtdmacs-lsp-find-references)
-    (define-key m (kbd "C-<f11>") #'--xtdmacs-lsp-find-references-other-window)
-    (define-key m (kbd "C-<f10>") #'lsp-ui-imenu)
-    (define-key m (kbd "M-t")     #'lsp-format-region)
-    (define-key m (kbd "C-M-t")   #'lsp-format-buffer)
-    (define-key m (kbd "M-r")     #'lsp-rename)
-    (define-key m (kbd "M-.")     #'company-complete)))
-
 ;;;###autoload
 (defun xtdmacs-code-python-setup ()
   "Configure a Python buffer with xtdmacs conventions."
-  (xtdmacs-code-setup)
+  (xtdmacs-code-setup :with-lsp t)
   (font-lock-add-keywords nil xtdmacs-code-python-keywords-alist)
   (when (bound-and-true-p xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "python-mode" xtdmacs-code-python-compile-alist))
@@ -189,7 +170,3 @@
 (provide 'xtdmacs-code-python)
 
 ;;; xtdmacs-code-python.el ends here
-
-;; Local Variables:
-;; ispell-local-dictionary: "american"
-;; End:

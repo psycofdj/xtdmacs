@@ -2,8 +2,7 @@
 
 ;;; Commentary:
 
-;; xtdmacs setup for web-mode buffers: HTML comment delimiters,
-;; markup indent offset, and element-traversal key bindings.
+;; xtdmacs setup for web-mode buffers: HTML or golang templates.
 
 ;;; Code:
 
@@ -24,10 +23,13 @@
 ;;;###autoload
 (defun xtdmacs-code-web-setup ()
   "Configure a web-mode buffer with xtdmacs conventions."
-  (xtdmacs-code-setup)
-  (setq-local comment-start "<!--")
-  (setq-local comment-end   "-->")
-  (setq web-mode-markup-indent-offset 2))
+  (if (xtdmacs-helm-detect-p)
+      (progn
+        (xtdmacs-helm-init)
+        (setq-local web-mode-engine "go")
+        (xtdmacs-code-setup :with-lsp t))
+    (progn
+      (xtdmacs-code-setup))))
 
 ;;;###autoload
 (add-hook 'web-mode-hook #'xtdmacs-code-web-setup)

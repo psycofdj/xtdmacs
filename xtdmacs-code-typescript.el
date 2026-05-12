@@ -22,8 +22,7 @@
 
 (use-package typescript-mode
   :ensure t
-  :hook ((typescript-mode . lsp-deferred)
-         (typescript-mode . yas-minor-mode)))
+  :hook (typescript-mode . yas-minor-mode))
 
 (defface xtdmacs-code-typescript-face-indent-error
   '((t (:foreground "color-124" :underline t)))
@@ -97,7 +96,7 @@
 ;;;###autoload
 (defun xtdmacs-code-typescript-setup ()
   "Configure a TypeScript buffer with xtdmacs conventions."
-  (xtdmacs-code-setup)
+  (xtdmacs-code-setup :with-lsp t)
   (font-lock-add-keywords nil xtdmacs-code-typescript-keywords-alist)
   (when (bound-and-true-p xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "typescript-mode" xtdmacs-code-typescript-compile-alist))

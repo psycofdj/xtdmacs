@@ -650,10 +650,21 @@ Face: `xtdmacs-code-typescript-face-indent-error`.
 and provides a default compile config that runs `terraform validate` from
 the project root.
 
-| Variable                                      | Purpose                            |
-|-----------------------------------------------|------------------------------------|
-| `xtdmacs-code-terraform-format-on-save`       | run `lsp-format-buffer` on save    |
-| `xtdmacs-code-terraform-compile-alist`        | compile config                     |
+It also supports [OpenTofu](https://opentofu.org/) as a drop-in
+replacement: when `xtdmacs-code-terraform-backend` is set to `tofu`,
+setup switches `terraform-command` to `"tofu"`,
+`lsp-terraform-ls-server` to `"tofu-ls"`, and overrides the
+`lsp-terraform-ls-*` module functions (`validate`, `init`, `version`,
+module/provider tree fetchers) to dispatch `tofu-ls.*` workspace
+commands instead of the default `terraform-ls.*` ones. The LSP
+override is installed lazily through `with-eval-after-load
+'lsp-terraform` and is idempotent.
+
+| Variable                                      | Purpose                                                 |
+|-----------------------------------------------|---------------------------------------------------------|
+| `xtdmacs-code-terraform-format-on-save`       | run `lsp-format-buffer` on save                         |
+| `xtdmacs-code-terraform-backend`              | `terraform` (default) or `tofu` — selects LSP commands  |
+| `xtdmacs-code-terraform-compile-alist`        | compile config                                          |
 
 Bindings: same LSP / formatting keys as Go (`F12`, `F11`, `M-t`, `C-M-t`, `M-.`, …).
 

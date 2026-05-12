@@ -48,7 +48,7 @@
 ;;;###autoload
 (defun xtdmacs-code-php-setup ()
   "Configure a PHP buffer with xtdmacs conventions."
-  (xtdmacs-code-setup)
+  (xtdmacs-code-setup :with-lsp t)
   (font-lock-add-keywords nil xtdmacs-code-php-keywords-alist)
   (c-set-offset 'arglist-cont-nonempty 'c-lineup-arglist)
   (c-set-offset 'arglist-close         'c-lineup-arglist-close-under-paren)

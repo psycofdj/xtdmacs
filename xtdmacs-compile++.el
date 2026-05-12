@@ -298,9 +298,147 @@ Populated via `xtdmacs-compile++-register-config'.")
 
 
 
+;;;;;;;;;;;
+;; Cache ;;
+;;;;;;;;;;;
+
+(defcustom xtdmacs-compile++-cache-file
+  (expand-file-name "xtdmacs-compile++-cache.el" user-emacs-directory)
+  "File where per-workspace/major-mode command overrides are persisted."
+  :group 'xtdmacs-compile++
+  :type 'file)
+
+(defvar xtdmacs-compile++--cache nil
+  "In-memory copy of the persisted override cache.
+Shape: ((WORKSPACE . ((MODE . ((TYPE . ((KEY . VALUE) ...)) ...)) ...)) ...).
+WORKSPACE is a slash-terminated absolute directory.")
+
+(defvar-local xtdmacs-compile++--buffer-workspace nil
+  "Workspace already associated with this buffer (used as prompt default).")
+
+(defvar-local xtdmacs-compile++--apply-globally nil
+  "Non-nil if the most recent `xtdmacs-compile++-query-local' chose `apply to all'.")
+
+(defvar xtdmacs-compile++--suppress-persist nil
+  "When non-nil, `xtdmacs-compile++--maybe-persist' is a no-op.
+Used so nested params functions don't trigger a second workspace prompt.")
+
+(defun xtdmacs-compile++--normalize-dir (dir)
+  "Return DIR as a slash-terminated absolute path."
+  (file-name-as-directory (expand-file-name dir)))
+
+(defun xtdmacs-compile++--load-cache ()
+  "Read `xtdmacs-compile++-cache-file' into `xtdmacs-compile++--cache'."
+  (setq xtdmacs-compile++--cache
+        (when (file-exists-p xtdmacs-compile++-cache-file)
+          (with-temp-buffer
+            (insert-file-contents xtdmacs-compile++-cache-file)
+            (condition-case nil
+                (read (current-buffer))
+              (error nil))))))
+
+(defun xtdmacs-compile++--save-cache ()
+  "Write `xtdmacs-compile++--cache' to `xtdmacs-compile++-cache-file'."
+  (with-temp-file xtdmacs-compile++-cache-file
+    (let ((print-level nil) (print-length nil))
+      (prin1 xtdmacs-compile++--cache (current-buffer)))))
+
+(defun xtdmacs-compile++--matching-workspaces (&optional file)
+  "Cached workspaces that are ancestors of FILE (or current buffer file).
+Returned shortest-prefix first."
+  (let* ((path  (or file (buffer-file-name)))
+         (apath (and path (expand-file-name path)))
+         result)
+    (when apath
+      (dolist (entry xtdmacs-compile++--cache)
+        (let ((ws (car entry)))
+          (when (string-prefix-p ws apath)
+            (push ws result)))))
+    (sort result (lambda (a b) (< (length a) (length b))))))
+
+(defun xtdmacs-compile++--default-workspace ()
+  "Workspace value to offer as the prompt default."
+  (or xtdmacs-compile++--buffer-workspace
+      (car (last (xtdmacs-compile++--matching-workspaces)))
+      (and buffer-file-name
+           (file-name-directory (expand-file-name buffer-file-name)))
+      default-directory))
+
+(defun xtdmacs-compile++--read-workspace ()
+  "Prompt for the workspace to associate with the override."
+  (let ((def (xtdmacs-compile++--default-workspace)))
+    (xtdmacs-compile++--normalize-dir
+     (read-directory-name "Workspace: " def def t))))
+
+(defun xtdmacs-compile++--data-entry (entry)
+  "Return ENTRY with only string-valued pairs (drops function symbols, flags)."
+  (delq nil (mapcar (lambda (kv) (and (stringp (cdr kv)) kv)) entry)))
+
+
+(defun xtdmacs-compile++--cache-put (workspace mode type entry)
+  "Store TYPE override of MODE under WORKSPACE in `xtdmacs-compile++--cache'."
+  (let* ((data      (xtdmacs-compile++--data-entry entry))
+         (ws-cell   (assoc workspace xtdmacs-compile++--cache))
+         (mode-map  (cdr ws-cell))
+         (mode-cell (assoc mode mode-map))
+         (type-map  (cdr mode-cell))
+         (type-cell (assoc type type-map)))
+    (cond
+     (type-cell (setcdr type-cell data))
+     (mode-cell (setcdr mode-cell (cons (cons type data) type-map)))
+     (ws-cell   (setcdr ws-cell
+                        (cons (cons mode (list (cons type data))) mode-map)))
+     (t         (push (cons workspace
+                            (list (cons mode (list (cons type data)))))
+                      xtdmacs-compile++--cache)))))
+
+(defun xtdmacs-compile++--maybe-persist (type &optional mode)
+  "If the user chose `apply to all buffers', persist TYPE override of MODE.
+Prompts for the workspace directory; the default is the longest matching
+workspace already in the cache, falling back to the buffer file's parent."
+  (when (and xtdmacs-compile++--apply-globally
+             (not xtdmacs-compile++--suppress-persist))
+    (setq xtdmacs-compile++--apply-globally nil)
+    (let* ((effective-mode (or mode major-mode))
+           (workspace      (xtdmacs-compile++--read-workspace))
+           (config         (--xtdmacs-compile++-get-config effective-mode))
+           (entry          (cdr (assoc type config))))
+      (when entry
+        (setq xtdmacs-compile++--buffer-workspace workspace)
+        (xtdmacs-compile++--cache-put workspace effective-mode type entry)
+        (xtdmacs-compile++--save-cache)))))
+
+(defun xtdmacs-compile++--apply-cache ()
+  "Apply cached overrides matching the current buffer.
+Walks every workspace whose path is an ancestor of the buffer file, from
+shortest to longest prefix, so the most specific workspace wins per key.
+Makes `xtdmacs-compile++-config-alist' buffer-local before mutating."
+  (let ((workspaces (xtdmacs-compile++--matching-workspaces))
+        (mode       major-mode)
+        applied)
+    (dolist (ws workspaces)
+      (let* ((mode-map (cdr (assoc ws xtdmacs-compile++--cache)))
+             (type-map (cdr (assoc mode mode-map))))
+        (when type-map
+          (unless applied
+            (let ((tmp (copy-tree xtdmacs-compile++-config-alist)))
+              (make-local-variable 'xtdmacs-compile++-config-alist)
+              (setq xtdmacs-compile++-config-alist tmp))
+            (setq applied t))
+          (setq xtdmacs-compile++--buffer-workspace ws)
+          (dolist (type-entry type-map)
+            (let ((type (car type-entry)))
+              (dolist (kv (cdr type-entry))
+                (--xtdmacs-compile++-set-value mode type
+                                               (car kv) (cdr kv))))))))))
+
 (defun xtdmacs-compile++-query-local ()
-  "Ask whether to keep the compile config buffer-local; if yes, copy and localize."
-  (unless (y-or-n-p "Apply to all buffers ? ")
+  "Ask whether to keep the compile config buffer-local; if yes, copy and localize.
+Also remember the choice in `xtdmacs-compile++--apply-globally' so callers can
+decide whether to persist the override to the on-disk cache."
+  (if (y-or-n-p "Apply to all buffers ? ")
+      (setq xtdmacs-compile++--apply-globally t)
+    (setq xtdmacs-compile++--apply-globally nil)
     (let* ((tmp (copy-tree xtdmacs-compile++-config-alist)))
       (make-local-variable 'xtdmacs-compile++-config-alist)
       (setq xtdmacs-compile++-config-alist tmp))))
@@ -462,7 +600,8 @@ Populated via `xtdmacs-compile++-register-config'.")
     (xtdmacs-compile++-query-local)
     (--xtdmacs-compile++-set-value mode type :dir dir)
     (--xtdmacs-compile++-set-value mode type :env env)
-    (--xtdmacs-compile++-set-value mode type :bin bin)))
+    (--xtdmacs-compile++-set-value mode type :bin bin)
+    (xtdmacs-compile++--maybe-persist type mode)))
 
 (defun xtdmacs-compile++-current-file-params (type &optional mode)
   "Prompt for :bin, :file of compile entry TYPE in MODE and store them."
@@ -470,27 +609,34 @@ Populated via `xtdmacs-compile++-register-config'.")
          (file (--xtdmacs-compile++-prompt-value mode type :file "File")))
     (xtdmacs-compile++-query-local)
     (--xtdmacs-compile++-set-value mode type :bin  bin)
-    (--xtdmacs-compile++-set-value mode type :file file)))
+    (--xtdmacs-compile++-set-value mode type :file file)
+    (xtdmacs-compile++--maybe-persist type mode)))
 
 (defun xtdmacs-compile++-compose-params (type &optional mode)
   "Prompt for default + compose params of compile entry TYPE in MODE."
-  (xtdmacs-compile++-default-params type mode)
+  (let ((xtdmacs-compile++--suppress-persist t))
+    (xtdmacs-compile++-default-params type mode))
   (let* ((compose (--xtdmacs-compile++-prompt-value mode type :compose-file "Compose-file"))
          (service (--xtdmacs-compile++-prompt-value mode type :service      "Service")))
     (--xtdmacs-compile++-set-value mode type :compose-file compose)
-    (--xtdmacs-compile++-set-value mode type :service      service)))
+    (--xtdmacs-compile++-set-value mode type :service      service))
+  (xtdmacs-compile++--maybe-persist type mode))
 
 (defun xtdmacs-compile++-docker-exec-params (type &optional mode)
   "Prompt for default + container params of compile entry TYPE in MODE."
-  (xtdmacs-compile++-default-params type mode)
+  (let ((xtdmacs-compile++--suppress-persist t))
+    (xtdmacs-compile++-default-params type mode))
   (let* ((container (--xtdmacs-compile++-prompt-value mode type "container" "Container")))
-    (--xtdmacs-compile++-set-value mode type "container" container)))
+    (--xtdmacs-compile++-set-value mode type "container" container))
+  (xtdmacs-compile++--maybe-persist type mode))
 
 (defun xtdmacs-compile++-docker-run-params (type &optional mode)
   "Prompt for default + image params of compile entry TYPE in MODE."
-  (xtdmacs-compile++-default-params type mode)
+  (let ((xtdmacs-compile++--suppress-persist t))
+    (xtdmacs-compile++-default-params type mode))
   (let* ((image  (--xtdmacs-compile++-prompt-value mode type :image "Image")))
-    (--xtdmacs-compile++-set-value mode type :image image)))
+    (--xtdmacs-compile++-set-value mode type :image image))
+  (xtdmacs-compile++--maybe-persist type mode))
 
 
 ;;;;;;;;;
@@ -539,6 +685,7 @@ Populated via `xtdmacs-compile++-register-config'.")
   (add-hook 'compilation-filter-hook 'xtdmacs-compile++-colorize-compilation-buffer)
   (make-local-variable 'mode-line)
   (make-local-variable 'mode-line-inactive)
+  (xtdmacs-compile++--apply-cache)
   (message "enabled : xtdmacs-compile++-mode")
   (add-to-list 'compilation-finish-functions 'xtdmacs-compile++-compilation-finished)
   ;; comint install
@@ -581,9 +728,9 @@ Populated via `xtdmacs-compile++-register-config'.")
     ([21 C-f8]          . (lambda () (interactive) (xtdmacs-compile++-command-6 t)))
     ([21 f32]           . (lambda () (interactive) (xtdmacs-compile++-command-6 t)))
 
-    ([M-f8]              . kill-compilation)
     ([M-f7]              . kill-compilation)
     ([M-f6]              . kill-compilation)
+    ([M-f8]              . kill-compilation)
 
     ([f9]                . xtdmacs-compile++-next-error)
     ([C-f9]              . xtdmacs-compile++-next-warning)
@@ -605,6 +752,8 @@ Populated via `xtdmacs-compile++-register-config'.")
 (put 'xtdmacs-compile++-default-config-alist 'safe-local-variable '(lambda(p) t))
 ;;;###autoload
 (put 'xtdmacs-compile++-iwyu-build-directory-name 'safe-local-variable 'stringp)
+
+(xtdmacs-compile++--load-cache)
 
 (provide 'xtdmacs-compile++)
 

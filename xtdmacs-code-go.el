@@ -97,7 +97,7 @@
 ;;;###autoload
 (defun xtdmacs-code-go-setup ()
   "Configure a Go buffer with xtdmacs conventions."
-  (xtdmacs-code-setup)
+  (xtdmacs-code-setup :with-lsp t)
   (font-lock-add-keywords nil xtdmacs-code-go-keywords-alist)
   (when (bound-and-true-p xtdmacs-compile++-mode)
     (xtdmacs-compile++-register-config "go-mode" xtdmacs-code-go-compile-alist))

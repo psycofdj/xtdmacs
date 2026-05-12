@@ -41,7 +41,7 @@
 ;;;###autoload
 (defun xtdmacs-code-js-setup ()
   "Configure a JavaScript buffer with xtdmacs conventions."
-  (xtdmacs-code-setup)
+  (xtdmacs-code-setup :with-lsp t)
   (font-lock-add-keywords nil xtdmacs-code-js-keywords-alist))
 
 ;;;###autoload

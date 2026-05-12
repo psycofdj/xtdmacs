@@ -1,19 +1,33 @@
-;; -*- mode: emacs-lisp; -*-
-;; -*- lexical-binding: t -*-
+;;; dot.emacs --- Default ~/.emacs configuration file  -*- mode: emacs-lisp; lexical-binding: t -*-
 
-;; configure repositories
+;;; Commentary:
+
+;; Create symlink from this file to ~/.emacs
+
+;;; Code:
+
+
+(fset 'xterm-color-unfontify-region 'font-lock-default-unfontify-region)
+
+;; install packages from source
+(unless (package-installed-p 'yaml-lsp)
+  (package-vc-install
+   '(yaml-lsp
+     :vc-backend Git
+     :url "https://github.com/psycofdj/yaml-lsp"
+     :lisp-dir "emacs"
+     :main-file "yaml-lsp.el")))
+
+;; configure package repositories
 (require 'package)
 (add-to-list 'package-archives '("melpa"        . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
 
-(fset 'xterm-color-unfontify-region 'font-lock-default-unfontify-region)
 
 ;; custom file definition
 (setq custom-file "~/.emacs-custom")
 (load custom-file)
-;(load "~/.emacs.d/dash.el")
-;(load "~/.emacs.d/dash-functional.el")
 
 ;; set utf-8 encoding
 (set-terminal-coding-system 'utf-8)
@@ -30,9 +44,6 @@
     (setq frame-background-mode 'light)
   (setq frame-background-mode 'dark))
 
-;; Per-language setup functions (xtdmacs-code-shell-setup, xtdmacs-code-python-setup
-;; etc.) are auto-attached to their major-mode hooks by the language files via
-;; ;;;###autoload cookies.  No manual add-hook calls needed here.
 
 (require 'xtdmacs-find)
 (require 'xtdmacs-loader)
